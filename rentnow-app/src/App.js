@@ -1,10 +1,19 @@
 import React from "react"
 import './App.css';
-import Login from './Login/Login.js'
+import Login from './components/Login/Login.js'
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import * as Routes from "./constants/routes"
+import Landing from "./components/Landing/Landing"
 
 function App() {
   return (
-    <Login />
+    <Router>
+      <Switch>
+        <Route path={Routes.LOGIN} exact component={() => <Login />} />
+        <Route path={Routes.LANDING} exact component={() => <Landing />} />
+        <Route path="*" exact component={() => <Landing />} />
+      </ Switch>
+    </ Router>
   );
 }
 
