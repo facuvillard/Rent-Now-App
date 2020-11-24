@@ -1,5 +1,5 @@
-import React from 'react'
-import {Container, Avatar, Button}  from '@material-ui/core';
+import React, { useState } from 'react'
+import { Container, Avatar, Button, CircularProgress } from '@material-ui/core';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
@@ -10,6 +10,9 @@ import Box from '@material-ui/core/Box';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
+import { useFormik } from 'formik';
+import AlertCustom from './../../utils/AlertCustom/AlertCustom'
+import {signIn} from './../../api/auth'
 
 const useStyles = makeStyles((theme) => ({
     paper: {
@@ -34,8 +37,39 @@ const useStyles = makeStyles((theme) => ({
 
 
 const Login = () => {
-
     const classes = useStyles();
+    const [showAlert, setShowAlert] = useState(false);
+    const [alertProps, setAlertProps] = useState({});
+    const [isLoading, setIsLoading] = useState(false);
+
+    const formik = useFormik({
+        initialValues: {
+            email: '',
+            password: '',
+        },
+        onSubmit: (values) => {
+            handleSubmit(values.email, values.password)
+        },
+    })
+
+    const handleSubmit = async (email, password) => {
+        setIsLoading(true);
+        const response = await signIn(email, password);
+        if (response.status === "OK") {
+            setAlertProps({
+                type: "success",
+                text: response.message,
+            });
+            setShowAlert(true);
+        } else {
+            setAlertProps({
+                type: "error",
+                text: response.message,
+            });
+            setShowAlert(true);
+            setIsLoading(false);
+        }
+    };
 
     return (
         <Container component="main" maxWidth="xs">
@@ -47,17 +81,19 @@ const Login = () => {
                 <Typography component="h1" variant="h5">
                     Iniciar Sesión
         </Typography>
-                <form noValidate className={classes.form}>
+                <form noValidate className={classes.form} onSubmit={formik.handleSubmit}>
                     <TextField
                         variant="outlined"
                         margin="normal"
                         required
                         fullWidth
                         id="email"
-                        label="Email Address"
+                        label="Email"
                         name="email"
                         autoComplete="email"
                         autoFocus
+                        value={formik.values.email}
+                        onChange={formik.handleChange}
                     />
                     <TextField
                         variant="outlined"
@@ -65,10 +101,13 @@ const Login = () => {
                         required
                         fullWidth
                         name="password"
-                        label="Password"
+                        label="Contraseña"
                         type="password"
                         id="password"
                         autoComplete="current-password"
+                        value={formik.values.password}
+                        onChange={formik.handleChange}
+                        
                     />
                     <FormControlLabel
                         control={<Checkbox value="remember" color="primary" />}
@@ -80,9 +119,9 @@ const Login = () => {
                         variant="contained"
                         color="primary"
                         className={classes.submit}
-                        onClick={console.log("hola")}
+                        disabled={isLoading}
                     >
-                        Ingresar
+                        {!isLoading ? "Ingresar" : <CircularProgress />}
           </Button>
                     <Grid container>
                         <Grid item xs>
@@ -100,6 +139,12 @@ const Login = () => {
             </div>
             <Box mt={8}>
             </Box>
+            <AlertCustom
+                type={alertProps.type}
+                text={alertProps.text}
+                open={showAlert}
+                setOpen={setShowAlert}
+            />
         </Container>
     )
 }
