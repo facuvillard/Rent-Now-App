@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Container, Avatar, Button, CircularProgress } from '@material-ui/core';
+import { Container, Avatar, Button, CircularProgress, Paper } from '@material-ui/core';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
@@ -12,11 +12,12 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import { useFormik } from 'formik';
 import AlertCustom from './../../utils/AlertCustom/AlertCustom'
-import {signIn} from './../../api/auth'
+import { signIn } from './../../api/auth'
+import * as Routes from "../../constants/routes";
 
 const useStyles = makeStyles((theme) => ({
-    paper: {
-        marginTop: theme.spacing(8),
+    main: {
+        marginTop: theme.spacing(5),
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -32,9 +33,33 @@ const useStyles = makeStyles((theme) => ({
     submit: {
         margin: theme.spacing(3, 0, 2),
     },
+    paper: {
+        marginTop: theme.spacing(2),
+        marginBottom: theme.spacing(2),
+        padding: theme.spacing(2),
+        [theme.breakpoints.up(600 + theme.spacing(3) * 2)]: {
+            marginTop: theme.spacing(6),
+            marginBottom: theme.spacing(6),
+            padding: theme.spacing(3),
+        },
+    },
+
+
 
 }))
 
+function Copyright() {
+    return (
+        <Typography variant="body2" color="textSecondary" align="center">
+            {'Copyright © '}
+            <Link color="inherit" href={Routes.LANDING}>
+                RentNow
+        </Link>{' '}
+            {new Date().getFullYear()}
+            {'.'}
+        </Typography>
+    );
+}
 
 const Login = () => {
     const classes = useStyles();
@@ -73,78 +98,81 @@ const Login = () => {
 
     return (
         <Container component="main" maxWidth="xs">
-            <CssBaseline />
-            <div className={classes.paper} >
-                <Avatar className={classes.avatar} >
-                    <LockOutlinedIcon />
-                </Avatar>
-                <Typography component="h1" variant="h5">
-                    Iniciar Sesión
+            <Paper variant="outlined" className={classes.paper} >
+                <CssBaseline />
+                <div className={classes.main} >
+                    <Avatar className={classes.avatar} >
+                        <LockOutlinedIcon />
+                    </Avatar>
+                    <Typography component="h1" variant="h5">
+                        Iniciar Sesión
         </Typography>
-                <form noValidate className={classes.form} onSubmit={formik.handleSubmit}>
-                    <TextField
-                        variant="outlined"
-                        margin="normal"
-                        required
-                        fullWidth
-                        id="email"
-                        label="Email"
-                        name="email"
-                        autoComplete="email"
-                        autoFocus
-                        value={formik.values.email}
-                        onChange={formik.handleChange}
-                    />
-                    <TextField
-                        variant="outlined"
-                        margin="normal"
-                        required
-                        fullWidth
-                        name="password"
-                        label="Contraseña"
-                        type="password"
-                        id="password"
-                        autoComplete="current-password"
-                        value={formik.values.password}
-                        onChange={formik.handleChange}
-                        
-                    />
-                    <FormControlLabel
-                        control={<Checkbox value="remember" color="primary" />}
-                        label="Recordarme"
-                    />
-                    <Button
-                        type="submit"
-                        fullWidth
-                        variant="contained"
-                        color="primary"
-                        className={classes.submit}
-                        disabled={isLoading}
-                    >
-                        {!isLoading ? "Ingresar" : <CircularProgress />}
-          </Button>
-                    <Grid container>
-                        <Grid item xs>
-                            <Link href="#" variant="body2" color="secondary">
-                                ¿Olvidaste tu contraseña?
+                    <form noValidate className={classes.form} onSubmit={formik.handleSubmit}>
+                        <TextField
+                            variant="outlined"
+                            margin="normal"
+                            required
+                            fullWidth
+                            id="email"
+                            label="Email"
+                            name="email"
+                            autoComplete="email"
+                            autoFocus
+                            value={formik.values.email}
+                            onChange={formik.handleChange}
+                        />
+                        <TextField
+                            variant="outlined"
+                            margin="normal"
+                            required
+                            fullWidth
+                            name="password"
+                            label="Contraseña"
+                            type="password"
+                            id="password"
+                            autoComplete="current-password"
+                            value={formik.values.password}
+                            onChange={formik.handleChange}
+
+                        />
+                        <FormControlLabel
+                            control={<Checkbox value="remember" color="primary" />}
+                            label="Recordarme"
+                        />
+                        <Button
+                            type="submit"
+                            fullWidth
+                            variant="contained"
+                            color="primary"
+                            className={classes.submit}
+                            disabled={isLoading}
+                        >
+                            {!isLoading ? "Ingresar" : <CircularProgress />}
+                        </Button>
+                        <AlertCustom
+                            type={alertProps.type}
+                            text={alertProps.text}
+                            open={showAlert}
+                            setOpen={setShowAlert}
+                        />
+                        <Grid container>
+                            <Grid item xs>
+                                <Link href="#" variant="body2" color="secondary">
+                                    ¿Olvidaste tu contraseña?
               </Link>
-                        </Grid>
-                        <Grid item>
-                            <Link href="#" variant="body2" color="secondary">
-                                ¿No tienes cuenta? Registrate
+                            </Grid>
+                            <Grid item>
+                                <Link href="#" variant="body2" color="secondary">
+                                    ¿No tienes cuenta? Registrate
                             </Link>
+                            </Grid>
                         </Grid>
-                    </Grid>
-                </form>
-            </div>
-            <Box mt={8}>
-            </Box>
-            <AlertCustom
-                type={alertProps.type}
-                text={alertProps.text}
-                open={showAlert}
-                setOpen={setShowAlert}
-            />
+                    </form>
+                </div>
+                <Box mt={8}>
+                    <Copyright />
+                </Box>
+            </ Paper>
         </Container>
     )
 }
