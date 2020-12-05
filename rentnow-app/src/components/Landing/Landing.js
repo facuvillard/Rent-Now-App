@@ -1,10 +1,47 @@
 import React from 'react'
+import { createMuiTheme } from '@material-ui/core/styles';
+import { ThemeProvider } from '@material-ui/styles';
+import Navbar from 'components/Landing/Navbar'
+import Hero from 'components/Landing/Hero/Hero'
+import HowItWorks from 'components/Landing/HowItWorks/HowItWorks'
+
+const theme = createMuiTheme({
+    palette: {
+        primary: {
+            main: "#FCC931",
+        },
+        secondary: {
+            main: "#3F4652",
+            dark: "rgba(33,33,33, 0.8)"
+        }
+    },
+    typography: {
+        fontFamily: "'Raleway', sans-serif",
+        h2: {
+            fontFamily: "'Raleway', sans-serif"
+        },
+        h3: {
+            fontFamily: "'Raleway', sans-serif"
+        },
+        h4: {
+            fontFamily: "'Raleway', sans-serif"
+        },
+        h5: {
+            fontFamily: "'Raleway', sans-serif"
+        },
+        h6: {
+            fontFamily: "'Raleway', sans-serif"
+        },
+    }
+})
 
 const Landing = () => {
     return (
-        <div>
-            Estamos en la Landing
-        </div>
+        <ThemeProvider theme={theme}>
+            <Navbar />
+            <Hero />
+            <HowItWorks />
+        </ThemeProvider>
     )
 }
 
