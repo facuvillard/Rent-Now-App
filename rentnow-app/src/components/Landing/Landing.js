@@ -4,6 +4,9 @@ import { ThemeProvider } from '@material-ui/styles';
 import Navbar from 'components/Landing/Navbar'
 import Hero from 'components/Landing/Hero/Hero'
 import HowItWorks from 'components/Landing/HowItWorks/HowItWorks'
+import AboutUs from 'components/Landing/About/AboutUs'
+import Aplications from 'components/Landing/Aplications/Aplications';
+import Footer from 'components/Landing/Footer/Footer';
 
 const theme = createMuiTheme({
     palette: {
@@ -41,6 +44,9 @@ const Landing = () => {
             <Navbar />
             <Hero />
             <HowItWorks />
+            <AboutUs />
+            <Aplications />
+            <Footer />
         </ThemeProvider>
     )
 }
