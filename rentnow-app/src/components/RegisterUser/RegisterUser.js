@@ -1,4 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+
+// Api services
+import { getProvincesApi, getCitiesByProvincesApi } from 'api/geoApi';
+
+// Material-ui Components and Icons
 import {
 	Container,
 	CssBaseline,
@@ -11,31 +16,17 @@ import {
 	Button,
 	CircularProgress,
 } from '@material-ui/core';
+
+//Autocomplete
+import { Autocomplete } from '@material-ui/lab';
 import { PersonOutline } from '@material-ui/icons';
+
+//Formik
 import { useFormik } from 'formik';
+
+//Moment
 import moment from 'moment';
 import 'moment/locale/es';
-
-const provincia = [
-	{
-		value: 'Cordoba',
-		label: 'Córdoba',
-	},
-	{
-		value: 'La Rioja',
-		label: 'La Rioja',
-	},
-];
-const ciudad = [
-	{
-		value: 'Cordoba',
-		label: 'Córdoba',
-	},
-	{
-		value: 'La Rioja',
-		label: 'La Rioja',
-	},
-];
 
 const useStyles = makeStyles((theme) => ({
 	main: {
@@ -68,8 +59,14 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function RegisterUser() {
+	const [provinces, setProvinces] = useState([]);
+	const [cities, setCities] = useState([]);
 	const classes = useStyles();
 	const [isLoading, setIsLoading] = useState(false);
+
+	const [alertProps, setAlertProps] = useState({})
+
+
 	const formik = useFormik({
 		initialValues: {
 			nombre: '',
@@ -85,6 +82,23 @@ export default function RegisterUser() {
 			console.log(values);
 		},
 	});
+
+	useEffect(() => {
+		getProvincesApi().then((response) => {
+			setProvinces(response.provincias);
+		});
+	}, []);
+
+	const handleCityTextField = async (e) => {
+		if (e.target.value.length > 3) {
+			await getCitiesByProvincesApi(formik.values.provincia, e.target.value).then((response) => {
+				setCities(response.localidades);
+			});
+		} else {
+			setCities([]);
+		}
+	};
+
 	return (
 		<Container component="main" maxWidth="xs">
 			<Paper variant="outlined" className={classes.paper}>
@@ -96,44 +110,39 @@ export default function RegisterUser() {
 					<Typography component="h1" variant="h5">
 						¡Registrate con tus datos!
 					</Typography>
-					<form noValidate className={classes.form}>
+					<form className={classes.form} onSubmit={formik.handleSubmit}>
 						<TextField
 							variant="outlined"
-							margin="normal"
+							margin="dense"
 							required
 							fullWidth
-							id="nombre"
+							autoFocus
 							label="Nombre"
 							name="nombre"
 							autoComplete="nombre"
-							autoFocus
 							value={formik.values.nombre}
 							onChange={formik.handleChange}
 						/>
 						<TextField
 							variant="outlined"
-							margin="normal"
+							margin="dense"
 							required
 							fullWidth
-							id="apellido"
 							label="Apellido"
 							name="apellido"
 							autoComplete="apellido"
-							autoFocus
 							value={formik.values.apellido}
 							onChange={formik.handleChange}
 						/>
 						<TextField
 							type="number"
 							variant="outlined"
-							margin="normal"
+							margin="dense"
 							required
 							fullWidth
-							id="celular"
 							label="Celular"
 							name="celular"
 							autoComplete="celular"
-							autoFocus
 							value={formik.values.celular}
 							onChange={formik.handleChange}
 						/>
@@ -141,79 +150,75 @@ export default function RegisterUser() {
 							type="date"
 							inputProps={{ max: moment(new Date()).format('yyyy-MM-DD') }}
 							variant="outlined"
-							margin="normal"
+							margin="dense"
 							required
 							fullWidth
-							id="fechaNacimiento"
 							label="Fecha de Nacimiento"
 							name="fechaNacimiento"
 							autoComplete="fechaNacimiento"
-							autoFocus
 							value={formik.values.fechaNacimiento}
 							onChange={formik.handleChange}
 						/>
 						<TextField
 							select
 							variant="outlined"
-							margin="normal"
+							margin="dense"
 							required
 							fullWidth
-							id="provincia"
 							label="Provincia"
 							name="provincia"
 							autoComplete="provincia"
-							autoFocus
 							value={formik.values.provincia}
-							onChange={formik.handleChange}
+							onChange={(e) => {
+								formik.handleChange(e);
+								formik.setFieldValue('ciudad', '');
+							}}
 						>
-							{provincia.map((opt) => (
-								<MenuItem key={opt.value} value={opt.value}>
-									{opt.label}
+							{provinces.map((opt) => (
+								<MenuItem key={opt.id} value={opt.nombre}>
+									{opt.nombre}
 								</MenuItem>
 							))}
 						</TextField>
+						<Autocomplete
+							disabled={formik.values.provincia ? false : true}
+							options={cities}
+							getOptionLabel={(option) => option.nombre}
+							inputValue={formik.values.ciudad}
+							renderInput={(params) => (
+								<TextField
+									{...params}
+									margin="dense"
+									name="ciudad"
+									label="Ciudad"
+									variant="outlined"
+									required
+									onChange={handleCityTextField}
+								/>
+							)}
+							onInputChange={(e, inputValue) => {
+								formik.setValues({ ...formik.values, ciudad: inputValue });
+							}}
+						/>
 						<TextField
-							select
 							variant="outlined"
-							margin="normal"
+							margin="dense"
 							required
 							fullWidth
-							id="ciudad"
-							label="Ciudad"
-							name="ciudad"
-							autoComplete="ciudad"
-							autoFocus
-							value={formik.values.ciudad}
-							onChange={formik.handleChange}
-						>
-							{ciudad.map((opt) => (
-								<MenuItem key={opt.value} value={opt.value}>
-									{opt.label}
-								</MenuItem>
-							))}
-						</TextField>
-						<TextField
-							variant="outlined"
-							margin="normal"
-							required
-							fullWidth
-							id="email"
 							label="Email"
 							name="email"
 							autoComplete="email"
-							autoFocus
 							value={formik.values.email}
 							onChange={formik.handleChange}
 						/>
 						<TextField
 							variant="outlined"
-							margin="normal"
+							margin="dense"
 							required
 							fullWidth
 							name="password"
 							label="Contraseña"
 							type="password"
-							id="password"
 							autoComplete="current-password"
 							value={formik.values.password}
 							onChange={formik.handleChange}
