@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 
 // Api services
 import { getProvincesApi, getCitiesByProvincesApi } from 'api/geoApi';
+import { signUpWithEmailApi } from 'api/auth';
 
 // Material-ui Components and Icons
 import {
@@ -17,14 +18,14 @@ import {
 	CircularProgress,
 } from '@material-ui/core';
 
-//Autocomplete
+// Autocomplete
 import { Autocomplete } from '@material-ui/lab';
 import { PersonOutline } from '@material-ui/icons';
 
-//Formik
+// Formik
 import { useFormik } from 'formik';
 
-//Moment
+// Moment
 import moment from 'moment';
 import 'moment/locale/es';
 
@@ -63,9 +64,7 @@ export default function RegisterUser() {
 	const [cities, setCities] = useState([]);
 	const classes = useStyles();
 	const [isLoading, setIsLoading] = useState(false);
-
-	const [alertProps, setAlertProps] = useState({})
-
+	const [alertProps, setAlertProps] = useState({});
 
 	const formik = useFormik({
 		initialValues: {
@@ -79,7 +78,9 @@ export default function RegisterUser() {
 			password: '',
 		},
 		onSubmit: (values) => {
-			console.log(values);
+			signUpWithEmailApi(values).then((resp) => {
+				console.log(resp.message);
+			});
 		},
 	});
 
