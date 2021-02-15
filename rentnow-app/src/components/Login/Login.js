@@ -4,7 +4,6 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
-import Link from '@material-ui/core/Link';
 import Grid from '@material-ui/core/Grid';
 import Box from '@material-ui/core/Box';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
@@ -14,6 +13,14 @@ import { useFormik } from 'formik';
 import AlertCustom from './../../utils/AlertCustom/AlertCustom'
 import { signIn } from './../../api/auth'
 import * as Routes from "../../constants/routes";
+import Link from "utils/LinkCustom/Link"
+import ButtonGroup from '@material-ui/core/ButtonGroup';
+import FacebookIcon from '@material-ui/icons/Facebook';
+import EmailIcon from '@material-ui/icons/Email';
+import {loginWithFacebook} from 'firebase.js'
+import {useHistory} from 'react-router-dom'
+import RegisterExtraData from 'components/Login/RegisterExtraData'
+
 
 const useStyles = makeStyles((theme) => ({
     main: {
@@ -66,6 +73,10 @@ const Login = () => {
     const [showAlert, setShowAlert] = useState(false);
     const [alertProps, setAlertProps] = useState({});
     const [isLoading, setIsLoading] = useState(false);
+    const [showNewUserForm, setShowNewUserForm] = useState(false);
+    const [userData, setUserData] = useState({});
+
+    const history = useHistory()
 
     const formik = useFormik({
         initialValues: {
@@ -95,6 +106,32 @@ const Login = () => {
             setIsLoading(false);
         }
     };
+
+    const handleLoginWithFacebook = () => {
+        loginWithFacebook().then((user)=>{
+            if(user.additionalUserInfo.isNewUser){
+                setShowNewUserForm(true)
+                setUserData({
+                    uid: user.user.uid,
+                    email: user.additionalUserInfo.profile.email
+                })
+                alert("es usuario nuevo :D")
+            } else{
+                history.push('/landing')
+            }
+            console.log(user)
+          }).catch((err)=> {
+            console.log(err)
+          })
+    }
+
+    if(showNewUserForm){
+        return (
+            <Container component="main" maxWidth="xs">
+                <RegisterExtraData userData={userData} />
+            </Container>
+    )
+}
 
     return (
         <Container component="main" maxWidth="xs">
@@ -156,15 +193,29 @@ const Login = () => {
                             setOpen={setShowAlert}
                         />
                         <Grid container>
-                            <Grid item xs>
+                            <Grid alignItems="center" item xs={12}>
+                               <Typography align="center"> ó </Typography>
+                            </Grid>
+                            <Grid item xs={6}>
+                               <Typography align="right"> Ingresá con </Typography> 
+                            </Grid>
+                            <Grid item xs={4} style={{marginBottom: "2rem"}}>
+                                <ButtonGroup variant="text">
+                                    <Button onClick={handleLoginWithFacebook}><FacebookIcon/></Button>
+                                    <Button onClick={()=>{alert("Google")}}><EmailIcon/></Button>
+                                </ButtonGroup>
+                            </Grid>
+                            <Grid item xs={6}>
                                 <Link href="#" variant="body2" color="secondary">
                                     ¿Olvidaste tu contraseña?
-              </Link>
+                                </Link>
                             </Grid>
                             <Grid item>
-                                <Link href="#" variant="body2" color="secondary">
-                                    ¿No tienes cuenta? Registrate
-                            </Link>
+                                <Link to="/register">
+                                    <Typography variant="body2" color="secondary">
+                                        ¿No tienes cuenta? Registrate
+                                    </Typography>
+                                </Link>
                             </Grid>
                         </Grid>
                     </form>
