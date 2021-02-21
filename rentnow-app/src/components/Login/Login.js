@@ -117,7 +117,7 @@ const Login = () => {
                 })
                 alert("es usuario nuevo :D")
             } else{
-                history.push('/landing')
+                history.push('/complejos')
             }
             console.log(user)
           }).catch((err)=> {
@@ -143,7 +143,7 @@ const Login = () => {
                     </Avatar>
                     <Typography component="h1" variant="h5">
                         Iniciar Sesión
-        </Typography>
+                    </Typography>
                     <form noValidate className={classes.form} onSubmit={formik.handleSubmit}>
                         <TextField
                             variant="outlined"
