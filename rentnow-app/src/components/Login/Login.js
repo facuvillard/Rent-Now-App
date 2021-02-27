@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState } from 'react';
 import { Container, Avatar, Button, CircularProgress, Paper } from '@material-ui/core';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
@@ -21,51 +21,47 @@ import {loginWithFacebook} from 'firebase.js'
 import {useHistory} from 'react-router-dom'
 import RegisterExtraData from 'components/Login/RegisterExtraData'
 
-
 const useStyles = makeStyles((theme) => ({
-    main: {
-        marginTop: theme.spacing(5),
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-    },
-    avatar: {
-        margin: theme.spacing(1),
-        backgroundColor: theme.palette.secondary.main,
-    },
-    form: {
-        width: '100%', // Fix IE 11 issue.
-        marginTop: theme.spacing(1),
-    },
-    submit: {
-        margin: theme.spacing(3, 0, 2),
-    },
-    paper: {
-        marginTop: theme.spacing(2),
-        marginBottom: theme.spacing(2),
-        padding: theme.spacing(2),
-        [theme.breakpoints.up(600 + theme.spacing(3) * 2)]: {
-            marginTop: theme.spacing(6),
-            marginBottom: theme.spacing(6),
-            padding: theme.spacing(3),
-        },
-    },
-
-
-
-}))
+	main: {
+		marginTop: theme.spacing(5),
+		display: 'flex',
+		flexDirection: 'column',
+		alignItems: 'center',
+	},
+	avatar: {
+		margin: theme.spacing(1),
+		backgroundColor: theme.palette.secondary.main,
+	},
+	form: {
+		width: '100%', // Fix IE 11 issue.
+		marginTop: theme.spacing(1),
+	},
+	submit: {
+		margin: theme.spacing(3, 0, 2),
+	},
+	paper: {
+		marginTop: theme.spacing(2),
+		marginBottom: theme.spacing(2),
+		padding: theme.spacing(2),
+		[theme.breakpoints.up(600 + theme.spacing(3) * 2)]: {
+			marginTop: theme.spacing(6),
+			marginBottom: theme.spacing(6),
+			padding: theme.spacing(3),
+		},
+	},
+}));
 
 function Copyright() {
-    return (
-        <Typography variant="body2" color="textSecondary" align="center">
-            {'Copyright © '}
-            <Link color="inherit" href={Routes.LANDING}>
-                RentNow
-        </Link>{' '}
-            {new Date().getFullYear()}
-            {'.'}
-        </Typography>
-    );
+	return (
+		<Typography variant="body2" color="textSecondary" align="center">
+			{'Copyright © '}
+			<Link color="inherit" href={Routes.LANDING}>
+				RentNow
+			</Link>{' '}
+			{new Date().getFullYear()}
+			{'.'}
+		</Typography>
+	);
 }
 
 const Login = () => {
@@ -78,34 +74,36 @@ const Login = () => {
 
     const history = useHistory()
 
-    const formik = useFormik({
-        initialValues: {
-            email: '',
-            password: '',
-        },
-        onSubmit: (values) => {
-            handleSubmit(values.email, values.password)
-        },
-    })
 
-    const handleSubmit = async (email, password) => {
-        setIsLoading(true);
-        const response = await signIn(email, password);
-        if (response.status === "OK") {
-            setAlertProps({
-                type: "success",
-                text: response.message,
-            });
-            setShowAlert(true);
-        } else {
-            setAlertProps({
-                type: "error",
-                text: response.message,
-            });
-            setShowAlert(true);
-            setIsLoading(false);
-        }
-    };
+	const formik = useFormik({
+		initialValues: {
+			email: '',
+			password: '',
+		},
+		onSubmit: (values) => {
+			handleSubmit(values.email, values.password);
+		},
+	});
+
+	const handleSubmit = async (email, password) => {
+		setIsLoading(true);
+		const response = await signIn(email, password);
+		if (response.status === 'OK') {
+			setAlertProps({
+				type: 'success',
+				text: response.message,
+			});
+			setShowAlert(true);
+		} else {
+			setAlertProps({
+				type: 'error',
+				text: response.message,
+			});
+			setShowAlert(true);
+			setIsLoading(false);
+		}
+	};
+
 
     const handleLoginWithFacebook = () => {
         loginWithFacebook().then((user)=>{
@@ -211,7 +209,7 @@ const Login = () => {
                                 </Link>
                             </Grid>
                             <Grid item>
-                                <Link to="/register">
+                                <Link to="/sign-up">
                                     <Typography variant="body2" color="secondary">
                                         ¿No tienes cuenta? Registrate
                                     </Typography>
@@ -227,5 +225,4 @@ const Login = () => {
         </Container>
     )
 }
-
-export default Login
+export default Login;

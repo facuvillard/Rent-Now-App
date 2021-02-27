@@ -1,9 +1,6 @@
-//RUTAS BASE
-export const LANDING = "/"
-
-
-
 //LANDING
-export const LOGIN = "/login"
+export const LANDING = '/';
 
-
+//RUTAS BASE
+export const LOGIN = '/login';
+export const REGISTER_USER = '/sign-up';
