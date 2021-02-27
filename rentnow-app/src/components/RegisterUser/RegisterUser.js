@@ -84,10 +84,18 @@ export default function RegisterUser(props) {
 			setIsLoading(true);
 			signUpWithEmailApi(values)
 				.then((resp) => {
-					window.location.replace('/complejos');
+					if (resp.status === 'ERROR') {
+						setIsLoading(false);
+						setAlertProps({
+							text: 'Error al registrar usuaro!',
+							type: 'error',
+						});
+						setAlertShow(true);
+					} else {
+						window.location.replace('/complejos')
+					}
 				})
-				.catch((error) => {
-					console.log(error);
+				.catch(() => {
 					setIsLoading(false);
 					setAlertProps({
 						text: 'Error al registrar usuario',
