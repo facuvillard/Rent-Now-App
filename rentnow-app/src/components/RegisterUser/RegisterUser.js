@@ -29,6 +29,8 @@ import { useFormik } from 'formik';
 import moment from 'moment';
 import 'moment/locale/es';
 
+import AlertCustom from '../utils/AlertCustom/AlertCustom';
+
 const useStyles = makeStyles((theme) => ({
 	main: {
 		marginTop: theme.spacing(5),
@@ -59,12 +61,13 @@ const useStyles = makeStyles((theme) => ({
 	},
 }));
 
-export default function RegisterUser() {
+export default function RegisterUser(props) {
 	const [provinces, setProvinces] = useState([]);
 	const [cities, setCities] = useState([]);
 	const classes = useStyles();
 	const [isLoading, setIsLoading] = useState(false);
 	const [alertProps, setAlertProps] = useState({});
+	const [alertShow, setAlertShow] = useState(false);
 
 	const formik = useFormik({
 		initialValues: {
@@ -78,9 +81,20 @@ export default function RegisterUser() {
 			password: '',
 		},
 		onSubmit: (values) => {
-			signUpWithEmailApi(values).then((resp) => {
-				console.log(resp.message);
-			});
+			setIsLoading(true);
+			signUpWithEmailApi(values)
+				.then((resp) => {
+					window.location.replace('/complejos');
+				})
+				.catch((error) => {
+					console.log(error);
+					setIsLoading(false);
+					setAlertProps({
+						text: 'Error al registrar usuario',
+						type: 'error',
+					});
+					setAlertShow(true);
+				});
 		},
 	});
 
@@ -114,7 +128,7 @@ export default function RegisterUser() {
 					<form className={classes.form} onSubmit={formik.handleSubmit}>
 						<TextField
 							variant="outlined"
-							margin="dense"
+							margin="normal"
 							required
 							fullWidth
 							autoFocus
@@ -126,7 +140,7 @@ export default function RegisterUser() {
 						/>
 						<TextField
 							variant="outlined"
-							margin="dense"
+							margin="normal"
 							required
 							fullWidth
 							label="Apellido"
@@ -138,7 +152,7 @@ export default function RegisterUser() {
 						<TextField
 							type="number"
 							variant="outlined"
-							margin="dense"
+							margin="normal"
 							required
 							fullWidth
 							label="Celular"
@@ -151,7 +165,7 @@ export default function RegisterUser() {
 							type="date"
 							inputProps={{ max: moment(new Date()).format('yyyy-MM-DD') }}
 							variant="outlined"
-							margin="dense"
+							margin="normal"
 							required
 							fullWidth
 							label="Fecha de Nacimiento"
@@ -163,7 +177,7 @@ export default function RegisterUser() {
 						<TextField
 							select
 							variant="outlined"
-							margin="dense"
+							margin="normal"
 							required
 							fullWidth
 							label="Provincia"
@@ -189,7 +203,7 @@ export default function RegisterUser() {
 							renderInput={(params) => (
 								<TextField
 									{...params}
-									margin="dense"
+									margin="normal"
 									name="ciudad"
 									label="Ciudad"
 									variant="outlined"
@@ -203,7 +217,7 @@ export default function RegisterUser() {
 						/>
 						<TextField
 							variant="outlined"
-							margin="dense"
+							margin="normal"
 							required
 							fullWidth
 							label="Email"
@@ -214,7 +228,7 @@ export default function RegisterUser() {
 						/>
 						<TextField
 							variant="outlined"
-							margin="dense"
+							margin="normal"
 							required
 							fullWidth
 							name="password"
@@ -223,6 +237,12 @@ export default function RegisterUser() {
 							autoComplete="current-password"
 							value={formik.values.password}
 							onChange={formik.handleChange}
+						/>
+						<AlertCustom
+							type={alertProps.type}
+							text={alertProps.text}
+							open={alertShow}
+							setOpen={setAlertShow}
 						/>
 						<Button
 							type="submit"
