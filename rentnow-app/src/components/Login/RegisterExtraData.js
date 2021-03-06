@@ -108,7 +108,7 @@ const RegisterExtraData = (props) => {
                         console.log('Extra data submitted: ', values, props.userData)
                         submitExtraDataOnRegister({ ...values, ...props.userData }).then(result => {
                             if(result.status === "OK"){
-                                history.push("/landing")
+                                history.push("/complejos")
                             } else {
 
                             }
