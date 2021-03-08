@@ -112,13 +112,17 @@ const Login = () => {
 						uid: user.user.uid,
 						email: user.additionalUserInfo.profile.email,
 					});
-					alert('Es usuario nuevo');
 				} else {
-					history.push('/compĺejos');
+					history.push('/complejos');
 				}
 			})
-			.catch((err) => {
-				console.log(err);
+			.catch(() => {
+				setIsLoading(false);
+				setAlertProps({
+					type: 'error',
+					text: 'Error de logueo!',
+				});
+				setShowAlert(true);
 			});
 	};
 
@@ -131,14 +135,17 @@ const Login = () => {
 						uid: user.user.uid,
 						email: user.additionalUserInfo.profile.email,
 					});
-					alert('es usuario nuevo :D');
 				} else {
 					history.push('/complejos');
 				}
-				console.log(user);
 			})
-			.catch((err) => {
-				console.log(err);
+			.catch(() => {
+				setIsLoading(false);
+				setAlertProps({
+					type: 'error',
+					text: 'Error de logueo!',
+				});
+				setShowAlert(true);
 			});
 	};
 
