@@ -10,16 +10,16 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import { useFormik } from 'formik';
-import AlertCustom from './../../utils/AlertCustom/AlertCustom'
-import { signIn } from './../../api/auth'
-import * as Routes from "../../constants/routes";
-import Link from "utils/LinkCustom/Link"
+import AlertCustom from './../../utils/AlertCustom/AlertCustom';
+import { signIn } from './../../api/auth';
+import * as Routes from '../../constants/routes';
+import Link from 'utils/LinkCustom/Link';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
 import FacebookIcon from '@material-ui/icons/Facebook';
 import EmailIcon from '@material-ui/icons/Email';
-import {loginWithFacebook} from 'firebase.js'
-import {useHistory} from 'react-router-dom'
-import RegisterExtraData from 'components/Login/RegisterExtraData'
+import { loginWithFacebook, loginWithGmail } from 'firebase.js';
+import { useHistory } from 'react-router-dom';
+import RegisterExtraData from 'components/Login/RegisterExtraData';
 
 const useStyles = makeStyles((theme) => ({
 	main: {
@@ -65,15 +65,14 @@ function Copyright() {
 }
 
 const Login = () => {
-    const classes = useStyles();
-    const [showAlert, setShowAlert] = useState(false);
-    const [alertProps, setAlertProps] = useState({});
-    const [isLoading, setIsLoading] = useState(false);
-    const [showNewUserForm, setShowNewUserForm] = useState(false);
-    const [userData, setUserData] = useState({});
+	const classes = useStyles();
+	const [showAlert, setShowAlert] = useState(false);
+	const [alertProps, setAlertProps] = useState({});
+	const [isLoading, setIsLoading] = useState(false);
+	const [showNewUserForm, setShowNewUserForm] = useState(false);
+	const [userData, setUserData] = useState({});
 
-    const history = useHistory()
-
+	const history = useHistory();
 
 	const formik = useFormik({
 		initialValues: {
@@ -104,125 +103,155 @@ const Login = () => {
 		}
 	};
 
+	const handleLoginWithGmail = () => {
+		loginWithGmail()
+			.then((user) => {
+				if (user.additionalUserInfo.isNewUser) {
+					setShowNewUserForm(true);
+					setUserData({
+						uid: user.user.uid,
+						email: user.additionalUserInfo.profile.email,
+					});
+				} else {
+					history.push('/complejos');
+				}
+			})
+			.catch(() => {
+				setIsLoading(false);
+				setAlertProps({
+					type: 'error',
+					text: 'Error de logueo!',
+				});
+				setShowAlert(true);
+			});
+	};
 
-    const handleLoginWithFacebook = () => {
-        loginWithFacebook().then((user)=>{
-            if(user.additionalUserInfo.isNewUser){
-                setShowNewUserForm(true)
-                setUserData({
-                    uid: user.user.uid,
-                    email: user.additionalUserInfo.profile.email
-                })
-                alert("es usuario nuevo :D")
-            } else{
-                history.push('/complejos')
-            }
-            console.log(user)
-          }).catch((err)=> {
-            console.log(err)
-          })
-    }
+	const handleLoginWithFacebook = () => {
+		loginWithFacebook()
+			.then((user) => {
+				if (user.additionalUserInfo.isNewUser) {
+					setShowNewUserForm(true);
+					setUserData({
+						uid: user.user.uid,
+						email: user.additionalUserInfo.profile.email,
+					});
+				} else {
+					history.push('/complejos');
+				}
+			})
+			.catch(() => {
+				setIsLoading(false);
+				setAlertProps({
+					type: 'error',
+					text: 'Error de logueo!',
+				});
+				setShowAlert(true);
+			});
+	};
 
-    if(showNewUserForm){
-        return (
-            <Container component="main" maxWidth="xs">
-                <RegisterExtraData userData={userData} />
-            </Container>
-    )
-}
+	if (showNewUserForm) {
+		return (
+			<Container component="main" maxWidth="xs">
+				<RegisterExtraData userData={userData} />
+			</Container>
+		);
+	}
 
-    return (
-        <Container component="main" maxWidth="xs">
-            <Paper variant="outlined" className={classes.paper} >
-                <CssBaseline />
-                <div className={classes.main} >
-                    <Avatar className={classes.avatar} >
-                        <LockOutlinedIcon />
-                    </Avatar>
-                    <Typography component="h1" variant="h5">
-                        Iniciar Sesión
-                    </Typography>
-                    <form noValidate className={classes.form} onSubmit={formik.handleSubmit}>
-                        <TextField
-                            variant="outlined"
-                            margin="normal"
-                            required
-                            fullWidth
-                            id="email"
-                            label="Email"
-                            name="email"
-                            autoComplete="email"
-                            autoFocus
-                            value={formik.values.email}
-                            onChange={formik.handleChange}
-                        />
-                        <TextField
-                            variant="outlined"
-                            margin="normal"
-                            required
-                            fullWidth
-                            name="password"
-                            label="Contraseña"
-                            type="password"
-                            id="password"
-                            autoComplete="current-password"
-                            value={formik.values.password}
-                            onChange={formik.handleChange}
-
-                        />
-                        <FormControlLabel
-                            control={<Checkbox value="remember" color="primary" />}
-                            label="Recordarme"
-                        />
-                        <Button
-                            type="submit"
-                            fullWidth
-                            variant="contained"
-                            color="primary"
-                            className={classes.submit}
-                            disabled={isLoading}
-                        >
-                            {!isLoading ? "Ingresar" : <CircularProgress />}
-                        </Button>
-                        <AlertCustom
-                            type={alertProps.type}
-                            text={alertProps.text}
-                            open={showAlert}
-                            setOpen={setShowAlert}
-                        />
-                        <Grid container>
-                            <Grid alignItems="center" item xs={12}>
-                               <Typography align="center"> ó </Typography>
-                            </Grid>
-                            <Grid item xs={6}>
-                               <Typography align="right"> Ingresá con </Typography> 
-                            </Grid>
-                            <Grid item xs={4} style={{marginBottom: "2rem"}}>
-                                <ButtonGroup variant="text">
-                                    <Button onClick={handleLoginWithFacebook}><FacebookIcon/></Button>
-                                    <Button onClick={()=>{alert("Google")}}><EmailIcon/></Button>
-                                </ButtonGroup>
-                            </Grid>
-                            <Grid item xs={6}>
-                                <Link href="#" variant="body2" color="secondary">
-                                    ¿Olvidaste tu contraseña?
-                                </Link>
-                            </Grid>
-                            <Grid item>
-                                <Link to="/sign-up">
-                                    <Typography variant="body2" color="secondary">
-                                        ¿No tienes cuenta? Registrate
-                                    </Typography>
-                                </Link>
-                            </Grid>
-                        </Grid>
-                    </form>
-                </div>
-                <Box mt={8}>
-                    <Copyright />
-                </Box>
-            </ Paper>
-        </Container>
-    )
-}
+	return (
+		<Container component="main" maxWidth="xs">
+			<Paper variant="outlined" className={classes.paper}>
+				<CssBaseline />
+				<div className={classes.main}>
+					<Avatar className={classes.avatar}>
+						<LockOutlinedIcon />
+					</Avatar>
+					<Typography component="h1" variant="h5">
+						Iniciar Sesión
+					</Typography>
+					<form noValidate className={classes.form} onSubmit={formik.handleSubmit}>
+						<TextField
+							variant="outlined"
+							margin="normal"
+							required
+							fullWidth
+							id="email"
+							label="Email"
+							name="email"
+							autoComplete="email"
+							autoFocus
+							value={formik.values.email}
+							onChange={formik.handleChange}
+						/>
+						<TextField
+							variant="outlined"
+							margin="normal"
+							required
+							fullWidth
+							name="password"
+							label="Contraseña"
+							type="password"
+							id="password"
+							autoComplete="current-password"
+							value={formik.values.password}
+							onChange={formik.handleChange}
+						/>
+						<FormControlLabel
+							control={<Checkbox value="remember" color="primary" />}
+							label="Recordarme"
+						/>
+						<Button
+							type="submit"
+							fullWidth
+							variant="contained"
+							color="primary"
+							className={classes.submit}
+							disabled={isLoading}
+						>
+							{!isLoading ? 'Ingresar' : <CircularProgress />}
+						</Button>
+						<AlertCustom
+							type={alertProps.type}
+							text={alertProps.text}
+							open={showAlert}
+							setOpen={setShowAlert}
+						/>
+						<Grid container>
+							<Grid alignItems="center" item xs={12}>
+								<Typography align="center"> ó </Typography>
+							</Grid>
+							<Grid item xs={6}>
+								<Typography align="right"> Ingresá con </Typography>
+							</Grid>
+							<Grid item xs={4} style={{ marginBottom: '2rem' }}>
+								<ButtonGroup variant="text">
+									<Button onClick={handleLoginWithFacebook}>
+										<FacebookIcon />
+									</Button>
+									<Button onClick={handleLoginWithGmail}>
+										<EmailIcon />
+									</Button>
+								</ButtonGroup>
+							</Grid>
+							<Grid item xs={6}>
+								<Link href="#" variant="body2" color="secondary">
+									¿Olvidaste tu contraseña?
+								</Link>
+							</Grid>
+							<Grid item>
+								<Link to="/sign-up">
+									<Typography variant="body2" color="secondary">
+										¿No tienes cuenta? Registrate
+									</Typography>
+								</Link>
+							</Grid>
+						</Grid>
+					</form>
+				</div>
+				<Box mt={8}>
+					<Copyright />
+				</Box>
+			</Paper>
+		</Container>
+	);
+};
 export default Login;
