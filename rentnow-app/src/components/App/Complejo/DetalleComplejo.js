@@ -117,6 +117,12 @@ const useStyles = makeStyles((theme) => ({
         padding: theme.spacing(2),
         backgroundColor: theme.palette.grey[200],
     },
+    popover:{
+        marginTop: theme.spacing(1),
+        marginBottom: theme.spacing(1),
+        marginRight: theme.spacing(1),
+        marginLeft: theme.spacing(1),
+    }
 }));
 
 
@@ -258,6 +264,7 @@ const DetalleComplejo = () => {
                                                         onClose={handleHelpClose}
                                                     >
                                                         <>
+                                                        <div className={classes.popover} >
                                                             <Grid container direction="column" alignItems="center">
                                                                 <Typography variant="h6" gutterBottom className={classes.sidebarSection}>
                                                                     Redes
@@ -302,6 +309,7 @@ const DetalleComplejo = () => {
                                                             </Typography>
                                                                 </Grid>
                                                             )}
+                                                            </div>
                                                         </>
                                                     </Popover>
                                                 </>
