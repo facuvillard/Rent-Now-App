@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Container, Avatar, Button, CircularProgress, Paper } from '@material-ui/core';
+import { Link as LinkMaterial } from '@material-ui/core';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
@@ -11,7 +12,7 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import { useFormik } from 'formik';
 import AlertCustom from './../../utils/AlertCustom/AlertCustom';
-import { signIn } from './../../api/auth';
+import { signIn, recoverAndResetPassword } from './../../api/auth';
 import * as Routes from '../../constants/routes';
 import Link from 'utils/LinkCustom/Link';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
@@ -157,6 +158,27 @@ const Login = () => {
 		);
 	}
 
+	const handleClickRecoverAndResetPassword = async (email) => {
+		const result = await recoverAndResetPassword(email);
+
+		if (result.status === 'OK') {
+			setAlertProps({
+				text:
+					'Se ha enviado un mail para recuperar contraseña, por favor revise su correo electronico.',
+				type: 'success',
+			});
+			setShowAlert(true);
+			console.log(result.message);
+		} else {
+			setAlertProps({
+				text: 'No se puede recuperar contraseña, por favor ingrese un email válido.',
+				type: 'error',
+			});
+			setShowAlert(true);
+			console.log(result.message);
+		}
+	};
+
 	return (
 		<Container component="main" maxWidth="xs">
 			<Paper variant="outlined" className={classes.paper}>
@@ -233,9 +255,16 @@ const Login = () => {
 								</ButtonGroup>
 							</Grid>
 							<Grid item xs={6}>
-								<Link href="#" variant="body2" color="secondary">
-									¿Olvidaste tu contraseña?
-								</Link>
+								<LinkMaterial
+									href="#"
+									onClick={() => {
+										handleClickRecoverAndResetPassword(formik.values.email);
+									}}
+								>
+									<Typography variant="body2" color="secondary">
+										¿Olvidaste tu contraseña?
+									</Typography>
+								</LinkMaterial>
 							</Grid>
 							<Grid item>
 								<Link to="/sign-up">
