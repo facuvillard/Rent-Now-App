@@ -56,7 +56,7 @@ function Copyright() {
 	return (
 		<Typography variant="body2" color="textSecondary" align="center">
 			{'Copyright © '}
-			<Link color="inherit" href={Routes.LANDING}>
+			<Link color="inherit" to={Routes.LANDING}>
 				RentNow
 			</Link>{' '}
 			{new Date().getFullYear()}
@@ -161,8 +161,11 @@ const Login = () => {
 	const handleClickRecoverAndResetPassword = async (email) => {
 		const result = await recoverAndResetPassword(email);
 
+		console.log(result);
+
 		if (result.status === 'OK') {
 			setAlertProps({
+				...alertProps,
 				text:
 					'Se ha enviado un mail para recuperar contraseña, por favor revise su correo electronico.',
 				type: 'success',
@@ -171,6 +174,7 @@ const Login = () => {
 			console.log(result.message);
 		} else {
 			setAlertProps({
+				...alertProps,
 				text: 'No se puede recuperar contraseña, por favor ingrese un email válido.',
 				type: 'error',
 			});
@@ -256,14 +260,16 @@ const Login = () => {
 							</Grid>
 							<Grid item xs={6}>
 								<LinkMaterial
-									href="#"
+									type="button"
+									underline="none"
+									component="button"
+									variatn="body2"
+									color="secondary"
 									onClick={() => {
 										handleClickRecoverAndResetPassword(formik.values.email);
 									}}
 								>
-									<Typography variant="body2" color="secondary">
-										¿Olvidaste tu contraseña?
-									</Typography>
+									¿Olvidaste tu contraseña?
 								</LinkMaterial>
 							</Grid>
 							<Grid item>
