@@ -28,6 +28,9 @@ import GridListTileBar from '@material-ui/core/GridListTileBar';
 import ArrowBackIosRoundedIcon from '@material-ui/icons/ArrowBackIosRounded';
 import Popover from '@material-ui/core/Popover';
 import InfoIcon from '@material-ui/icons/Info';
+import { useHistory } from "react-router-dom";
+import {DETALLE_COMPLEJO_VER_FOTOS} from "constants/routes";
+import LinkCustom from "components/utils/LinkCustom/LinkCustom";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -172,6 +175,11 @@ const DetalleComplejo = () => {
         setAnchorEl(null);
     };
 
+    // const history = useHistory()
+    // const handleRouteFotos = () => {
+    //     history.push(DETALLE_COMPLEJO_VER_FOTOS);
+    // };
+
     const helpOpen = Boolean(anchorEl);
     const id = helpOpen ? 'simple-popover' : undefined;
 
@@ -216,6 +224,7 @@ const DetalleComplejo = () => {
                                     }}
                                     actionIcon={
                                         <>
+                                       
                                             {matches ? (
                                                 <>
                                                     {complejo.redes.facebook !== '' ? (
@@ -314,6 +323,10 @@ const DetalleComplejo = () => {
                                                     </Popover>
                                                 </>
                                             )}
+                                             <LinkCustom to={DETALLE_COMPLEJO_VER_FOTOS}>
+                                                <Button variant="contained">Ver Fotos</Button>
+                                             </LinkCustom>
+                                             
                                         </>
                                     }
                                 />
