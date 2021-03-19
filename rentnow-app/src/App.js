@@ -20,10 +20,9 @@ function App() {
         <Switch>
           <Route path={Routes.LOGIN} exact component={() => <Login />} />
           <Route path={Routes.LANDING} exact component={() => <Landing />} />
-          <Route path={Routes.DETALLE_COMPLEJO} exact isPrivate={true} component={()=> <DetalleComplejo />} />
-          <Route path={Routes.DETALLE_COMPLEJO_VER_FOTOS} exact isPrivate={true} component={()=> <VerFotos />} />
           <RouteWithNavbar path= {Routes.COMPLEJOS} exact isPrivate={true} component={() => <Complejos />} />
-          <RouteWithNavbar path="/complejos/:id"  exact isPrivate={true} component={() => <ComplejoDetail />} />
+          <RouteWithNavbar path={Routes.DETALLE_COMPLEJO}  exact isPrivate={true} component={() => <DetalleComplejo  />} />
+          <RouteWithNavbar path={Routes.DETALLE_COMPLEJO_VER_FOTOS} exact isPrivate={true} component={()=> <VerFotos />} />
           <RouteWithNavbar path={Routes.REGISTER_USER}  exact isPrivate={false} component={() => <RegisterUser />} />
           <Route path="*" exact component={() => <Landing />} />
 

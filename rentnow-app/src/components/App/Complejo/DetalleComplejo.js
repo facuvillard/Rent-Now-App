@@ -28,8 +28,8 @@ import GridListTileBar from '@material-ui/core/GridListTileBar';
 import ArrowBackIosRoundedIcon from '@material-ui/icons/ArrowBackIosRounded';
 import Popover from '@material-ui/core/Popover';
 import InfoIcon from '@material-ui/icons/Info';
-import { useHistory } from "react-router-dom";
-import {DETALLE_COMPLEJO_VER_FOTOS} from "constants/routes";
+import { useParams } from "react-router-dom";
+import { DETALLE_COMPLEJO_VER_FOTOS } from "constants/routes";
 import LinkCustom from "components/utils/LinkCustom/LinkCustom";
 
 
@@ -120,7 +120,7 @@ const useStyles = makeStyles((theme) => ({
         padding: theme.spacing(2),
         backgroundColor: theme.palette.grey[200],
     },
-    popover:{
+    popover: {
         marginTop: theme.spacing(1),
         marginBottom: theme.spacing(1),
         marginRight: theme.spacing(1),
@@ -142,15 +142,15 @@ const DetalleComplejo = () => {
 
     const [isLoading, setIsLoading] = useState(true);
 
-    const idComplejo = "HijkhSYMeyCDSlkd2x6E";
+    const {id} = useParams();
 
     const handleClick = () => { setOpen(true) }
 
     useEffect(() => {
-        getComplejosById(idComplejo).then((response) => {
+        getComplejosById(id).then((response) => {
             if (response.status === "OK") {
                 setComplejo(response.data);
-                getEspaciosByIdComplejo(idComplejo).then((response) => {
+                getEspaciosByIdComplejo(id).then((response) => {
                     if (response.status === "OK") {
                         setEspacios(response.data);
                         setIsLoading(false);
@@ -163,7 +163,7 @@ const DetalleComplejo = () => {
             }
         });
 
-    }, [idComplejo]);
+    }, [id]);
 
     const [anchorEl, setAnchorEl] = useState(null);
 
@@ -181,7 +181,7 @@ const DetalleComplejo = () => {
     // };
 
     const helpOpen = Boolean(anchorEl);
-    const id = helpOpen ? 'simple-popover' : undefined;
+    const idPop = helpOpen ? 'simple-popover' : undefined;
 
     console.log(complejo, espacios)
 
@@ -224,7 +224,7 @@ const DetalleComplejo = () => {
                                     }}
                                     actionIcon={
                                         <>
-                                       
+
                                             {matches ? (
                                                 <>
                                                     {complejo.redes.facebook !== '' ? (
@@ -244,6 +244,9 @@ const DetalleComplejo = () => {
                                                             <TwitterIcon />
                                                         </IconButton>
                                                     ) : null}
+                                                    <LinkCustom to={`/complejos/${id}/ver-fotos`}>
+                                                        <Button variant="contained">Ver Fotos</Button>
+                                                    </LinkCustom>
                                                 </>
                                             ) : (
                                                 <>
@@ -259,7 +262,7 @@ const DetalleComplejo = () => {
                                                         <InfoIcon />
                                                     </IconButton>
                                                     <Popover
-                                                        id={id}
+                                                        id={idPop}
                                                         anchorOrigin={{
                                                             vertical: 'bottom',
                                                             horizontal: 'left',
@@ -273,60 +276,60 @@ const DetalleComplejo = () => {
                                                         onClose={handleHelpClose}
                                                     >
                                                         <>
-                                                        <div className={classes.popover} >
-                                                            <Grid container direction="column" alignItems="center">
-                                                                <Typography variant="h6" gutterBottom className={classes.sidebarSection}>
-                                                                    Redes
-                                                            </Typography>
-                                                            </Grid>
-                                                            {complejo.redes.facebook !== ''
-                                                                && complejo.redes.twitter !== ''
-                                                                && complejo.redes.instagram !== '' ? (
-                                                                <>
-                                                                    {complejo.redes.facebook !== '' ? (
-                                                                        <Link color='secondary' display="block" variant="body1" href={complejo.redes.facebook}>
-                                                                            <Grid container direction="row" spacing={1} alignItems="center">
-                                                                                <Grid item>
-                                                                                    <FacebookIcon />
-                                                                                </Grid>
-                                                                                <Grid item>Facebook</Grid>
-                                                                            </Grid>
-                                                                        </Link>) : null}
-                                                                    {complejo.redes.twitter !== '' ? (
-                                                                        <Link color='secondary' display="block" variant="body1" href={complejo.redes.twitter}>
-                                                                            <Grid container direction="row" spacing={1} alignItems="center">
-                                                                                <Grid item>
-                                                                                    <TwitterIcon />
-                                                                                </Grid>
-                                                                                <Grid item>Twitter</Grid>
-                                                                            </Grid>
-                                                                        </Link>) : null}
-                                                                    {complejo.redes.instagram !== '' ? (
-                                                                        <Link color='secondary' display="block" variant="body1" href={complejo.redes.instagram}>
-                                                                            <Grid container direction="row" spacing={1} alignItems="center">
-                                                                                <Grid item>
-                                                                                    <InstagramIcon />
-                                                                                </Grid>
-                                                                                <Grid item>Instagram</Grid>
-                                                                            </Grid>
-                                                                        </Link>) : null}
-                                                                </>
-                                                            ) : (
+                                                            <div className={classes.popover} >
                                                                 <Grid container direction="column" alignItems="center">
-                                                                    <Typography gutterBottom className={classes.sidebarSection}>
-                                                                        ¡El complejo no tiene Redes Sociales cargadas!
+                                                                    <Typography variant="h6" gutterBottom className={classes.sidebarSection}>
+                                                                        Redes
                                                             </Typography>
                                                                 </Grid>
-                                                            )}
+                                                                {complejo.redes.facebook !== ''
+                                                                    && complejo.redes.twitter !== ''
+                                                                    && complejo.redes.instagram !== '' ? (
+                                                                    <>
+                                                                        {complejo.redes.facebook !== '' ? (
+                                                                            <Link color='secondary' display="block" variant="body1" href={complejo.redes.facebook}>
+                                                                                <Grid container direction="row" spacing={1} alignItems="center">
+                                                                                    <Grid item>
+                                                                                        <FacebookIcon />
+                                                                                    </Grid>
+                                                                                    <Grid item>Facebook</Grid>
+                                                                                </Grid>
+                                                                            </Link>) : null}
+                                                                        {complejo.redes.twitter !== '' ? (
+                                                                            <Link color='secondary' display="block" variant="body1" href={complejo.redes.twitter}>
+                                                                                <Grid container direction="row" spacing={1} alignItems="center">
+                                                                                    <Grid item>
+                                                                                        <TwitterIcon />
+                                                                                    </Grid>
+                                                                                    <Grid item>Twitter</Grid>
+                                                                                </Grid>
+                                                                            </Link>) : null}
+                                                                        {complejo.redes.instagram !== '' ? (
+                                                                            <Link color='secondary' display="block" variant="body1" href={complejo.redes.instagram}>
+                                                                                <Grid container direction="row" spacing={1} alignItems="center">
+                                                                                    <Grid item>
+                                                                                        <InstagramIcon />
+                                                                                    </Grid>
+                                                                                    <Grid item>Instagram</Grid>
+                                                                                </Grid>
+                                                                            </Link>) : null}
+                                                                    </>
+                                                                ) : (
+                                                                    <Grid container direction="column" alignItems="center">
+                                                                        <Typography gutterBottom className={classes.sidebarSection}>
+                                                                            ¡El complejo no tiene Redes Sociales cargadas!
+                                                            </Typography>
+                                                                    </Grid>
+                                                                )}
+                                                                <LinkCustom to={`/complejos/${id}/ver-fotos`}>
+                                                                    <Button variant="contained">Ver Fotos</Button>
+                                                                </LinkCustom>
                                                             </div>
                                                         </>
+
                                                     </Popover>
                                                 </>
                                             )}
-                                             <LinkCustom to={DETALLE_COMPLEJO_VER_FOTOS}>
-                                                <Button variant="contained">Ver Fotos</Button>
-                                             </LinkCustom>
-                                             
                                         </>
                                     }
                                 />

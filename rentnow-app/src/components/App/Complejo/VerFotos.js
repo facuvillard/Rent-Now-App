@@ -6,6 +6,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardActionArea from '@material-ui/core/CardActionArea';
 import CardMedia from '@material-ui/core/CardMedia';
+import { useParams } from 'react-router';
 
 
 
@@ -24,12 +25,13 @@ const useStyles = makeStyles((theme) => ({
 const VerFotos = () => {
 
     const classes = useStyles();
-    const idComplejo = "HijkhSYMeyCDSlkd2x6E";
     const [complejo, setComplejo] = useState({});
     const [isLoading, setIsLoading] = useState(true);
 
+    const {id} = useParams();
+
     useEffect(() => {
-        getComplejosById(idComplejo).then((response) => {
+        getComplejosById(id).then((response) => {
             if (response.status === "OK") {
                 setComplejo(response.data);
                 setIsLoading(false);
@@ -38,7 +40,7 @@ const VerFotos = () => {
             }
         });
 
-    }, [idComplejo]);
+    }, [id]);
 
     console.log(complejo)
 
