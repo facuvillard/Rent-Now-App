@@ -1,19 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import { getComplejosById } from "api/complejos";
-import { Grid, CircularProgress } from "@material-ui/core";
+import { Grid, CircularProgress, Typography, Container} from "@material-ui/core";
 import Slider from 'infinite-react-carousel';
 import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardActionArea from '@material-ui/core/CardActionArea';
-import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
-import Typography from '@material-ui/core/Typography';
+
+
 
 const useStyles = makeStyles((theme) => ({
     media: {
         height: 350,
     },
-
+    section: {
+    top: '50%',
+    },
+    tituloSeccion: {
+        textAlign: 'center'
+    },
 }))
 
 const VerFotos = () => {
@@ -37,6 +42,12 @@ const VerFotos = () => {
 
     console.log(complejo)
 
+    const settings = {
+        arrowsBlock: false,
+        arrows: false,
+        dots: true
+    };
+
     return (
         <>
             {isLoading ? (
@@ -51,36 +62,35 @@ const VerFotos = () => {
                     </Grid>
                 </Grid>
             ) : (
+                <div className={classes.section}>
+                    <Grid item xs={12} md={12}>
+                        <Typography className={classes.tituloSeccion} variant="h5" gutterBottom>
+                        Fotos del Complejo {complejo.nombre}
+                </Typography>
+                    </Grid>
 
-                <Grid contaner>
+                    <Container maxWidth="xl">
 
-                    <Slider >
-                        {complejo.fotos.map((foto) => (
-                            <Grid item key={foto} xs={12}>
-                                {/* <img src={foto} alt={foto} /> */}
-                                <Card >
-                                    <CardActionArea>
-                                        <CardMedia
-                                          className={classes.media}
-                                            image={foto}
-                                            title="Contemplative Reptile"
-                                        />
-                                        <CardContent>
-                                            <Typography gutterBottom variant="h5" component="h2">
-                                                Lizard
-          </Typography>
-                                            <Typography variant="body2" color="textSecondary" component="p">
-                                                Lizards are a widespread group of squamate reptiles, with over 6,000 species, ranging
-                                                across all continents except Antarctica
-          </Typography>
-                                        </CardContent>
-                                    </CardActionArea>                                
+                        <Slider {...settings}>
+                            {complejo.fotos.map((foto) => (
+                                <Grid item key={foto} xs={12}>
+                                    {/* <img src={foto} alt={foto} /> */}
+                                    <Card >
+                                        <CardActionArea>
+                                            <CardMedia
+                                                className={classes.media}
+                                                image={foto}
+                                                title="Contemplative Reptile"
+                                            />
+
+                                        </CardActionArea>
                                     </Card>
-                            </Grid>
-                        )
-                        )}
-                    </Slider>
-                </Grid>
+                                </Grid>
+                            )
+                            )}
+                        </Slider>
+                    </Container>
+                </ div>
             )}
         </>
     )
