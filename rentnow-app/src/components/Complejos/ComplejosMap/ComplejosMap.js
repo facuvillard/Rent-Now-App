@@ -1,5 +1,5 @@
-import React from 'react'
-import { GoogleMap, LoadScript } from "@react-google-maps/api";
+import React, { useState, useEffect } from 'react'
+import { GoogleMap, LoadScript, useGoogleMap } from "@react-google-maps/api";
 import { GOOGLE_MAP_KEY } from "constants/apiKeys";
 import { Marker } from "@react-google-maps/api";
 
@@ -8,12 +8,43 @@ const containerStyle = {
     height: '100vh'
 };
 
-const center = {
-    lat: -3.745,
-    lng: -38.523
-};
 
-const ComplejosMap = ({complejos}) => {
+
+const ComplejosMap = ({ complejos, center, fetchComplejos }) => {
+    const [mapRef, setMapRef] = useState(null);
+    const [mapCenter, setMapCenter] = useState({
+        lat: -3.745,
+        lng: -38.523
+    })
+
+    let timer;
+
+    useEffect(() => {
+        setMapCenter(center)
+    }, [center])
+
+    useEffect(() => {
+        fetchComplejos(mapCenter)
+    }, [mapCenter])
+    
+    const handleCenterChange = () => {
+        if (!mapRef) {
+            return
+        }
+
+        clearTimeout(timer)
+        timer = setTimeout(function () {
+            setMapCenter(oldMapCenter => {
+                if (oldMapCenter.lat === mapRef.getCenter().lat() && oldMapCenter.lng === mapRef.getCenter().lng()) {
+                    return oldMapCenter
+                }
+                return {
+                    lat: mapRef.getCenter().lat(),
+                    lng: mapRef.getCenter().lng()
+                }
+            });
+        }, 3000);
+    }
 
     return (
         <LoadScript
@@ -21,10 +52,13 @@ const ComplejosMap = ({complejos}) => {
         >
             <GoogleMap
                 mapContainerStyle={containerStyle}
-                center={complejos[0] ? { lat: complejos[0].ubicacion.latlng.latitude, lng: complejos[0].ubicacion.latlng.longitude } : center}
-                zoom={12}
+                center={center}
+                zoom={15}
+                onCenterChanged={handleCenterChange}
+                onLoad={map => setMapRef(map)}
+
             >
-                {complejos.map((complejo) => <Marker position={{ lat: complejo.ubicacion.latlng.latitude, lng: complejo.ubicacion.latlng.longitude }}  />)}
+                {complejos ? complejos.map((complejo) => <Marker position={{ lat: complejo.latlng.latitude, lng: complejo.latlng.longitude }} />) : null}
             </GoogleMap>
         </LoadScript>
     )
