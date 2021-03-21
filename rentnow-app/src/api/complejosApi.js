@@ -60,14 +60,15 @@ export async function getNearbyComplejos(center, radius) {
 
       }))
 
-      let ubicaciones = await matchingDocs.map( doc => doc.get('ubicacion'))
+      let complejos = await matchingDocs.map( doc => {return {id: doc.id, ...doc.data()}})
 
     return {
       status: "OK",
       message: "Se consultaron los complejos con exito",
-      data: ubicaciones,
+      data: complejos,
     };
   } catch (err) {
+    console.log(err)
     return {
       status: "ERROR",
       message: "Se produjo un error al consultar los complejos",
