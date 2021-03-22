@@ -6,7 +6,6 @@ import CardMedia from '@material-ui/core/CardMedia';
 import Typography from '@material-ui/core/Typography';
 import Rating from '@material-ui/lab/Rating';
 import Link from '@material-ui/core/Link';
-import Modal from 'utils/Modal/Modal'
 import { Grid, CircularProgress, CardHeader, useTheme, useMediaQuery, Fab } from "@material-ui/core";
 import { getComplejosById } from "api/complejos";
 import { getEspaciosByIdComplejo } from "api/espacios"
@@ -29,7 +28,6 @@ import ArrowBackIosRoundedIcon from '@material-ui/icons/ArrowBackIosRounded';
 import Popover from '@material-ui/core/Popover';
 import InfoIcon from '@material-ui/icons/Info';
 import { useParams } from "react-router-dom";
-import { DETALLE_COMPLEJO_VER_FOTOS } from "constants/routes";
 import LinkCustom from "components/utils/LinkCustom/LinkCustom";
 
 
@@ -135,16 +133,11 @@ const DetalleComplejo = () => {
     const matches = useMediaQuery(theme.breakpoints.up('sm'));
 
     const [complejo, setComplejo] = useState({});
-    const [espacios, setEspacios] = useState({})
-
-
-    const [open, setOpen] = useState(false)
+    const [espacios, setEspacios] = useState({});
 
     const [isLoading, setIsLoading] = useState(true);
 
     const {id} = useParams();
-
-    const handleClick = () => { setOpen(true) }
 
     useEffect(() => {
         getComplejosById(id).then((response) => {
@@ -212,7 +205,8 @@ const DetalleComplejo = () => {
                                         </Typography>
                                     }
                                     subtitle={
-                                        <Link href="#" onClick={handleClick} color="inherit">
+                                        <Link color="inherit" href={`https://www.google.com/maps/search/?api=1&query=${complejo.ubicacion.latlng.latitude},${complejo.ubicacion.latlng.longitude}`} target='_blank'
+                                        >
                                             <Typography variant="subtitle1">
                                                 {complejo.ubicacion.calle}, {complejo.ubicacion.numero} {complejo.ubicacion.ciudad} {complejo.ubicacion.provincia}
                                             </Typography>
@@ -604,14 +598,6 @@ const DetalleComplejo = () => {
                         Aquí encontraras todas las valoraciones y opiniones realizadas por los usuarios sobre el complejo y sus espacios
                     </Typography>
                     <Divider variant="middle" />
-                    <Modal
-                        title="Ubicación"
-                        open={open}
-                        setOpen={setOpen}
-                        size="sm"
-                    >
-                        "Mapa"
-            </Modal>
                     <Fab size="small" aria-label='Volver' className={classes.fab} color='inherit'>
                         <ArrowBackIosRoundedIcon />
                     </Fab>
