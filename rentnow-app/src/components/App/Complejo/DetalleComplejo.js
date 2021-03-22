@@ -29,6 +29,7 @@ import Popover from '@material-ui/core/Popover';
 import InfoIcon from '@material-ui/icons/Info';
 import { useParams } from "react-router-dom";
 import LinkCustom from "components/utils/LinkCustom/LinkCustom";
+import {tipoEspacio} from 'constants/espacios/constants'
 
 
 const useStyles = makeStyles((theme) => ({
@@ -72,7 +73,8 @@ const useStyles = makeStyles((theme) => ({
         flexDirection: 'column',
     },
     cardMedia: {
-        paddingTop: '56.25%',
+        paddingTop: '60%',
+        backgroundSize: 'auto'
     },
     cardContent: {
         flexGrow: 1,
@@ -359,8 +361,8 @@ const DetalleComplejo = () => {
                                                     />
                                                     <CardMedia
                                                         className={classes.cardMedia}
-                                                        image={espacio.foto[0]}
-                                                        title="Image title"
+                                                        image={ espacio.foto[0]  ? espacio.foto[0] : tipoEspacio[espacio.tipoEspacio].urlImagen }
+                                                        title={espacio.nombre}
                                                     />
                                                     <CardContent className={classes.cardContent}>
                                                         <Grid container
