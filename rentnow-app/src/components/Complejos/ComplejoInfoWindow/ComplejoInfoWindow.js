@@ -9,10 +9,8 @@ import {
 	CardActions,
 	Button,
 	Typography,
-	IconButton,
 } from '@material-ui/core';
 import { Rating } from '@material-ui/lab';
-import TouchAppIcon from '@material-ui/icons/TouchApp';
 import Link from 'utils/LinkCustom/Link';
 
 import logo from 'assets/Landing/logo-amarillo-simple.png';
@@ -44,9 +42,6 @@ export default function ComplejoInfoWindow(props) {
 		lat: complejo.ubicacion.latlng.latitude,
 		lng: complejo.ubicacion.latlng.longitude,
 	};
-
-	console.log(complejo);
-
 	const onCloseClickHandler = () => {
 		props.setComplejo(null);
 	};
