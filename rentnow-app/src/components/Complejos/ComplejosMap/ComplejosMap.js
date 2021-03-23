@@ -1,14 +1,14 @@
+import ComplejoInfoWindow from '../ComplejoInfoWindow/ComplejoInfoWindow';
 import React, { useState, useEffect } from 'react'
 import { GoogleMap, LoadScript, useGoogleMap } from "@react-google-maps/api";
 import { GOOGLE_MAP_KEY } from "constants/apiKeys";
 import { Marker } from "@react-google-maps/api";
 
+
 const containerStyle = {
-    width: '100%',
-    height: '100vh'
+	width: '100%',
+	height: '100vh',
 };
-
-
 
 const ComplejosMap = ({ complejos, center, fetchComplejos }) => {
     const [mapRef, setMapRef] = useState(null);
@@ -16,6 +16,7 @@ const ComplejosMap = ({ complejos, center, fetchComplejos }) => {
         lat: -3.745,
         lng: -38.523
     })
+    const [selectedComplejo, setSelectedComplejo] = useState(null);
 
     let timer;
 
@@ -59,9 +60,11 @@ const ComplejosMap = ({ complejos, center, fetchComplejos }) => {
 
             >
                 {complejos ? complejos.map((complejo) => <Marker key={complejo.ubicacion.latlng.latitude + complejo.ubicacion.latlng.long} position={{ lat: complejo.ubicacion.latlng.latitude, lng: complejo.ubicacion.latlng.longitude }} />) : null}
+	              {selectedComplejo && (
+					          <ComplejoInfoWindow complejo={selectedComplejo} setComplejo={setSelectedComplejo} />
+				        )}
             </GoogleMap>
         </LoadScript>
     )
 }
-
-export default ComplejosMap
+export default ComplejosMap;
