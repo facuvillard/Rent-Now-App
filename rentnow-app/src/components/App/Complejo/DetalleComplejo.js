@@ -31,6 +31,14 @@ import InfoIcon from '@material-ui/icons/Info';
 import { useParams } from "react-router-dom";
 import { DETALLE_COMPLEJO_VER_FOTOS } from "constants/routes";
 import LinkCustom from "components/utils/LinkCustom/LinkCustom";
+import SwipeableViews from 'react-swipeable-views';
+import AppBar from '@material-ui/core/AppBar';
+import Tabs from '@material-ui/core/Tabs';
+import Tab from '@material-ui/core/Tab';
+import Box from '@material-ui/core/Box';
+import { GoogleMap, LoadScript, useGoogleMap } from "@react-google-maps/api";
+import { GOOGLE_MAP_KEY } from "constants/apiKeys";
+import { Marker } from "@react-google-maps/api";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -107,9 +115,9 @@ const useStyles = makeStyles((theme) => ({
     redes: {
         paddingTop: theme.spacing(2),
     },
-    section: {
-        paddingTop: theme.spacing(2),
-        paddingBottom: theme.spacing(2),
+    divider: {
+        marginTop: theme.spacing(2),
+        marginBottom: theme.spacing(2),
     },
     fab: {
         position: 'fixed',
@@ -128,29 +136,61 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
+const containerStyle = {
+    width: '100%',
+    height: '30vh'
+};
+
+
+function TabPanel(props) {
+    const { children, value, index, ...other } = props;
+
+    return (
+        <div
+            role="tabpanel"
+            hidden={value !== index}
+            id={`full-width-tabpanel-${index}`}
+            aria-labelledby={`full-width-tab-${index}`}
+            {...other}
+        >
+            {value === index && (
+                <Box p={3}>
+                    <Typography>{children}</Typography>
+                </Box>
+            )}
+        </div>
+    );
+}
+
 
 const DetalleComplejo = () => {
     const classes = useStyles();
     const theme = useTheme();
     const matches = useMediaQuery(theme.breakpoints.up('sm'));
-
     const [complejo, setComplejo] = useState({});
     const [espacios, setEspacios] = useState({})
-
+    const [value, setValue] = React.useState(0);
 
     const [open, setOpen] = useState(false)
 
     const [isLoading, setIsLoading] = useState(true);
 
-    const {id} = useParams();
+    const { idComplejo } = useParams();
 
     const handleClick = () => { setOpen(true) }
 
+    function a11yProps(index) {
+        return {
+            id: `full-width-tab-${index}`,
+            'aria-controls': `full-width-tabpanel-${index}`,
+        };
+    }
+
     useEffect(() => {
-        getComplejosById(id).then((response) => {
+        getComplejosById(idComplejo).then((response) => {
             if (response.status === "OK") {
                 setComplejo(response.data);
-                getEspaciosByIdComplejo(id).then((response) => {
+                getEspaciosByIdComplejo(idComplejo).then((response) => {
                     if (response.status === "OK") {
                         setEspacios(response.data);
                         setIsLoading(false);
@@ -163,7 +203,7 @@ const DetalleComplejo = () => {
             }
         });
 
-    }, [id]);
+    }, [idComplejo]);
 
     const [anchorEl, setAnchorEl] = useState(null);
 
@@ -175,15 +215,16 @@ const DetalleComplejo = () => {
         setAnchorEl(null);
     };
 
-    // const history = useHistory()
-    // const handleRouteFotos = () => {
-    //     history.push(DETALLE_COMPLEJO_VER_FOTOS);
-    // };
-
     const helpOpen = Boolean(anchorEl);
     const idPop = helpOpen ? 'simple-popover' : undefined;
 
-    console.log(complejo, espacios)
+    const handleChange = (event, newValue) => {
+        setValue(newValue);
+    };
+
+    const handleChangeIndex = (index) => {
+        setValue(index);
+    };
 
     return (
         <>
@@ -203,7 +244,9 @@ const DetalleComplejo = () => {
                     <div className={classes.root}>
                         <GridList cols={1} rows={1} cellHeight={300} className={classes.gridList}>
                             <GridListTile>
-                                <img src={complejo.fotos[0]} alt={complejo.nombre} />
+                                <LinkCustom to={`/complejos/${idComplejo}/ver-fotos`}>
+                                    <img src={complejo.fotos[0]} alt={complejo.nombre} />
+                                </LinkCustom>
                                 <GridListTileBar
                                     title={
                                         <Typography component="h5" variant="h5">
@@ -223,395 +266,369 @@ const DetalleComplejo = () => {
                                         subtitle: classes.subtitle
                                     }}
                                     actionIcon={
-                                        <>
-
-                                            {matches ? (
-                                                <>
-                                                    {complejo.redes.facebook !== '' ? (
-                                                        <Link href={complejo.redes.facebook} >
-                                                            <IconButton className={classes.icon} aria-label="upload picture" component="span">
-                                                                <FacebookIcon />
-                                                            </IconButton>
-                                                        </Link>
-                                                    ) : (null)}
-                                                    {complejo.redes.instagram !== '' ? (
-                                                        <IconButton href={complejo.redes.instagram} className={classes.icon} aria-label="upload picture" component="span">
-                                                            <InstagramIcon />
-                                                        </IconButton>
-                                                    ) : null}
-                                                    {complejo.redes.twitter !== '' ? (
-                                                        <IconButton href={complejo.redes.twitter} className={classes.icon} aria-label="upload picture" component="span">
-                                                            <TwitterIcon />
-                                                        </IconButton>
-                                                    ) : null}
-                                                    <LinkCustom to={`/complejos/${id}/ver-fotos`}>
-                                                        <Button variant="contained">Ver Fotos</Button>
-                                                    </LinkCustom>
-                                                </>
-                                            ) : (
-                                                <>
-                                                    <IconButton
-                                                        onClick={handleHelpClick}
-                                                        size="small"
-                                                        color="inherit"
-                                                        aria-label="upload picture"
-                                                        component="span"
-                                                        aria-describedby={id}
-                                                        className={classes.icon}
-                                                    >
-                                                        <InfoIcon />
-                                                    </IconButton>
-                                                    <Popover
-                                                        id={idPop}
-                                                        anchorOrigin={{
-                                                            vertical: 'bottom',
-                                                            horizontal: 'left',
-                                                        }}
-                                                        transformOrigin={{
-                                                            vertical: 'top',
-                                                            horizontal: 'right',
-                                                        }}
-                                                        open={helpOpen}
-                                                        anchorEl={anchorEl}
-                                                        onClose={handleHelpClose}
-                                                    >
-                                                        <>
-                                                            <div className={classes.popover} >
-                                                                <Grid container direction="column" alignItems="center">
-                                                                    <Typography variant="h6" gutterBottom className={classes.sidebarSection}>
-                                                                        Redes
-                                                            </Typography>
-                                                                </Grid>
-                                                                {complejo.redes.facebook !== ''
-                                                                    && complejo.redes.twitter !== ''
-                                                                    && complejo.redes.instagram !== '' ? (
-                                                                    <>
-                                                                        {complejo.redes.facebook !== '' ? (
-                                                                            <Link color='secondary' display="block" variant="body1" href={complejo.redes.facebook}>
-                                                                                <Grid container direction="row" spacing={1} alignItems="center">
-                                                                                    <Grid item>
-                                                                                        <FacebookIcon />
-                                                                                    </Grid>
-                                                                                    <Grid item>Facebook</Grid>
-                                                                                </Grid>
-                                                                            </Link>) : null}
-                                                                        {complejo.redes.twitter !== '' ? (
-                                                                            <Link color='secondary' display="block" variant="body1" href={complejo.redes.twitter}>
-                                                                                <Grid container direction="row" spacing={1} alignItems="center">
-                                                                                    <Grid item>
-                                                                                        <TwitterIcon />
-                                                                                    </Grid>
-                                                                                    <Grid item>Twitter</Grid>
-                                                                                </Grid>
-                                                                            </Link>) : null}
-                                                                        {complejo.redes.instagram !== '' ? (
-                                                                            <Link color='secondary' display="block" variant="body1" href={complejo.redes.instagram}>
-                                                                                <Grid container direction="row" spacing={1} alignItems="center">
-                                                                                    <Grid item>
-                                                                                        <InstagramIcon />
-                                                                                    </Grid>
-                                                                                    <Grid item>Instagram</Grid>
-                                                                                </Grid>
-                                                                            </Link>) : null}
-                                                                    </>
-                                                                ) : (
-                                                                    <Grid container direction="column" alignItems="center">
-                                                                        <Typography gutterBottom className={classes.sidebarSection}>
-                                                                            ¡El complejo no tiene Redes Sociales cargadas!
-                                                            </Typography>
-                                                                    </Grid>
-                                                                )}
-                                                                <LinkCustom to={`/complejos/${id}/ver-fotos`}>
-                                                                    <Button variant="contained">Ver Fotos</Button>
-                                                                </LinkCustom>
-                                                            </div>
-                                                        </>
-
-                                                    </Popover>
-                                                </>
-                                            )}
-                                        </>
+                                        <LinkCustom to={`/complejos/${idComplejo}/ver-fotos`}>
+                                            <Button className={classes.title} >Ver Fotos</Button>
+                                        </LinkCustom>
                                     }
                                 />
                             </GridListTile>
                         </GridList>
                     </div>
-                    <section className={classes.section} >
-                        <Grid item xs={12} md={12}>
-                            <Typography className={classes.tituloSeccion} variant="h4" gutterBottom>
-                                Espacios
-                        </Typography>
-                        </Grid>
-                        <Typography color="textSecondary" className={classes.tituloSeccion}>
-                            Aquí encontraras todos los espacios disponibles para reservar. Selecciona uno para ver mayores detalles del mismo.
-                    </Typography>
-                        <Container className={classes.cardGrid} maxWidth="md">
-                            <Grid
-                                container
-                                direction="row"
-                                justify="center"
-                                alignItems="center"
-                                spacing={4}
+                    <section >
+                        <AppBar position="static" color="default">
+                            <Tabs
+                                value={value}
+                                onChange={handleChange}
+                                indicatorColor="primary"
+                                textColor="primary"
+                                variant="fullWidth"
+                                aria-label="full width tabs example"
                             >
-                                {espacios ? (
+                                <Tab label="Info" {...a11yProps(0)} />
+                                <Tab label="Espacios" {...a11yProps(1)} />
+                                <Tab label="Valoraciones" {...a11yProps(2)} />
+                            </Tabs>
+                        </AppBar>
+                        <SwipeableViews
+                            axis={theme.direction === 'rtl' ? 'x-reverse' : 'x'}
+                            index={value}
+                            onChangeIndex={handleChangeIndex}
+                        >
+                            <TabPanel value={value} index={0} dir={theme.direction}>
+                                <Typography className={classes.tituloSeccion} variant="h4" gutterBottom>
+                                    Ubicación
+                            </Typography>
+                                <LoadScript
+                                    googleMapsApiKey={GOOGLE_MAP_KEY}
+                                >
+                                    <GoogleMap
+                                        mapContainerStyle={containerStyle}
+                                        zoom={15}
+                                        center={{ lat: complejo.ubicacion.latlng.latitude, lng: complejo.ubicacion.latlng.longitude }}
+                                    >
+                                        <Marker key={complejo.ubicacion.latlng.latitude + complejo.ubicacion.latlng.longitude} position={{ lat: complejo.ubicacion.latlng.latitude, lng: complejo.ubicacion.latlng.longitude }} />
+                                    </GoogleMap>
+                                </LoadScript>
+                                <Divider className={classes.divider} />
+                                <Grid item xs={12} md={12}>
+                                    <Typography className={classes.tituloSeccion} variant="h4" gutterBottom>
+                                        Horarios
+                                        </Typography>
+                                </Grid>
+                                <Typography color="textSecondary" className={classes.tituloSeccion}>
+                                    Aquí encontraras todos los horarios de atención del complejo
+                                    </Typography>
+                                <Grid container
+                                    direction="row"
+                                    justify="center"
+                                    alignItems="center"
+                                >
+
+                                    <div className={matches ? (classes.horariosWeb) : (classes.horariosMobile)}>
+                                        <Card className={classes.card}>
+                                            <CardContent className={classes.cardContent}>
+                                                <Grid container
+                                                    direction="row"
+                                                    justify="space-between"
+                                                    alignItems="center"
+                                                >
+                                                    <Typography color="textSecondary" className={classes.tituloSeccion}>
+                                                        Lunes
+                        </Typography>
+                                                    {complejo.horarios.Lunes.abre ? (
+                                                        <Typography color="textSecondary" className={classes.tituloSeccion}>
+                                                            {complejo.horarios.Lunes.desde} - {complejo.horarios.Lunes.hasta}
+                                                        </Typography>
+                                                    ) : (
+                                                        <Typography color="textSecondary" className={classes.tituloSeccion}>
+                                                            Cerrado
+                                                        </Typography>
+
+                                                    )}
+                                                </Grid>
+                                                <Grid container
+                                                    direction="row"
+                                                    justify="space-between"
+                                                    alignItems="center"
+                                                >
+                                                    <Typography color="textSecondary" className={classes.tituloSeccion}>
+                                                        Martes
+                        </Typography>
+                                                    {complejo.horarios.Martes.abre ? (
+                                                        <Typography color="textSecondary" className={classes.tituloSeccion}>
+                                                            {complejo.horarios.Martes.desde} - {complejo.horarios.Martes.hasta}
+                                                        </Typography>
+                                                    ) : (
+                                                        <Typography color="textSecondary" className={classes.tituloSeccion}>
+                                                            Cerrado
+                                                        </Typography>
+
+                                                    )}
+                                                </Grid>
+                                                <Grid container
+                                                    direction="row"
+                                                    justify="space-between"
+                                                    alignItems="center"
+                                                >
+                                                    <Typography color="textSecondary" className={classes.tituloSeccion}>
+                                                        Miercoles
+                        </Typography>
+                                                    {complejo.horarios.Miercoles.abre ? (
+                                                        <Typography color="textSecondary" className={classes.tituloSeccion}>
+                                                            {complejo.horarios.Miercoles.desde} - {complejo.horarios.Miercoles.hasta}
+                                                        </Typography>
+                                                    ) : (
+                                                        <Typography color="textSecondary" className={classes.tituloSeccion}>
+                                                            Cerrado
+                                                        </Typography>
+
+                                                    )}
+                                                </Grid>
+                                                <Grid container
+                                                    direction="row"
+                                                    justify="space-between"
+                                                    alignItems="center"
+                                                >
+                                                    <Typography color="textSecondary" className={classes.tituloSeccion}>
+                                                        Jueves
+                        </Typography>
+                                                    {complejo.horarios.Jueves.abre ? (
+                                                        <Typography color="textSecondary" className={classes.tituloSeccion}>
+                                                            {complejo.horarios.Jueves.desde} - {complejo.horarios.Jueves.hasta}
+                                                        </Typography>
+                                                    ) : (
+                                                        <Typography color="textSecondary" className={classes.tituloSeccion}>
+                                                            Cerrado
+                                                        </Typography>
+
+                                                    )}
+                                                </Grid>
+                                                <Grid container
+                                                    direction="row"
+                                                    justify="space-between"
+                                                    alignItems="center"
+                                                >
+                                                    <Typography color="textSecondary" className={classes.tituloSeccion}>
+                                                        Viernes
+                        </Typography>
+                                                    {complejo.horarios.Viernes.abre ? (
+                                                        <Typography color="textSecondary" className={classes.tituloSeccion}>
+                                                            {complejo.horarios.Viernes.desde} - {complejo.horarios.Viernes.hasta}
+                                                        </Typography>
+                                                    ) : (
+                                                        <Typography color="textSecondary" className={classes.tituloSeccion}>
+                                                            Cerrado
+                                                        </Typography>
+
+                                                    )}
+                                                </Grid>
+                                                <Grid container
+                                                    direction="row"
+                                                    justify="space-between"
+                                                    alignItems="center"
+                                                >
+                                                    <Typography color="textSecondary" className={classes.tituloSeccion}>
+                                                        Sabado
+                        </Typography>
+                                                    {complejo.horarios.Sabado.abre ? (
+                                                        <Typography color="textSecondary" className={classes.tituloSeccion}>
+                                                            {complejo.horarios.Sabado.desde} - {complejo.horarios.Sabado.hasta}
+                                                        </Typography>
+                                                    ) : (
+                                                        <Typography color="textSecondary" className={classes.tituloSeccion}>
+                                                            Cerrado
+                                                        </Typography>
+
+                                                    )}
+                                                </Grid>
+                                                <Grid container
+                                                    direction="row"
+                                                    justify="space-between"
+                                                    alignItems="center"
+                                                >
+                                                    <Typography color="textSecondary" className={classes.tituloSeccion}>
+                                                        Domingo
+                        </Typography>
+                                                    {complejo.horarios.Domingo.abre ? (
+                                                        <Typography color="textSecondary" className={classes.tituloSeccion}>
+                                                            {complejo.horarios.Domingo.desde} - {complejo.horarios.Domingo.hasta}
+                                                        </Typography>
+                                                    ) : (
+                                                        <Typography color="textSecondary" className={classes.tituloSeccion}>
+                                                            Cerrado
+                                                        </Typography>
+
+                                                    )}
+                                                </Grid>
+                                                <Grid container
+                                                    direction="row"
+                                                    justify="space-between"
+                                                    alignItems="center"
+                                                >
+                                                    <Typography color="textSecondary" className={classes.tituloSeccion}>
+                                                        Feriados
+                        </Typography>
+                                                    {complejo.horarios.Feriados.abre ? (
+                                                        <Typography color="textSecondary" className={classes.tituloSeccion}>
+                                                            {complejo.horarios.Feriados.desde} - {complejo.horarios.Feriados.hasta}
+                                                        </Typography>
+                                                    ) : (
+                                                        <Typography color="textSecondary" className={classes.tituloSeccion}>
+                                                            Cerrado
+                                                        </Typography>
+
+                                                    )}
+                                                </Grid>
+                                            </CardContent>
+                                        </Card>
+                                    </div>
+                                </Grid>
+                                <Divider className={classes.divider} />
+                                {complejo.redes.facebook !== ''
+                                    && complejo.redes.twitter !== ''
+                                    && complejo.redes.instagram !== '' ? (
                                     <>
-                                        {espacios.map((espacio) => (
-                                            <Grid item key={espacio.id} xs={10} sm={6} md={4}>
-                                                <Card className={classes.card}>
-                                                    <CardHeader
-                                                        title={espacio.nombre}
-                                                        titleTypographyProps={{ align: 'center' }}
-                                                        className={classes.cardHeader}
-                                                    />
-                                                    <CardMedia
-                                                        className={classes.cardMedia}
-                                                        image={espacio.foto[0]}
-                                                        title="Image title"
-                                                    />
-                                                    <CardContent className={classes.cardContent}>
-                                                        <Grid container
-                                                            direction="row"
-                                                            justify="space-around"
-                                                            alignItems="center">
-                                                            <Tooltip title="Precio de Turno">
-                                                                <Chip
-                                                                    className={classes.chip}
-                                                                    icon={<AttachMoneyIcon />}
-                                                                    label={espacio.precioTurno}
-                                                                />
-                                                            </Tooltip>
-                                                            <Tooltip title="Capacidad de Personas">
-                                                                <Chip
-                                                                    className={classes.chip}
-                                                                    icon={<PeopleIcon />}
-                                                                    label={espacio.capacidad}
-                                                                />
-                                                            </Tooltip>
-                                                        </Grid>
-                                                        <Typography className={classes.cardText}>
-                                                            Tipo de Espacio: <b>{espacio.tipoEspacio}</b>
-                                                        </Typography>
-                                                        <Typography>
-                                                            Tipo de Piso: <b>{espacio.tipoPiso}</b>
-                                                        </Typography>
-                                                        <Typography>
-                                                            Infraestructura: <b>{espacio.infraestructura}</b>
-                                                        </Typography>
-                                                    </CardContent>
-                                                    <CardActions>
-                                                        <Grid container
-                                                            direction="row"
-                                                            justify="center"
-                                                            alignItems="center">
-                                                            <Button size="small" variant="contained" color="primary">
-                                                                Reservar
-                                                </Button>
-                                                        </Grid>
-                                                    </CardActions>
-                                                </Card>
-                                            </Grid>
-                                        ))}
+                                        <Typography className={classes.tituloSeccion} variant="h4" gutterBottom>
+                                            Redes
+                                </Typography>
+                                        {complejo.redes.facebook !== '' ? (
+                                            <Link color='secondary' display="block" target="_blank" variant="body1" href={complejo.redes.facebook}>
+                                                <Grid container direction="row" spacing={1} alignItems="center">
+                                                    <Grid item>
+                                                        <FacebookIcon />
+                                                    </Grid>
+                                                    <Grid item>Facebook</Grid>
+                                                </Grid>
+                                            </Link>) : null}
+                                        {complejo.redes.twitter !== '' ? (
+                                            <Link color='secondary' display="block" target="_blank" variant="body1" href={complejo.redes.twitter}>
+                                                <Grid container direction="row" spacing={1} alignItems="center">
+                                                    <Grid item>
+                                                        <TwitterIcon />
+                                                    </Grid>
+                                                    <Grid item>Twitter</Grid>
+                                                </Grid>
+                                            </Link>) : null}
+                                        {complejo.redes.instagram !== '' ? (
+                                            <Link color='secondary' display="block" variant="body1" target="_blank" href={complejo.redes.instagram}>
+                                                <Grid container direction="row" spacing={1} alignItems="center">
+                                                    <Grid item>
+                                                        <InstagramIcon />
+                                                    </Grid>
+                                                    <Grid item>Instagram</Grid>
+                                                </Grid>
+                                            </Link>) : null}
                                     </>
                                 ) : (
-                                    null
+                                    <Grid container direction="column" alignItems="center">
+                                        <Typography gutterBottom className={classes.sidebarSection}>
+                                            ¡El complejo no tiene Redes Sociales cargadas!
+                                                                        </Typography>
+                                    </Grid>
                                 )}
-                            </Grid>
-                        </Container>
+
+
+                            </TabPanel>
+                            <TabPanel value={value} index={1} dir={theme.direction}>
+                                <Container className={classes.cardGrid} maxWidth="md">
+                                    <Typography color="textSecondary" className={classes.tituloSeccion}>
+                                        Aquí encontraras todos los espacios disponibles para reservar. Selecciona uno para ver mayores detalles del mismo.
+                                </Typography>
+                                    <Grid
+                                        container
+                                        direction="row"
+                                        justify="center"
+                                        alignItems="center"
+                                        spacing={4}
+                                    >
+                                        {espacios ? (
+                                            <>
+                                                {espacios.map((espacio) => (
+                                                    <Grid item key={espacio.id} xs={10} sm={6} md={4}>
+                                                        <Card className={classes.card}>
+                                                            <CardHeader
+                                                                title={espacio.nombre}
+                                                                titleTypographyProps={{ align: 'center' }}
+                                                                className={classes.cardHeader}
+                                                            />
+                                                            <CardMedia
+                                                                className={classes.cardMedia}
+                                                                image={espacio.foto[0]}
+                                                                title="Image title"
+                                                            />
+                                                            <CardContent className={classes.cardContent}>
+                                                                <Grid container
+                                                                    direction="row"
+                                                                    justify="space-around"
+                                                                    alignItems="center">
+                                                                    <Tooltip title="Precio de Turno">
+                                                                        <Chip
+                                                                            className={classes.chip}
+                                                                            icon={<AttachMoneyIcon />}
+                                                                            label={espacio.precioTurno}
+                                                                        />
+                                                                    </Tooltip>
+                                                                    <Tooltip title="Capacidad de Personas">
+                                                                        <Chip
+                                                                            className={classes.chip}
+                                                                            icon={<PeopleIcon />}
+                                                                            label={espacio.capacidad}
+                                                                        />
+                                                                    </Tooltip>
+                                                                </Grid>
+                                                                <Typography className={classes.cardText}>
+                                                                    Tipo de Espacio: <b>{espacio.tipoEspacio}</b>
+                                                                </Typography>
+                                                                <Typography>
+                                                                    Tipo de Piso: <b>{espacio.tipoPiso}</b>
+                                                                </Typography>
+                                                                <Typography>
+                                                                    Infraestructura: <b>{espacio.infraestructura}</b>
+                                                                </Typography>
+                                                            </CardContent>
+                                                            <CardActions>
+                                                                <Grid container
+                                                                    direction="row"
+                                                                    justify="center"
+                                                                    alignItems="center">
+                                                                    <LinkCustom
+                                                                        to={
+                                                                            {
+                                                                                pathname: `/complejos/${idComplejo}/espacios/${espacio.id}`,
+                                                                                state: { espacio: espacio }
+                                                                            }
+                                                                        }
+                                                                    >
+                                                                        <Button size="small" variant="contained" color="primary">
+                                                                            Reservar
+                                                                </Button>
+                                                                    </LinkCustom>
+                                                                </Grid>
+                                                            </CardActions>
+                                                        </Card>
+                                                    </Grid>
+                                                ))}
+                                            </>
+                                        ) : (
+                                            null
+                                        )}
+                                    </Grid>
+                                </Container>
+                            </TabPanel>
+                            <TabPanel value={value} index={2} dir={theme.direction}>
+                                <Grid item xs={12} md={12}>
+                                    <Typography className={classes.tituloSeccion} variant="h4" gutterBottom>
+                                        Valoraciones
+                        </Typography>
+                                    <Typography color="textSecondary" className={classes.tituloSeccion}>
+                                        Aquí encontraras todas las valoraciones y opiniones realizadas por los usuarios sobre el complejo y sus espacios
+                        </Typography>
+                                </Grid>
+                            </TabPanel>
+                        </SwipeableViews>
+
                     </section>
-                    <Divider variant="middle" />
-                    <section className={classes.section} >
-                        <Grid item xs={12} md={12}>
-                            <Typography className={classes.tituloSeccion} variant="h4" gutterBottom>
-                                Horarios
-                        </Typography>
-                        </Grid>
-                        <Typography color="textSecondary" className={classes.tituloSeccion}>
-                            Aquí encontraras todos los horarios de atención del complejo
-                    </Typography>
-                        <Grid container
-                            direction="row"
-                            justify="center"
-                            alignItems="center"
-                        >
 
-                            <div className={matches ? (classes.horariosWeb) : (classes.horariosMobile)}>
-                                <Card className={classes.card}>
-                                    <CardContent className={classes.cardContent}>
-                                        <Grid container
-                                            direction="row"
-                                            justify="space-between"
-                                            alignItems="center"
-                                        >
-                                            <Typography color="textSecondary" className={classes.tituloSeccion}>
-                                                Lunes
-                        </Typography>
-                                            {complejo.horarios.Lunes.abre ? (
-                                                <Typography color="textSecondary" className={classes.tituloSeccion}>
-                                                    {complejo.horarios.Lunes.desde} - {complejo.horarios.Lunes.hasta}
-                                                </Typography>
-                                            ) : (
-                                                <Typography color="textSecondary" className={classes.tituloSeccion}>
-                                                    Cerrado
-                                                </Typography>
-
-                                            )}
-                                        </Grid>
-                                        <Grid container
-                                            direction="row"
-                                            justify="space-between"
-                                            alignItems="center"
-                                        >
-                                            <Typography color="textSecondary" className={classes.tituloSeccion}>
-                                                Martes
-                        </Typography>
-                                            {complejo.horarios.Martes.abre ? (
-                                                <Typography color="textSecondary" className={classes.tituloSeccion}>
-                                                    {complejo.horarios.Martes.desde} - {complejo.horarios.Martes.hasta}
-                                                </Typography>
-                                            ) : (
-                                                <Typography color="textSecondary" className={classes.tituloSeccion}>
-                                                    Cerrado
-                                                </Typography>
-
-                                            )}
-                                        </Grid>
-                                        <Grid container
-                                            direction="row"
-                                            justify="space-between"
-                                            alignItems="center"
-                                        >
-                                            <Typography color="textSecondary" className={classes.tituloSeccion}>
-                                                Miercoles
-                        </Typography>
-                                            {complejo.horarios.Miercoles.abre ? (
-                                                <Typography color="textSecondary" className={classes.tituloSeccion}>
-                                                    {complejo.horarios.Miercoles.desde} - {complejo.horarios.Miercoles.hasta}
-                                                </Typography>
-                                            ) : (
-                                                <Typography color="textSecondary" className={classes.tituloSeccion}>
-                                                    Cerrado
-                                                </Typography>
-
-                                            )}
-                                        </Grid>
-                                        <Grid container
-                                            direction="row"
-                                            justify="space-between"
-                                            alignItems="center"
-                                        >
-                                            <Typography color="textSecondary" className={classes.tituloSeccion}>
-                                                Jueves
-                        </Typography>
-                                            {complejo.horarios.Jueves.abre ? (
-                                                <Typography color="textSecondary" className={classes.tituloSeccion}>
-                                                    {complejo.horarios.Jueves.desde} - {complejo.horarios.Jueves.hasta}
-                                                </Typography>
-                                            ) : (
-                                                <Typography color="textSecondary" className={classes.tituloSeccion}>
-                                                    Cerrado
-                                                </Typography>
-
-                                            )}
-                                        </Grid>
-                                        <Grid container
-                                            direction="row"
-                                            justify="space-between"
-                                            alignItems="center"
-                                        >
-                                            <Typography color="textSecondary" className={classes.tituloSeccion}>
-                                                Viernes
-                        </Typography>
-                                            {complejo.horarios.Viernes.abre ? (
-                                                <Typography color="textSecondary" className={classes.tituloSeccion}>
-                                                    {complejo.horarios.Viernes.desde} - {complejo.horarios.Viernes.hasta}
-                                                </Typography>
-                                            ) : (
-                                                <Typography color="textSecondary" className={classes.tituloSeccion}>
-                                                    Cerrado
-                                                </Typography>
-
-                                            )}
-                                        </Grid>
-                                        <Grid container
-                                            direction="row"
-                                            justify="space-between"
-                                            alignItems="center"
-                                        >
-                                            <Typography color="textSecondary" className={classes.tituloSeccion}>
-                                                Sabado
-                        </Typography>
-                                            {complejo.horarios.Sabado.abre ? (
-                                                <Typography color="textSecondary" className={classes.tituloSeccion}>
-                                                    {complejo.horarios.Sabado.desde} - {complejo.horarios.Sabado.hasta}
-                                                </Typography>
-                                            ) : (
-                                                <Typography color="textSecondary" className={classes.tituloSeccion}>
-                                                    Cerrado
-                                                </Typography>
-
-                                            )}
-                                        </Grid>
-                                        <Grid container
-                                            direction="row"
-                                            justify="space-between"
-                                            alignItems="center"
-                                        >
-                                            <Typography color="textSecondary" className={classes.tituloSeccion}>
-                                                Domingo
-                        </Typography>
-                                            {complejo.horarios.Domingo.abre ? (
-                                                <Typography color="textSecondary" className={classes.tituloSeccion}>
-                                                    {complejo.horarios.Domingo.desde} - {complejo.horarios.Domingo.hasta}
-                                                </Typography>
-                                            ) : (
-                                                <Typography color="textSecondary" className={classes.tituloSeccion}>
-                                                    Cerrado
-                                                </Typography>
-
-                                            )}
-                                        </Grid>
-                                        <Grid container
-                                            direction="row"
-                                            justify="space-between"
-                                            alignItems="center"
-                                        >
-                                            <Typography color="textSecondary" className={classes.tituloSeccion}>
-                                                Feriados
-                        </Typography>
-                                            {complejo.horarios.Feriados.abre ? (
-                                                <Typography color="textSecondary" className={classes.tituloSeccion}>
-                                                    {complejo.horarios.Feriados.desde} - {complejo.horarios.Feriados.hasta}
-                                                </Typography>
-                                            ) : (
-                                                <Typography color="textSecondary" className={classes.tituloSeccion}>
-                                                    Cerrado
-                                                </Typography>
-
-                                            )}
-                                        </Grid>
-                                    </CardContent>
-                                </Card>
-                            </div>
-                        </Grid>
-                    </section>
-                    <Divider variant="middle" />
-                    <Grid item xs={12} md={12}>
-                        <Typography className={classes.tituloSeccion} variant="h4" gutterBottom>
-                            Valoraciones
-                        </Typography>
-                    </Grid>
-                    <Typography color="textSecondary" className={classes.tituloSeccion}>
-                        Aquí encontraras todas las valoraciones y opiniones realizadas por los usuarios sobre el complejo y sus espacios
-                    </Typography>
-                    <Divider variant="middle" />
-                    <Modal
-                        title="Ubicación"
-                        open={open}
-                        setOpen={setOpen}
-                        size="sm"
-                    >
-                        "Mapa"
-            </Modal>
                     <Fab size="small" aria-label='Volver' className={classes.fab} color='inherit'>
                         <ArrowBackIosRoundedIcon />
                     </Fab>

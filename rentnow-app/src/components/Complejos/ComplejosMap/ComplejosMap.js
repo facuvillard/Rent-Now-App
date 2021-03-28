@@ -58,7 +58,7 @@ const ComplejosMap = ({ complejos, center, fetchComplejos }) => {
                 onLoad={map => setMapRef(map)}
 
             >
-                {complejos ? complejos.map((complejo) => <Marker key={complejo.ubicacion.latlng.latitude + complejo.ubicacion.latlng.long} position={{ lat: complejo.ubicacion.latlng.latitude, lng: complejo.ubicacion.latlng.longitude }} />) : null}
+                {complejos ? complejos.map((complejo) => <Marker key={complejo.ubicacion.latlng.latitude + complejo.ubicacion.latlng.longitude} position={{ lat: complejo.ubicacion.latlng.latitude, lng: complejo.ubicacion.latlng.longitude }} />) : null}
             </GoogleMap>
         </LoadScript>
     )
