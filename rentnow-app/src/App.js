@@ -5,12 +5,12 @@ import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import * as Routes from "./constants/routes"
 import Landing from "./components/Landing/Landing"
 import AuthProvider from "./Auth/Auth";
-import DetalleComplejo from "components/App/Complejo/DetalleComplejo"
+import DetalleComplejo from "components/Complejos/ComplejoDetail/DetalleComplejo"
 import DetalleEspacio from "components/App/Espacios/DetalleEspacio"
 import RouteWithNavbar from "components/Layout/withNavbar/RouteWithNavbar"
 import { Complejos } from "components/Complejos/Complejos";
 import RegisterUser from './components/RegisterUser/RegisterUser';
-import VerFotos from 'components/App/Complejo/VerFotos';
+import VerFotos from 'components/Complejos/ComplejoDetail/VerFotos/VerFotos';
 
 function App() {
   return (
