@@ -35,3 +35,14 @@ export async function signUpWithEmailApi(user) {
 		return { status: 'ERROR', message: 'Error al crear el usuario', error: error };
 	}
 }
+
+export async function signOut() {
+	var auth = firebase.auth();
+	try {
+		await auth.signOut();
+		return { status: 'OK', message: 'Deslogeo correcto' };
+	} catch (err) {
+		return { status: 'ERROR', message: 'Error al deslogear' };
+	}
+}
+
