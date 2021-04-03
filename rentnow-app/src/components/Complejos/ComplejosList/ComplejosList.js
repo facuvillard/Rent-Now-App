@@ -14,7 +14,7 @@ const useStyles = makeStyles((theme) => ({
     },
     gridList: {
         width: "100%",
-        height: "100vh",
+        height: "100%",
         // Promote the list into his own layer on Chrome. This cost memory but helps keeping high FPS.
         transform: 'translateZ(0)',
     },

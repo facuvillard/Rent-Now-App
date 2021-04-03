@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import ComplejosMap from './ComplejosMap/ComplejosMap';
-import { getNearbyComplejos } from 'api/complejosApi'
+import { getNearbyComplejos } from 'api/complejos'
 import { Grid, ButtonGroup, Button } from '@material-ui/core';
 import { ComplejosList } from './ComplejosList/ComplejosList';
 

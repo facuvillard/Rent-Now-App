@@ -28,10 +28,10 @@ const VerFotos = () => {
     const [complejo, setComplejo] = useState({});
     const [isLoading, setIsLoading] = useState(true);
 
-    const {id} = useParams();
+    const {idComplejo} = useParams();
 
     useEffect(() => {
-        getComplejosById(id).then((response) => {
+        getComplejosById(idComplejo).then((response) => {
             if (response.status === "OK") {
                 setComplejo(response.data);
                 setIsLoading(false);
@@ -40,7 +40,7 @@ const VerFotos = () => {
             }
         });
 
-    }, [id]);
+    }, [idComplejo]);
 
     console.log(complejo)
 

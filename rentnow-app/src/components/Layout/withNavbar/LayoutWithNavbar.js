@@ -29,9 +29,9 @@ const LayoutWithNavbar = (props) => {
       <Navbar />
       <main className={classes.content}>
         <div className={classes.toolbar} />
-        <Container maxWidth="xl">
+        {/* <Container maxWidth="xxl"> */}
           {props.children}
-        </Container>
+        {/* </Container> */}
       </main>
     </div>
   );
