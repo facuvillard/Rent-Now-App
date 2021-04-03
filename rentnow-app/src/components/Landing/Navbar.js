@@ -9,7 +9,6 @@ import {
     Paper,
     MenuList,
     MenuItem,
-    ClickAwayListener,
     Popper,
     Typography,
   } from "@material-ui/core";
@@ -79,9 +78,10 @@ const useStyles = makeStyles((theme) => ({
   const RightMenu = (props) => {
     const classes = useStyles();
     return (
-      <Popper anchorEl={props.referencia} open={props.open}>
+      <Popper  id={props.id}
+        open={props.open}
+        anchorEl={props.anchorEl}>
         <Paper className={classes.paper}>
-          <ClickAwayListener onClickAway={props.handleRightMenuOpen}>
             <MenuList>
               <MenuItem>
                 <LinkRouter to="/login" className={classes.link}>
@@ -94,13 +94,11 @@ const useStyles = makeStyles((theme) => ({
                 <Button
                   className={classes.rightLink}
                   color="primary"
-                  href="#Contacto"
-                >
+                  href="#Contacto">
                   <b>Registrate</b>
                 </Button>
               </MenuItem>
             </MenuList>
-          </ClickAwayListener>
         </Paper>
       </Popper>
     );
@@ -108,12 +106,21 @@ const useStyles = makeStyles((theme) => ({
   
   const Navbar = (props) => {
     const classes = useStyles();
-    const [rightMenuOpen, setRightMenuOpen] = useState(false);
-    const anchorRef = React.useRef(null);
-  
-    const handleRightMenuOpen = () => {
-      setRightMenuOpen((oldState) => !oldState);
-    };
+   
+    
+  const [anchorEl, setAnchorEl] = useState(null);
+
+  const handleHelpClick = (event) => {
+    setAnchorEl(anchorEl ? null : event.currentTarget);
+  };
+
+  const handleHelpClose = () => {
+    setAnchorEl((oldState) => !oldState);
+  };
+
+  const helpOpen = Boolean(anchorEl);
+  const id = helpOpen ? 'simple-popover' : undefined;
+
     return (
       <ElevationScroll {...props}>
         <AppBar position="fixed" className={classes.appbar}>
@@ -140,16 +147,17 @@ const useStyles = makeStyles((theme) => ({
             </div>
             <div className={classes.rightMenu}>
               <IconButton
-                ref={anchorRef}
+                aria-describedby={id}
                 color="primary"
-                onClick={handleRightMenuOpen}
+                onClick={handleHelpClick}
               >
                 <MenuIcon />
               </IconButton>
               <RightMenu
-                referencia={anchorRef.current}
-                open={rightMenuOpen}
-                handleRightMenuOpen={handleRightMenuOpen}
+                open={helpOpen}
+                anchorEl = {anchorEl}
+                id= {id}
+                handleHelpClick = {handleHelpClose}
               />
             </div>
           </Toolbar>
