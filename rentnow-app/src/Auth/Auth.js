@@ -21,6 +21,9 @@ const AuthProvider = (props) => {
         });
     }, []);
 
+    if (pending) {
+        return <>Cargando...</>;
+      }
 
     return (
         <AuthContext.Provider value={{ currentUser, userRoles }}>
