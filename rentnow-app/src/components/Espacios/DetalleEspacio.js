@@ -18,10 +18,8 @@ const DetalleEspacio = (props) => {
         }
 
         if(props.location.state && props.location.state.espacio){
-            console.log("ENTRANDO CON PROP")
             setEspacio(props.location.state.espacio)
         } else {
-            console.log("ENTRANDO SIN PROP")
             fetchEspacio();
         }
 
