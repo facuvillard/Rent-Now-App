@@ -123,8 +123,6 @@ const Navbar = (props) => {
 
 	const history = useHistory();
 
-	console.log(currentUser);
-
 	const handleRightMenuOpen = () => {
 		setRightMenuOpen(!rightMenuOpen);
 	};
@@ -133,8 +131,7 @@ const Navbar = (props) => {
 		signOut()
 			.then((resp) => {
 				if (resp.status === 'OK') {
-					console.log('OKERDIOS');
-					history.push("/login")
+					history.push('/login');
 				}
 			})
 			.catch(() => {
