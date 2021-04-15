@@ -1,10 +1,12 @@
 import React from 'react'
-import { GridList, GridListTile, GridListTileBar, IconButton } from '@material-ui/core'
+import { GridList, GridListTile, GridListTileBar, IconButton, List, ListItem, CardActionArea, Card, CardMedia, CardContent, Typography, InputLabel, Select, MenuItem, FormControl } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles';
 import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
 import { useHistory } from 'react-router-dom'
+import { Rating } from '@material-ui/lab';
 
-const useStyles = makeStyles((theme) => ({
+
+/* const useStyles = makeStyles((theme) => ({
     root: {
         display: 'flex',
         flexWrap: 'wrap',
@@ -26,6 +28,27 @@ const useStyles = makeStyles((theme) => ({
             'linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.7) 70%, rgba(0,0,0,0) 100%)',
     },
 }));
+ */
+
+const useStyles = makeStyles({
+    root: {
+        display: 'flex',
+        justifyContent: 'space-around',
+        width: "100%",
+        height: "100%"
+    },
+    media: {
+      height: "74%",
+    },
+    list: {
+        width: "100%",
+        height: "100%",
+    },
+    rating: {
+        display: 'flex',
+        alignSelf: "flex-end"
+    }
+  });
 
 export const ComplejosList = ({ complejos }) => {
     const classes = useStyles();
@@ -36,25 +59,39 @@ export const ComplejosList = ({ complejos }) => {
     }
 
     return (
-        <GridList className={classes.gridList} cellHeight={200} cols={1}>
-            {complejos.map((complejo) => (
-                <GridListTile key={complejo.id} >
-                    <img src={complejo.fotos[0]} alt={complejos.nombre} />
-                    <GridListTileBar
-                        title={complejo.nombre}
-                        classes={{
-                            root: classes.titleBar,
-                            title: classes.title,
-                        }}
-                        actionIcon={
-                            <IconButton aria-label={`view ${complejo.nombre}`} onClick={() => goToComplejoDetail(complejo.id)}>
-                                <ArrowForwardIcon className={classes.title} />
-                            </IconButton>
-                        }
-                    />
-                </GridListTile>
-            ))}
-        </GridList>
-
+        <List className={classes.list}>
+            <FormControl>
+                <InputLabel id="tipoComplejo">Tipo de complejo</InputLabel>
+                <Select
+                labelId="tipoComplejo"
+                id="tipoComplejoSelect"
+                value={12}
+                >
+                    <MenuItem value={10}>10</MenuItem>
+                    <MenuItem value={11}>11</MenuItem>                    
+                    <MenuItem value={12}>12</MenuItem>
+                </Select>
+            </FormControl>
+            {complejos.map((complejo => (
+                <ListItem className={classes.root} key={complejo.id}>
+                    <Card className={classes.root} elevation={4} >
+                        <CardActionArea onClick={() => goToComplejoDetail(complejo.id)}>
+                            <CardMedia
+                            className={classes.media}
+                            image={complejo.fotos[0]}
+                            title={complejo.nombre}
+                            />
+                            <CardContent>
+                                <Typography gutterBottom variant="h5" component="h2">
+                                    {complejo.nombre}
+                                </Typography>
+					            <Rating defaultValue={3} size="large" precision={1} readOnly/>
+                            </CardContent>
+                        </CardActionArea>
+                    </Card>
+                </ListItem>
+            )))
+            }
+        </List>
     );
 }
