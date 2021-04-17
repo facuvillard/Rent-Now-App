@@ -47,9 +47,9 @@ export const Complejos = () => {
                 {viewMode === 'map' ? <ComplejosMap center={center} fetchComplejos={fetchComplejos} complejos={complejos} /> : <ComplejosList complejos={complejos} />}
             </Grid>
             <Grid>
-                <ButtonGroup style={{ position: 'fixed', top: '95%', right: '40%' }} variant="contained" color="primary" aria-label="text primary button group">
-                    <Button onClick={() => { setViewMode('map') }}>Mapa</Button>
-                    <Button onClick={() => { setViewMode('list') }}>Lista</Button>
+                <ButtonGroup style={{ position: 'fixed', top: '95%', right: '40%' }} variant="contained" aria-label="text primary button group">
+                    <Button color={viewMode === 'map' ? "inherit" : "primary"} onClick={() => { setViewMode('map') }}>Mapa</Button>
+                    <Button color={viewMode === 'list' ? "inherit" : "primary"} onClick={() => { setViewMode('list') }}>Lista</Button>
                 </ButtonGroup>
             </Grid>
         </Grid>
