@@ -103,3 +103,20 @@ export async function getEspaciosByIdComplejo(idComplejo) {
       };
     }
   }
+
+  export async function getHorariosAndEspacios(fecha, tipoEspacio, idComplejo, duracion){
+    try{
+      console.log(fecha, tipoEspacio, idComplejo, duracion)
+      const getHorarios = firebase.functions().httpsCallable('getFreeHorariosAndEspacios');
+      const result = await getHorarios({fecha, tipoEspacio, idComplejo, duracion});
+      console.log(result)
+      return result.data;
+    } catch (err){
+      console.log(err);
+      return {
+        status: "ERROR",
+        message: "Se produjo un error al consultar los tipos de espacios",
+        error: err,
+      };
+    }
+  }

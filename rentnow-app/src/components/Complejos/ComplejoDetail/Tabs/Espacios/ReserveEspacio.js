@@ -28,7 +28,7 @@ import DialogCustom from "components/utils/DialogCustom/DialogCustom"
 import { tipoEspacio } from "constants/espacios/constants"
 
 //APIs
-import { getTiposEspacioByIdComplejo, getEspaciosByIdComplejoAndTipo } from "api/espacios"
+import { getTiposEspacioByIdComplejo, getEspaciosByIdComplejoAndTipo, getHorariosAndEspacios } from "api/espacios"
 
 //utils
 import moment from "moment"
@@ -308,6 +308,10 @@ const ReserveEspacio = (props) => {
                     <Typography>Seleccione un tipo de espacio para ver los disponibles.</Typography>
                 )}
             </Grid>
+            <Button onClick={async()=> {
+                 let result =  await getHorariosAndEspacios("12/12/2020","Cancha Futbol", "rX8YpYUtACnd7CzDMtHX" , 1)
+                 console.log(result)
+            }}>Consultar</Button>
         </>
     )
 }
