@@ -11,6 +11,7 @@ import RouteWithNavbar from "components/Layout/withNavbar/RouteWithNavbar"
 import { Complejos } from "components/Complejos/Complejos";
 import RegisterUser from './components/RegisterUser/RegisterUser';
 import VerFotos from 'components/Complejos/ComplejoDetail/VerFotos/VerFotos';
+import ConfirmReserva from 'components/Reservas/ConfirmReserva'
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
           <RouteWithNavbar path={Routes.DETALLE_COMPLEJO}  exact isPrivate={true} component={() => <DetalleComplejo  />} />
           <RouteWithNavbar path={Routes.DETALLE_COMPLEJO_VER_FOTOS} exact isPrivate={true} component={()=> <VerFotos />} />
           <RouteWithNavbar path={Routes.DETALLE_ESPACIO} exact isPrivate={true} component={() => <DetalleEspacio />} />
+          <RouteWithNavbar path={Routes.CONFIRMACION_RESERVA} exact isPrivate={true} component={() => <ConfirmReserva />} />
           <RouteWithNavbar path={Routes.REGISTER_USER}  exact isPrivate={false} component={() => <RegisterUser />} />
           <Route path="*" exact component={() => <Landing />} />
 

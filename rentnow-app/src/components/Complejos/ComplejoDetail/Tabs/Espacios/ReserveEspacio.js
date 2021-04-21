@@ -309,7 +309,7 @@ const ReserveEspacio = (props) => {
                 )}
             </Grid>
             <Button onClick={async()=> {
-                 let result =  await getHorariosAndEspacios("12/12/2020","Cancha Futbol", "rX8YpYUtACnd7CzDMtHX" , 1)
+                 let result =  await getHorariosAndEspacios("21/04/2021","Cancha Futbol", "rX8YpYUtACnd7CzDMtHX" , 1)
                  console.log(result)
             }}>Consultar</Button>
         </>
