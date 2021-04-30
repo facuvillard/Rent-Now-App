@@ -5,7 +5,12 @@ import Avatar from '@material-ui/core/Avatar';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemAvatar from '@material-ui/core/ListItemAvatar';
-import { Grid, CardHeader, Card, CardMedia, CardContent, Tooltip, Chip, Typography, CardActions, Button } from "@material-ui/core";
+import {
+    Grid, CardHeader, Card,
+    CardMedia, CardContent, Tooltip,
+    Chip, Typography, CardActions,
+    Button, useTheme, useMediaQuery, Divider,
+} from "@material-ui/core";
 import { makeStyles } from '@material-ui/core/styles';
 import ListItemText from '@material-ui/core/ListItemText';
 import {
@@ -28,11 +33,15 @@ import DialogCustom from "components/utils/DialogCustom/DialogCustom"
 import { tipoEspacio } from "constants/espacios/constants"
 
 //APIs
-import { getTiposEspacioByIdComplejo, getEspaciosByIdComplejoAndTipo, getHorariosAndEspacios } from "api/espacios"
+import { getTiposEspacioByIdComplejo, getHorariosAndEspacios } from "api/espacios"
 
 //utils
 import moment from "moment"
 import MomentUtils from "@date-io/moment"
+
+import Slider from 'infinite-react-carousel';
+import Alert from '@material-ui/lab/Alert';
+import { useHistory } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
     card: {
@@ -58,13 +67,32 @@ const useStyles = makeStyles((theme) => ({
             cursor: "pointer",
         }
     },
+    divider: {
+        marginTop: theme.spacing(2),
+        marginBottom: theme.spacing(2),
+    },
     cardText: {
         paddingTop: theme.spacing(2),
     },
+    chipDisponible: {
+        backgroundColor: '#70b578',
+        "&:hover, &:focus": {
+            backgroundColor: "#ABEBC6",
+            cursor: "pointer",
+        }
+    },
+    chipNoDisponible: {
+        backgroundColor: '#c2c2c2',
+    },
+    tituloSeccion: {
+        marginBottom: theme.spacing(2)
+    },
 }))
 
-function EspacioCard({ espacio, idComplejo }) {
+function EspacioCard({ espacio, idComplejo, fecha, horarioInicio, horarioFin }) {
+    const history = useHistory();
     const classes = useStyles();
+    console.log(espacio, idComplejo, fecha, horarioInicio, horarioFin)
     return (
         <Card className={classes.card}>
             <CardHeader
@@ -74,7 +102,7 @@ function EspacioCard({ espacio, idComplejo }) {
             />
             <CardMedia
                 className={classes.cardMedia}
-                image={ espacio.foto[0]  ? espacio.foto[0] : tipoEspacio[espacio.tipoEspacio].urlImagen }
+                image={espacio.foto[0] ? espacio.foto[0] : tipoEspacio[espacio.tipoEspacio].urlImagen}
                 title="Image title"
             />
             <CardContent className={classes.cardContent}>
@@ -112,18 +140,38 @@ function EspacioCard({ espacio, idComplejo }) {
                     direction="row"
                     justify="center"
                     alignItems="center">
-                    <LinkCustom
-                        to={
-                            {
-                                pathname: `/complejos/${idComplejo}/espacios/${espacio.id}`,
-                                state: { espacio: espacio }
-                            }
-                        }
+                    {/* <LinkCustom
+                        // to={
+                        //     {
+                        //         pathname: `/complejos/${idComplejo}/reservas/confirmar`,
+                        //         state: {
+                        //             espacio,
+                        //             fecha,
+                        //             horarioInicio,
+                        //             horarioFin
+                        //         }
+                        //     }
+                        // }
+                    > */}
+                    <Button
+                        size="small"
+                        variant="contained"
+                        color="primary"
+                        onClick={() => {
+                            history.push({
+                                pathname: `/complejos/${idComplejo}/reservas/confirmar`,
+                                state: {
+                                    espacio,
+                                    fecha,
+                                    horarioInicio,
+                                    horarioFin
+                                }
+                            })
+                        }}
                     >
-                        <Button size="small" variant="contained" color="primary">
-                            Reservar
+                        Reservar
                                         </Button>
-                    </LinkCustom>
+                    {/* </LinkCustom> */}
                 </Grid>
             </CardActions>
         </Card>
@@ -175,12 +223,9 @@ function SelectDuracion({ open, duraciones, onClose, selectedDuracion }) {
             <List>
                 {
 
-                   duraciones.map((duracion, index) => {
+                    duraciones.map((duracion, index) => {
                         return (
                             <ListItem autoFocus onClick={() => { handleListItemClick(duracion) }} button key={duracion}>
-                                {/* <ListItemAvatar>
-                                    <Avatar src={tipoEspacio[tipo].urlImagen} />
-                                </ListItemAvatar> */}
                                 <ListItemText primary={`${duracion}h`} />
                             </ListItem>
                         )
@@ -210,14 +255,17 @@ function DatepickerReserva({ selectedFecha, handleDateChange }) {
 }
 
 const ReserveEspacio = (props) => {
-    const [espacios, setEspacios] = useState([])
+    const [reserva, setReserva] = useState({})
+    const [espaciosToShow, setEspaciosToShow] = useState([])
     const [tiposEspacioComplejo, setTiposEspacioComplejo] = useState([]);
     const [openSelectTipoEspacio, setOpenSelectTipoEspacio] = useState(false);
     const [selectedTipoEspacio, setSelectedTipoEspacio] = useState(null);
     const [openSelectDuracion, setOpenSelectDuracion] = useState(false);
     const [selectedDuracion, setSelectedDuracion] = useState(null);
     const [selectedFecha, setSelectedFecha] = useState(null)
+    const [horariosAndEspacios, setHorariosAndEspacios] = useState(null)
     const { idComplejo } = props
+    const classes = useStyles();
 
     useEffect(() => {
         async function getTiposEspacios() {
@@ -228,29 +276,29 @@ const ReserveEspacio = (props) => {
     }, [idComplejo])
 
     useEffect(() => {
-        async function getEspacios(){
-            const result = await getEspaciosByIdComplejoAndTipo(idComplejo, selectedTipoEspacio)
-            if(result.status === "OK"){
-                setEspacios(result.data)
+        async function getHorarios(tipoEspacio, duracion, fecha, idComplejo) {
+            const result = await getHorariosAndEspacios(moment(fecha).format('DD/MM/YYYY'), tipoEspacio, idComplejo, duracion)
+            if (result.status === "OK") {
+                console.log(result)
+                setHorariosAndEspacios(result.data)
             } else {
                 alert(result.message)
             }
         }
-        if(!selectedTipoEspacio){
-            return;
+        if (selectedTipoEspacio && selectedDuracion && selectedFecha) {
+            getHorarios(selectedTipoEspacio, selectedDuracion, selectedFecha, idComplejo);
         }
-        getEspacios();
-    }, [selectedDuracion, selectedTipoEspacio, selectedFecha])
+    }, [selectedDuracion, selectedTipoEspacio, selectedFecha, idComplejo])
 
     const handleSelectTipoEspacioOpen = () => {
         setOpenSelectTipoEspacio(true)
     }
-    
+
     const handleCloseSelectTipoEspacio = (value) => {
         setOpenSelectTipoEspacio(false);
         setSelectedTipoEspacio(value);
     };
-    
+
     const handleSelectDuracionOpen = () => {
         setOpenSelectDuracion(true)
     }
@@ -260,9 +308,34 @@ const ReserveEspacio = (props) => {
         setSelectedDuracion(value);
     };
 
+    const theme = useTheme();
+    const matches = useMediaQuery(theme.breakpoints.up('sm'));
+
+    const settings = {
+        arrowsBlock: false,
+        arrows: true,
+        dots: false,
+        slidesPerRow: matches ? 5 : 3,
+    };
+
+    const handleShowEspacios = (horario) => {
+        setReserva({
+            horarioInicio: horario.horaDesde,
+            horarioFin: horario.horaHasta
+        })
+        horariosAndEspacios.espacios.forEach((espacio) => {
+            horario.espacios.forEach((idEspacio) => {
+                if (espacio.id === idEspacio) {
+                    espaciosToShow.push(espacio)
+                }
+            })
+        })
+    };
+
+
+
     return (
         <>
-
             <Grid
                 container
                 direction="row"
@@ -283,35 +356,68 @@ const ReserveEspacio = (props) => {
                         {selectedDuracion ? `${selectedDuracion}h` : "Tiempo"}
                     </Button>
                 </Grid>
+                {horariosAndEspacios ? (
+                    <Grid item xs={12} >
+                        <Divider className={classes.divider} />
+                        <Typography variant='subtitle2' className={classes.tituloSeccion} gutterBottom>
+                            Seleccione un Horario:
+                        </Typography>
+                        <Slider {...settings}>
+                            {horariosAndEspacios.horarios.map((horario) => (
+                                <Chip
+                                    label={`${horario.horaDesde} - ${horario.horaHasta}`}
+                                    className={horario.espacios.length === 0 ? classes.chipNoDisponible : classes.chipDisponible}
+                                    clickable={horario.espacios.length === 0 ? false : true}
+                                    onClick={() => {
+                                        espaciosToShow.splice(0, espaciosToShow.length)
+                                        handleShowEspacios(horario)
+                                    }}
+                                />
+                            ))}
+                        </Slider>
+                    </Grid>
+                ) : (
+                    null
+                )}
 
+                {espaciosToShow.length !== 0 ? (
+                    <>
+                        <Grid
+                            container
+                            direction="row"
+                            justify="center"
+                            alignItems="center"
+                            spacing={4}
+                        >
+                            <Grid item xs={12}>
+                                <Divider className={classes.divider} />
+                                <Typography variant='subtitle2' className={classes.tituloSeccion} gutterBottom>
+                                    Seleccione un Espacio:
+                            </Typography>
+                            </Grid>
+                            {espaciosToShow.map((espacio) => (
+                                <Grid item key={espacio.id} xs={6} sm={6} md={4}>
+                                    <EspacioCard espacio={espacio} idComplejo={idComplejo} fecha={moment(selectedFecha).format('DD/MM/YYYY')} horarioInicio={reserva.horarioInicio} horarioFin={reserva.horarioFin} />
+                                </Grid>
+                            ))}
+                        </Grid>
+                    </>
+                ) : (
+                    <Grid
+                        container
+                        direction="row"
+                        justify="center"
+                        alignItems="center"
+                        spacing={4}
+                    >
+                        <Alert severity="info">¡Seleccione un tipo de espacio, fecha y duración!</Alert>
+                    </Grid>
+                )}
             </Grid>
 
             <SelectTipoEspacio open={openSelectTipoEspacio} tiposEspacio={tiposEspacioComplejo} onClose={handleCloseSelectTipoEspacio} selectedTipo={selectedTipoEspacio} />
-            <SelectDuracion open={openSelectDuracion} duraciones={["1","1:30","2","2:30","3","3:30"]} onClose={handleCloseSelectDuracion} selectedDuracion={selectedDuracion} />
+            <SelectDuracion open={openSelectDuracion} duraciones={["1", "1:30", "2", "2:30", "3", "3:30"]} onClose={handleCloseSelectDuracion} selectedDuracion={selectedDuracion} />
 
-            <Grid
-                container
-                direction="row"
-                justify="center"
-                alignItems="center"
-                spacing={4}
-            >
-                {espacios ? (
-                    <>
-                        {espacios.map((espacio) => (
-                            <Grid item key={espacio.id} xs={10} sm={6} md={4}>
-                                <EspacioCard espacio={espacio} idComplejo={idComplejo} />
-                            </Grid>
-                        ))}
-                    </>
-                ) : (
-                    <Typography>Seleccione un tipo de espacio para ver los disponibles.</Typography>
-                )}
-            </Grid>
-            <Button onClick={async()=> {
-                 let result =  await getHorariosAndEspacios("21/04/2021","Cancha Futbol", "rX8YpYUtACnd7CzDMtHX" , 1)
-                 console.log(result)
-            }}>Consultar</Button>
         </>
     )
 }

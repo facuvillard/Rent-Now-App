@@ -25,7 +25,8 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-const ConfirmReserva = () => {
+const ConfirmReserva = (props) => {
+    console.log(props)
     const classes = useStyles();
     return (
         <>
