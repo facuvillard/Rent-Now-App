@@ -251,7 +251,7 @@ const DetalleComplejo = () => {
                             </TabPanel>
                             <TabPanel value={value} index={1} dir={theme.direction}>
                                 <Container className={classes.cardGrid} maxWidth="md">
-                                    <ReserveEspacio espacios={espacios} idComplejo={idComplejo} />
+                                    <ReserveEspacio espacios={espacios} idComplejo={idComplejo} complejo={complejo}/>
                                 </Container>
                             </TabPanel>
                             <TabPanel value={value} index={2} dir={theme.direction}>

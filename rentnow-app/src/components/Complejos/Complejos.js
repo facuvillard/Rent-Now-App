@@ -6,7 +6,7 @@ import { ComplejosList } from './ComplejosList/ComplejosList';
 
 
 
-export const Complejos = () => {
+export const Complejos = (props) => {
     const [complejos, setComplejos] = useState([])
     const [viewMode, setViewMode] = useState('map')
     const [center, setCenter] = useState({
@@ -14,6 +14,7 @@ export const Complejos = () => {
         lng: -38.523
     });
 
+    console.log(props)
     useEffect(() => {
         if ("geolocation" in navigator) {
             navigator.geolocation.getCurrentPosition((position) => {

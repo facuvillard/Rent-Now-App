@@ -10,6 +10,7 @@ import {
     CardMedia, CardContent, Tooltip,
     Chip, Typography, CardActions,
     Button, useTheme, useMediaQuery, Divider,
+    CircularProgress
 } from "@material-ui/core";
 import { makeStyles } from '@material-ui/core/styles';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -41,7 +42,7 @@ import MomentUtils from "@date-io/moment"
 
 import Slider from 'infinite-react-carousel';
 import Alert from '@material-ui/lab/Alert';
-import { useHistory } from "react-router-dom";
+import Swal from 'sweetalert2'
 
 const useStyles = makeStyles((theme) => ({
     card: {
@@ -89,10 +90,8 @@ const useStyles = makeStyles((theme) => ({
     },
 }))
 
-function EspacioCard({ espacio, idComplejo, fecha, horarioInicio, horarioFin }) {
-    const history = useHistory();
+function EspacioCard({ espacio, idComplejo, fecha, horarioInicio, horarioFin, complejo }) {
     const classes = useStyles();
-    console.log(espacio, idComplejo, fecha, horarioInicio, horarioFin)
     return (
         <Card className={classes.card}>
             <CardHeader
@@ -140,38 +139,28 @@ function EspacioCard({ espacio, idComplejo, fecha, horarioInicio, horarioFin }) 
                     direction="row"
                     justify="center"
                     alignItems="center">
-                    {/* <LinkCustom
-                        // to={
-                        //     {
-                        //         pathname: `/complejos/${idComplejo}/reservas/confirmar`,
-                        //         state: {
-                        //             espacio,
-                        //             fecha,
-                        //             horarioInicio,
-                        //             horarioFin
-                        //         }
-                        //     }
-                        // }
-                    > */}
-                    <Button
-                        size="small"
-                        variant="contained"
-                        color="primary"
-                        onClick={() => {
-                            history.push({
+                    <LinkCustom
+                        to={
+                            {
                                 pathname: `/complejos/${idComplejo}/reservas/confirmar`,
                                 state: {
-                                    espacio,
-                                    fecha,
-                                    horarioInicio,
-                                    horarioFin
+                                    espacio: espacio,
+                                    fecha: fecha,
+                                    horarioInicio: horarioInicio,
+                                    horarioFin: horarioFin,
+                                    complejo: complejo,
                                 }
-                            })
-                        }}
+                            }
+                        }
                     >
-                        Reservar
+                        <Button
+                            size="small"
+                            variant="contained"
+                            color="primary"
+                        >
+                            Reservar
                                         </Button>
-                    {/* </LinkCustom> */}
+                    </LinkCustom>
                 </Grid>
             </CardActions>
         </Card>
@@ -264,31 +253,46 @@ const ReserveEspacio = (props) => {
     const [selectedDuracion, setSelectedDuracion] = useState(null);
     const [selectedFecha, setSelectedFecha] = useState(null)
     const [horariosAndEspacios, setHorariosAndEspacios] = useState(null)
-    const { idComplejo } = props
+    const [isLoadingTipoEspacio, setIsLoadingTipoEspacio] = useState(true)
+    const [isLoadingHorariosAndEspacios, setIsLoadingHorariosAndEspacios] = useState(false)
+    const { idComplejo, complejo } = props
     const classes = useStyles();
 
     useEffect(() => {
         async function getTiposEspacios() {
             const result = await getTiposEspacioByIdComplejo(idComplejo);
             setTiposEspacioComplejo(result.data)
+            setIsLoadingTipoEspacio(false)
         }
         getTiposEspacios();
+
     }, [idComplejo])
 
     useEffect(() => {
-        async function getHorarios(tipoEspacio, duracion, fecha, idComplejo) {
-            const result = await getHorariosAndEspacios(moment(fecha).format('DD/MM/YYYY'), tipoEspacio, idComplejo, duracion)
+        async function getHorarios(tipoEspacio, duracion, fecha, idComplejo, complejo) {
+            const result = await getHorariosAndEspacios(moment(fecha).format('DD/MM/YYYY'), tipoEspacio, idComplejo, duracion, complejo)
             if (result.status === "OK") {
-                console.log(result)
                 setHorariosAndEspacios(result.data)
+                if(result.data.horarios.length === 0){
+                    Swal.fire({
+                        title: '¡Error!',
+                        text: 'No existen horarios disponibles para los filtros ingresados',
+                        icon: 'error',
+                        confirmButtonText: 'Aceptar'
+                      })
+                }
+                setIsLoadingHorariosAndEspacios(false)
             } else {
                 alert(result.message)
+                setIsLoadingHorariosAndEspacios(false)
             }
         }
         if (selectedTipoEspacio && selectedDuracion && selectedFecha) {
-            getHorarios(selectedTipoEspacio, selectedDuracion, selectedFecha, idComplejo);
+            setIsLoadingHorariosAndEspacios(true)
+            getHorarios(selectedTipoEspacio, selectedDuracion, selectedFecha, idComplejo, complejo);
+            espaciosToShow.splice(0, espaciosToShow.length)
         }
-    }, [selectedDuracion, selectedTipoEspacio, selectedFecha, idComplejo])
+    }, [selectedDuracion, selectedTipoEspacio, selectedFecha, idComplejo, complejo])
 
     const handleSelectTipoEspacioOpen = () => {
         setOpenSelectTipoEspacio(true)
@@ -343,41 +347,86 @@ const ReserveEspacio = (props) => {
                 alignItems="center"
                 spacing={1}
             >
-                <Grid item xs={4} >
-                    <Button fullWidth variant="outlined" startIcon={<SportsFootballOutlinedIcon />} onClick={handleSelectTipoEspacioOpen}>
-                        {selectedTipoEspacio ? selectedTipoEspacio : "Tipo"}
-                    </Button>
-                </Grid>
-                <Grid item xs={4} >
-                    <DatepickerReserva selectedFecha={selectedFecha} handleDateChange={setSelectedFecha} />
-                </Grid>
-                <Grid item xs={4} >
-                    <Button fullWidth variant="outlined" startIcon={<QueryBuilderOutlinedIcon />} onClick={handleSelectDuracionOpen}>
-                        {selectedDuracion ? `${selectedDuracion}h` : "Tiempo"}
-                    </Button>
-                </Grid>
-                {horariosAndEspacios ? (
-                    <Grid item xs={12} >
-                        <Divider className={classes.divider} />
-                        <Typography variant='subtitle2' className={classes.tituloSeccion} gutterBottom>
-                            Seleccione un Horario:
-                        </Typography>
-                        <Slider {...settings}>
-                            {horariosAndEspacios.horarios.map((horario) => (
-                                <Chip
-                                    label={`${horario.horaDesde} - ${horario.horaHasta}`}
-                                    className={horario.espacios.length === 0 ? classes.chipNoDisponible : classes.chipDisponible}
-                                    clickable={horario.espacios.length === 0 ? false : true}
-                                    onClick={() => {
-                                        espaciosToShow.splice(0, espaciosToShow.length)
-                                        handleShowEspacios(horario)
-                                    }}
-                                />
-                            ))}
-                        </Slider>
+                {isLoadingTipoEspacio ? (
+                    <Grid
+                        container
+                        direction="row"
+                        justify="center"
+                        alignItems="center"
+                        spacing={5}
+
+                    >
+                        <Grid item xs={2}>
+                            <CircularProgress />
+                        </Grid>
                     </Grid>
                 ) : (
-                    null
+                    <>
+                        <Grid item xs={12} >
+                            <Button fullWidth variant="outlined" startIcon={<SportsFootballOutlinedIcon />} onClick={handleSelectTipoEspacioOpen}>
+                                {selectedTipoEspacio ? selectedTipoEspacio : "Tipo"}
+                            </Button>
+                        </Grid>
+                        <Grid item xs={6} >
+                            <DatepickerReserva selectedFecha={selectedFecha} handleDateChange={setSelectedFecha} />
+                        </Grid>
+                        <Grid item xs={6} >
+                            <Button fullWidth variant="outlined" startIcon={<QueryBuilderOutlinedIcon />} onClick={handleSelectDuracionOpen}>
+                                {selectedDuracion ? `${selectedDuracion}h` : "Tiempo"}
+                            </Button>
+                        </Grid>
+                    </>
+                )}
+                {isLoadingHorariosAndEspacios ? (
+                    <Grid
+                        container
+                        direction="row"
+                        justify="center"
+                        alignItems="center"
+                        spacing={5}
+                    >
+                        <Grid item xs={2}>
+                            <CircularProgress />
+                        </Grid>
+                    </Grid>
+                ) : (
+                    <>
+                        {horariosAndEspacios ? (
+                            <Grid item xs={12} >
+                                <Divider className={classes.divider} />
+                                <Typography variant='subtitle2' className={classes.tituloSeccion} gutterBottom>
+                                    Seleccione un Horario:
+                            </Typography>
+                                {horariosAndEspacios.horarios.length !== 0 ? (
+                                    <Slider {...settings}>
+                                        {horariosAndEspacios.horarios.map((horario, index) => (
+                                            <Chip
+                                                key={index}
+                                                label={`${horario.horaDesde} - ${horario.horaHasta}`}
+                                                className={horario.espacios.length === 0 ? classes.chipNoDisponible : classes.chipDisponible}
+                                                clickable={horario.espacios.length === 0 ? false : true}
+                                                onClick={() => {
+                                                    espaciosToShow.splice(0, espaciosToShow.length)
+                                                    handleShowEspacios(horario)
+                                                }}
+                                            />
+                                        ))}
+                                    </Slider>
+                                ) : (
+                                    <Grid
+                                        container
+                                        direction="row"
+                                        justify="center"
+                                        alignItems="center"
+                                    >
+                                        <Alert severity="error">¡No existen horarios disponibles para los filtros seleccionados!</Alert>
+                                    </Grid>
+                                )}
+                            </Grid>
+                        ) : (
+                            null
+                        )}
+                    </>
                 )}
 
                 {espaciosToShow.length !== 0 ? (
@@ -396,8 +445,8 @@ const ReserveEspacio = (props) => {
                             </Typography>
                             </Grid>
                             {espaciosToShow.map((espacio) => (
-                                <Grid item key={espacio.id} xs={6} sm={6} md={4}>
-                                    <EspacioCard espacio={espacio} idComplejo={idComplejo} fecha={moment(selectedFecha).format('DD/MM/YYYY')} horarioInicio={reserva.horarioInicio} horarioFin={reserva.horarioFin} />
+                                <Grid item key={espacio.id} xs={12} sm={6} md={4}>
+                                    <EspacioCard complejo={complejo} espacio={espacio} idComplejo={idComplejo} fecha={moment(selectedFecha).format('DD/MM/YYYY')} horarioInicio={reserva.horarioInicio} horarioFin={reserva.horarioFin} />
                                 </Grid>
                             ))}
                         </Grid>
@@ -409,6 +458,7 @@ const ReserveEspacio = (props) => {
                         justify="center"
                         alignItems="center"
                         spacing={4}
+                        style={{ paddingTop: '100px' }}
                     >
                         <Alert severity="info">¡Seleccione un tipo de espacio, fecha y duración!</Alert>
                     </Grid>

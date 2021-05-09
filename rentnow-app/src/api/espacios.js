@@ -104,11 +104,11 @@ export async function getEspaciosByIdComplejo(idComplejo) {
     }
   }
 
-  export async function getHorariosAndEspacios(fecha, tipoEspacio, idComplejo, duracion){
+  export async function getHorariosAndEspacios(fecha, tipoEspacio, idComplejo, duracion, complejo){
     try{
-      console.log(fecha, tipoEspacio, idComplejo, duracion)
+      console.log(fecha, tipoEspacio, idComplejo, duracion, complejo)
       const getHorarios = firebase.functions().httpsCallable('getFreeHorariosAndEspacios');
-      const result = await getHorarios({fecha, tipoEspacio, idComplejo, duracion});
+      const result = await getHorarios({fecha, tipoEspacio, idComplejo, duracion, complejo});
       console.log(result)
       return result.data;
     } catch (err){

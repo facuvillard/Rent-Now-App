@@ -74,7 +74,6 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function ReservaDetail({ open, reserva, onClose }) {
-    console.log(reserva)
     return (
         <DialogCustom title="Detalle de Reserva" open={open} onClose={onClose}>
             <Grid>
@@ -118,8 +117,6 @@ const ReservasList = () => {
             }
         });
     }, [])
-
-    console.log(reservas)
 
     return (
         <>

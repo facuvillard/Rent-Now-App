@@ -1,7 +1,12 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 //Material UI
 import { Grid, Typography, Divider, makeStyles, Button } from "@material-ui/core";
-import Image from 'assets/hola.jpg'
+import { withRouter } from 'react-router-dom'
+
+//Constantes
+import { tipoEspacio } from "constants/espacios/constants"
+
+import moment from "moment"
 
 const useStyles = makeStyles((theme) => ({
     titulo: {
@@ -26,7 +31,10 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const ConfirmReserva = (props) => {
-    console.log(props)
+
+    console.log(props.location.state)
+    const reserva = props.location.state
+
     const classes = useStyles();
     return (
         <>
@@ -45,22 +53,22 @@ const ConfirmReserva = (props) => {
                 </Grid>
                 <Grid item xs={12}>
                     <Typography variant='subtitle1' className={classes.tituloSeccion} gutterBottom>
-                        <b>Complejo Cerca de Mi Casa</b>
-                </Typography>
+                        <b>{reserva.complejo.nombre}</b>
+                    </Typography>
                 </Grid>
                 <Grid item xs={6} >
                     <Typography variant='subtitle2' className={classes.titulo}>
-                        Espacio: Padel 6
+                        Espacio: {reserva.espacio.nombre}
                 </Typography>
                     <Typography variant='caption' display="block" className={classes.titulo} >
-                        Cancha Basquet - Cemento - Abierta sin luz
+                    {reserva.espacio.tipoEspacio} - {reserva.espacio.tipoPiso} - {reserva.espacio.infraestructura}
                 </Typography>
                     <Typography variant='caption' display="block" className={classes.titulo} >
-                        Capacidad: 10 participantes
+                        Capacidad: {reserva.espacio.capacidad} participantes
                 </Typography>
                 </Grid>
                 <Grid item xs={6} className={classes.complejo} >
-                    <img src={Image} alt="imagen-espacio" width="95%" />
+                    <img src={reserva.espacio.foto[0] ? reserva.espacio.foto[0] : tipoEspacio[reserva.espacio.tipoEspacio].urlImagen} alt="imagen-espacio" width="95%" />
                 </Grid>
                 <Grid item xs={12}>
                     <Divider variant="middle" className={classes.divider} />
@@ -71,10 +79,23 @@ const ConfirmReserva = (props) => {
                 </Typography>
                 </Grid>
                 <Grid item xs={6}>
-                <Typography variant='subtitle2' className={classes.titulo} gutterBottom>
-                        Jueves 22 Abril 15:00 - 17:00
+                    <Typography variant='subtitle2' className={classes.titulo} gutterBottom>
+                    {moment(reserva.fecha).format("D MMMM YYYY")} de {reserva.horarioInicio} a {reserva.horarioFin}
                 </Typography>
                 </ Grid>
+                <Grid item xs={12}>
+                    <Divider variant="middle" className={classes.divider} />
+                </Grid>
+                <Grid item xs={6}>
+                    <Typography variant='subtitle1' className={classes.titulo} gutterBottom>
+                        Número Telefonico del Complejo:
+                </Typography>
+                </Grid>
+                <Grid item xs={6} >
+                    <Typography variant='subtitle2' className={classes.titulo} gutterBottom>
+                        {reserva.complejo.telefono}
+                </Typography>
+                </Grid>
                 <Grid item xs={12}>
                     <Divider variant="middle" className={classes.divider} />
                 </Grid>
@@ -85,7 +106,9 @@ const ConfirmReserva = (props) => {
                 </Grid>
                 <Grid item xs={6} >
                     <Typography variant='subtitle2' className={classes.titulo} gutterBottom>
-                        Lagunilla, 2321 Cordoba, Cordoba
+                        {reserva.complejo.ubicacion.calle} {reserva.complejo.ubicacion.numero} - 
+                        Barrio: {reserva.complejo.ubicacion.barrio} - 
+                        {reserva.complejo.ubicacion.ciudad}, {reserva.complejo.ubicacion.provincia}
                 </Typography>
                 </Grid>
                 <Grid item xs={12}>
@@ -125,4 +148,4 @@ const ConfirmReserva = (props) => {
     )
 }
 
-export default ConfirmReserva
+export default withRouter(ConfirmReserva)
