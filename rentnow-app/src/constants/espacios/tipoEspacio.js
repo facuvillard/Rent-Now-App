@@ -1,31 +1,31 @@
 export const tipoEspacio = [
     {
         key: "Futbol",
-        value: "Cancha de Futbol"
+        value: "Cancha Futbol"
     },
     {
         key: "Basquet",
-        value: "Cancha de Basquet"
+        value: "Cancha Basquet"
     },
     {
         key: "Handball",
-        value: "Cancha de Handball"
+        value: "Cancha Handball"
     },
     {
         key: "Tenis",
-        value: "Cancha de Tenis"
+        value: "Cancha Tenis"
     },
     {
         key: "Paddle",
-        value: "Cancha de Paddle"
+        value: "Cancha Paddle"
     },
     {
         key: "Hockey",
-        value: "Cancha de Hockey"
+        value: "Cancha Hockey"
     },
     {
         key: "Voley",
-        value: "Cancha de Voley"
+        value: "Cancha Voley"
     },
     {
         key: "Sala de Juegos",

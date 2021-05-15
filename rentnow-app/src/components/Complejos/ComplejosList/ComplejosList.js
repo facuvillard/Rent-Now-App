@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
 	List,
 	ListItem,
@@ -26,35 +26,54 @@ const useStyles = makeStyles({
 		height: '100%',
 	},
 	media: {
-		height: '74%',
+		height: '70%',
 	},
 	list: {
 		width: '100%',
-		height: '100%',
+		height: '40%',
 	},
 	rating: {
 		display: 'flex',
 		alignSelf: 'flex-end',
 	},
 	formControl: {
-		minWidth: '50%',
+		minWidth: '100%',
 	},
 });
 
 export const ComplejosList = ({ complejos }) => {
 	const classes = useStyles();
 	const history = useHistory();
+	const [tipoEspacioSelected, setTipoEspacioSelected] = useState('Todos');
+	const [complejosList, setComplejosList] = useState([]);
 
 	function goToComplejoDetail(idComplejo) {
 		history.push(`/complejos/${idComplejo}`);
 	}
+
+	useEffect(() => {
+		if (tipoEspacioSelected === 'Todos') {
+			setComplejosList(complejos);
+		} else {
+			const filtro = complejos.filter((com) =>
+				com.espaciosMetaData.some((esp) => esp.tipoEspacio === tipoEspacioSelected)
+			);
+			setComplejosList(filtro);
+		}
+	}, [tipoEspacioSelected]);
 
 	return (
 		<List className={classes.list}>
 			<ListItem>
 				<FormControl className={classes.formControl}>
 					<InputLabel id="tipoEspacio">Tipo de espacio</InputLabel>
-					<Select variant="outlined" labelId="tipoEspacio" id="tipoEspacioSelect">
+					<Select
+						variant="outlined"
+						labelId="tipoEspacio"
+						id="tipoEspacioSelect"
+						value={tipoEspacioSelected}
+						onChange={(e) => setTipoEspacioSelected(e.target.value)}
+					>
 						<MenuItem value={'Todos'}>Todos</MenuItem>
 						{tipoEspacio.map((te) => (
 							<MenuItem value={te.value}>{te.key}</MenuItem>
@@ -62,7 +81,7 @@ export const ComplejosList = ({ complejos }) => {
 					</Select>
 				</FormControl>
 			</ListItem>
-			{complejos.map((complejo) => (
+			{complejosList.map((complejo) => (
 				<ListItem className={classes.root} key={complejo.id}>
 					<Card className={classes.root} elevation={4}>
 						<CardActionArea onClick={() => goToComplejoDetail(complejo.id)}>
