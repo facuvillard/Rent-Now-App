@@ -20,17 +20,16 @@ import { tipoEspacio } from 'constants/espacios/tipoEspacio';
 
 const useStyles = makeStyles({
 	root: {
-		display: 'flex',
-		justifyContent: 'space-around',
 		width: '100%',
 		height: '100%',
 	},
 	media: {
-		height: '70%',
+		height: 140,
 	},
 	list: {
 		width: '100%',
-		height: '40%',
+		height: '45%',
+		paddingBottom: '10%',
 	},
 	rating: {
 		display: 'flex',
@@ -81,21 +80,23 @@ export const ComplejosList = ({ complejos }) => {
 					</Select>
 				</FormControl>
 			</ListItem>
-			{complejosList.map((complejo) => (
-				<ListItem className={classes.root} key={complejo.id}>
-					<Card className={classes.root} elevation={4}>
-						<CardActionArea onClick={() => goToComplejoDetail(complejo.id)}>
-							<CardMedia className={classes.media} image={complejo.fotos[0]} title={complejo.nombre} />
-							<CardContent>
-								<Typography gutterBottom variant="h5" component="h2">
-									{complejo.nombre}
-								</Typography>
-								<Rating defaultValue={3} size="large" precision={1} readOnly />
-							</CardContent>
-						</CardActionArea>
-					</Card>
-				</ListItem>
-			))}
+			{complejosList.length === 0
+				? null
+				: complejosList.map((complejo) => (
+						<ListItem key={complejo.id}>
+							<Card className={classes.root} elevation={4}>
+								<CardActionArea style={{ height: '100%' }} onClick={() => goToComplejoDetail(complejo.id)}>
+									<CardMedia className={classes.media} image={complejo.fotos[0]} title={complejo.nombre} />
+									<CardContent>
+										<Typography gutterBottom variant="h5" component="h2">
+											{complejo.nombre}
+										</Typography>
+										<Rating defaultValue={3} size="large" precision={1} readOnly />
+									</CardContent>
+								</CardActionArea>
+							</Card>
+						</ListItem>
+				  ))}
 		</List>
 	);
 };
