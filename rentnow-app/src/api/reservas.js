@@ -21,3 +21,20 @@ export async function getReservas(idComplejo) {
       };
     }
   }
+
+  export async function createReserva(reserva){
+    try{
+      console.log(reserva)
+      const createReserva = firebase.functions().httpsCallable('createReservaApp');
+      const result = await createReserva(reserva);
+      console.log(result)
+      return result.data;
+    } catch (err){
+      console.log(err);
+      return {
+        status: "ERROR",
+        message: "Se produjo un error al validar la reserva.",
+        error: err,
+      };
+    }
+  }

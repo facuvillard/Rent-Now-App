@@ -90,7 +90,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }))
 
-function EspacioCard({ espacio, idComplejo, fecha, horarioInicio, horarioFin, complejo }) {
+function EspacioCard({ espacio, idComplejo, fecha, horarioInicio, horarioFin, complejo, duracion }) {
     const classes = useStyles();
     return (
         <Card className={classes.card}>
@@ -149,6 +149,8 @@ function EspacioCard({ espacio, idComplejo, fecha, horarioInicio, horarioFin, co
                                     horarioInicio: horarioInicio,
                                     horarioFin: horarioFin,
                                     complejo: complejo,
+                                    idComplejo: idComplejo,
+                                    duracion: duracion
                                 }
                             }
                         }
@@ -446,7 +448,7 @@ const ReserveEspacio = (props) => {
                             </Grid>
                             {espaciosToShow.map((espacio) => (
                                 <Grid item key={espacio.id} xs={12} sm={6} md={4}>
-                                    <EspacioCard complejo={complejo} espacio={espacio} idComplejo={idComplejo} fecha={moment(selectedFecha).format('DD/MM/YYYY')} horarioInicio={reserva.horarioInicio} horarioFin={reserva.horarioFin} />
+                                    <EspacioCard complejo={complejo} espacio={espacio} idComplejo={idComplejo} fecha={moment(selectedFecha).format('DD/MM/YYYY')} horarioInicio={reserva.horarioInicio} horarioFin={reserva.horarioFin} duracion={selectedDuracion} />
                                 </Grid>
                             ))}
                         </Grid>
