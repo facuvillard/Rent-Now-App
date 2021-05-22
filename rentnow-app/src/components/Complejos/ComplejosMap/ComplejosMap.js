@@ -63,10 +63,11 @@ const ComplejosMap = ({ complejos, center, fetchComplejos }) => {
                 <Marker 
                     key={complejo.ubicacion.latlng.latitude + complejo.ubicacion.latlng.long} 
                     position={{ lat: complejo.ubicacion.latlng.latitude, lng: complejo.ubicacion.latlng.longitude }} 
+                    onClick={()=>{setSelectedComplejo(complejo)}}
                     />) 
                 : null}
 	              {selectedComplejo && (
-					          <ComplejoInfoWindow complejo={selectedComplejo} setComplejo={setSelectedComplejo} />
+                    <ComplejoInfoWindow complejo={selectedComplejo} setComplejo={setSelectedComplejo} />
 				)}
 
             </GoogleMap>

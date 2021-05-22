@@ -10,3 +10,7 @@ export const DETALLE_COMPLEJO_VER_FOTOS = `${DETALLE_COMPLEJO}/ver-fotos`;
 
 //ESPACIO
 export const DETALLE_ESPACIO = `${DETALLE_COMPLEJO}/espacios/:idEspacio`
+
+//RESERVA
+export const CONFIRMACION_RESERVA = `${DETALLE_COMPLEJO}/reservas/confirmar`
+export const CONSULTAR_RESERVAS = `/reservas/consultar`
