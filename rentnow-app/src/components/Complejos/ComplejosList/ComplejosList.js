@@ -11,10 +11,11 @@ import {
 	Select,
 	MenuItem,
 	FormControl,
+	Grid,
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { useHistory } from 'react-router-dom';
-import { Rating } from '@material-ui/lab';
+import { Rating, Alert, AlertTitle } from '@material-ui/lab';
 
 import { tipoEspacio } from 'constants/espacios/tipoEspacio';
 
@@ -37,6 +38,10 @@ const useStyles = makeStyles({
 	},
 	formControl: {
 		minWidth: '100%',
+	},
+	AlertStyle: {
+		marginLeft: '5%',
+		marginRight: '5%',
 	},
 });
 
@@ -80,23 +85,35 @@ export const ComplejosList = ({ complejos }) => {
 					</Select>
 				</FormControl>
 			</ListItem>
-			{complejosList.length === 0
-				? null
-				: complejosList.map((complejo) => (
-						<ListItem key={complejo.id}>
-							<Card className={classes.root} elevation={4}>
-								<CardActionArea style={{ height: '100%' }} onClick={() => goToComplejoDetail(complejo.id)}>
-									<CardMedia className={classes.media} image={complejo.fotos[0]} title={complejo.nombre} />
-									<CardContent>
-										<Typography gutterBottom variant="h5" component="h2">
-											{complejo.nombre}
-										</Typography>
-										<Rating defaultValue={3} size="large" precision={1} readOnly />
-									</CardContent>
-								</CardActionArea>
-							</Card>
-						</ListItem>
-				  ))}
+			{complejos.length === 0 ? (
+				<Grid container justify="center">
+					<Alert className={classes.AlertStyle} severity="warning">
+						<AlertTitle>No existen complejos en esta ubicación</AlertTitle>
+					</Alert>
+				</Grid>
+			) : complejosList.length === 0 ? (
+				<Grid container justify="center">
+					<Alert className={classes.AlertStyle} severity="warning">
+						<AlertTitle>No existen complejos con este tipo de espacio en esta ubicación</AlertTitle>
+					</Alert>
+				</Grid>
+			) : (
+				complejosList.map((complejo) => (
+					<ListItem key={complejo.id}>
+						<Card className={classes.root} elevation={4}>
+							<CardActionArea style={{ height: '100%' }} onClick={() => goToComplejoDetail(complejo.id)}>
+								<CardMedia className={classes.media} image={complejo.fotos[0]} title={complejo.nombre} />
+								<CardContent>
+									<Typography gutterBottom variant="h5" component="h2">
+										{complejo.nombre}
+									</Typography>
+									<Rating defaultValue={3} size="large" precision={1} readOnly />
+								</CardContent>
+							</CardActionArea>
+						</Card>
+					</ListItem>
+				))
+			)}
 		</List>
 	);
 };
