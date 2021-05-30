@@ -1,60 +1,119 @@
-import React from 'react'
-import { GridList, GridListTile, GridListTileBar, IconButton } from '@material-ui/core'
+import React, { useState, useEffect } from 'react';
+import {
+	List,
+	ListItem,
+	CardActionArea,
+	Card,
+	CardMedia,
+	CardContent,
+	Typography,
+	InputLabel,
+	Select,
+	MenuItem,
+	FormControl,
+	Grid,
+} from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
-import { useHistory } from 'react-router-dom'
+import { useHistory } from 'react-router-dom';
+import { Rating, Alert, AlertTitle } from '@material-ui/lab';
 
-const useStyles = makeStyles((theme) => ({
-    root: {
-        display: 'flex',
-        flexWrap: 'wrap',
-        justifyContent: 'space-around',
-        overflow: 'hidden',
-        backgroundColor: theme.palette.background.paper,
-    },
-    gridList: {
-        width: "100%",
-        height: "100%",
-        // Promote the list into his own layer on Chrome. This cost memory but helps keeping high FPS.
-        transform: 'translateZ(0)',
-    },
-    title: {
-        color: theme.palette.primary.light,
-    },
-    titleBar: {
-        background:
-            'linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.7) 70%, rgba(0,0,0,0) 100%)',
-    },
-}));
+import { tipoEspacio } from 'constants/espacios/tipoEspacio';
+
+const useStyles = makeStyles({
+	root: {
+		width: '100%',
+		height: '100%',
+	},
+	media: {
+		height: 140,
+	},
+	list: {
+		width: '100%',
+		height: '45%',
+		paddingBottom: '10%',
+	},
+	rating: {
+		display: 'flex',
+		alignSelf: 'flex-end',
+	},
+	formControl: {
+		minWidth: '100%',
+	},
+	AlertStyle: {
+		marginLeft: '5%',
+		marginRight: '5%',
+	},
+});
 
 export const ComplejosList = ({ complejos }) => {
-    const classes = useStyles();
-    const history = useHistory();
+	const classes = useStyles();
+	const history = useHistory();
+	const [tipoEspacioSelected, setTipoEspacioSelected] = useState('Todos');
+	const [complejosList, setComplejosList] = useState([]);
 
-    function goToComplejoDetail(idComplejo) {
-        history.push(`/complejos/${idComplejo}`)
-    }
+	function goToComplejoDetail(idComplejo) {
+		history.push(`/complejos/${idComplejo}`);
+	}
 
-    return (
-        <GridList className={classes.gridList} cellHeight={200} cols={1}>
-            {complejos.map((complejo) => (
-                <GridListTile key={complejo.id} >
-                    <img src={complejo.fotos[0]} alt={complejos.nombre} />
-                    <GridListTileBar
-                        title={complejo.nombre}
-                        classes={{
-                            root: classes.titleBar,
-                            title: classes.title,
-                        }}
-                        actionIcon={
-                            <IconButton aria-label={`view ${complejo.nombre}`} onClick={() => goToComplejoDetail(complejo.id)}>
-                                <ArrowForwardIcon className={classes.title} />
-                            </IconButton>
-                        }
-                    />
-                </GridListTile>
-            ))}
-        </GridList>
+	useEffect(() => {
+		if (tipoEspacioSelected === 'Todos') {
+			setComplejosList(complejos);
+		} else {
+			const filtro = complejos.filter((com) =>
+				com.espaciosMetaData.some((esp) => esp.tipoEspacio === tipoEspacioSelected)
+			);
+			setComplejosList(filtro);
+		}
+	}, [tipoEspacioSelected]);
 
-    );
-}
+	return (
+		<List className={classes.list}>
+			<ListItem>
+				<FormControl className={classes.formControl}>
+					<InputLabel id="tipoEspacio">Tipo de espacio</InputLabel>
+					<Select
+						variant="outlined"
+						labelId="tipoEspacio"
+						id="tipoEspacioSelect"
+						value={tipoEspacioSelected}
+						onChange={(e) => setTipoEspacioSelected(e.target.value)}
+					>
+						<MenuItem value={'Todos'}>Todos</MenuItem>
+						{tipoEspacio.map((te) => (
+							<MenuItem value={te.value}>{te.key}</MenuItem>
+						))}
+					</Select>
+				</FormControl>
+			</ListItem>
+			{complejos.length === 0 ? (
+				<Grid container justify="center">
+					<Alert className={classes.AlertStyle} severity="warning">
+						<AlertTitle>No existen complejos en esta ubicación</AlertTitle>
+					</Alert>
+				</Grid>
+			) : complejosList.length === 0 ? (
+				<Grid container justify="center">
+					<Alert className={classes.AlertStyle} severity="warning">
+						<AlertTitle>No existen complejos con este tipo de espacio en esta ubicación</AlertTitle>
+					</Alert>
+				</Grid>
+			) : (
+				complejosList.map((complejo) => (
+					<ListItem key={complejo.id}>
+						<Card className={classes.root} elevation={4}>
+							<CardActionArea style={{ height: '100%' }} onClick={() => goToComplejoDetail(complejo.id)}>
+								<CardMedia className={classes.media} image={complejo.fotos[0]} title={complejo.nombre} />
+								<CardContent>
+									<Typography gutterBottom variant="h5" component="h2">
+										{complejo.nombre}
+									</Typography>
+									<Rating defaultValue={3} size="large" precision={1} readOnly />
+								</CardContent>
+							</CardActionArea>
+						</Card>
+					</ListItem>
+				))
+			)}
+		</List>
+	);
+};
