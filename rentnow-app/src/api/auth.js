@@ -32,6 +32,15 @@ export async function signUpWithEmailApi(user) {
 
 		return { status: 'OK', message: 'Usuario creado correctamente' };
 	} catch (error) {
-		return { status: 'ERROR', message: 'Error al crear el usuario', error: error };
+		if (error.code === 'auth/email-already-in-use') {
+			return {
+				status: 'ERROR',
+				message:
+					'El email ingresado ya existe registrado, intente con otro o pruebe recuperando contraseña.',
+				error: error,
+			};
+		} else {
+			return { status: 'ERROR', message: 'Error al registrar usuario', error: error };
+		}
 	}
 }

@@ -87,12 +87,12 @@ export default function RegisterUser(props) {
 					if (resp.status === 'ERROR') {
 						setIsLoading(false);
 						setAlertProps({
-							text: 'Error al registrar usuaro!',
+							text: resp.message,
 							type: 'error',
 						});
 						setAlertShow(true);
 					} else {
-						window.location.replace('/complejos')
+						window.location.replace('/complejos');
 					}
 				})
 				.catch(() => {
