@@ -93,6 +93,7 @@ const Login = () => {
 				text: response.message,
 			});
 			setShowAlert(true);
+			history.push("/complejos");
 		} else {
 			setAlertProps({
 				type: 'error',
