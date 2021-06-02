@@ -1,15 +1,29 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
+
+// Material UI
 import {
     Grid, Typography, Divider,
     makeStyles, Card, CardContent, CardMedia, Tooltip,
     Chip, Stepper, Step, StepLabel, CircularProgress, CardHeader
 } from "@material-ui/core";
-import Image from 'assets/hola.jpg'
-import DialogCustom from "components/utils/DialogCustom/DialogCustom"
+import Alert from '@material-ui/lab/Alert';
+
+// Moment
 import moment from "moment"
+
+// APIS
 import { getReservas } from 'api/reservas';
+import { getComplejoNameImagesAndUbicacion } from 'api/complejos';
+
+// Constantes
 import { colorsByEstado } from 'constants/reservas/constants'
+
+// Componentes Genericos
+import DialogCustom from "components/utils/DialogCustom/DialogCustom"
 import LinkCustom from 'utils/LinkCustom/Link'
+
+// Auth
+import { AuthContext } from 'Auth/Auth'
 
 const useStyles = makeStyles((theme) => ({
     titulo: {
@@ -92,8 +106,11 @@ function ReservaDetail({ open, reserva, onClose }) {
 const ReservasList = () => {
     const classes = useStyles();
 
-    const [reservas, setReservas] = useState(null)
+    const { currentUser } = useContext(AuthContext);
+
+    const [reservas, setReservas] = useState([])
     const [isLoading, setIsLoading] = useState(true)
+    const [reservasShow, setReservasShow] = useState(false)
     const [open, setOpen] = useState(false)
     const [reservaDetail, setReservaDetail] = useState(null)
 
@@ -106,17 +123,23 @@ const ReservasList = () => {
     }
 
     useEffect(() => {
-        getReservas('rX8YpYUtACnd7CzDMtHX').then((response) => {
-            if (response.status === "OK") {
-                setIsLoading(false);
-                if (response.data.length > 0) {
-                    setReservas(response.data);
+        if (reservas.length === 0) {
+            async function obtenerReservas(id) {
+                const result = await getReservas(id)
+                if (result.status === "OK") {
+                    setReservas(result.data)
+                    setIsLoading(false)
+                } else {
+                    console.log(result.message)
+                    setIsLoading(false)
+                    alert(result.message)
+                    return;
                 }
-            } else {
-                setIsLoading(false);
             }
-        });
-    }, [])
+            obtenerReservas(currentUser.uid)
+        }
+    }, [currentUser, reservas])
+
 
     return (
         <>
@@ -153,13 +176,13 @@ const ReservasList = () => {
                             alignItems="center"
                             className={classes.container}
                         >
-                            {reservas ? (
+                            {reservas.length > 0 ? (
                                 reservas.map((reserva, index) => (
                                     <Grid key={index} item xs={12} md={3}>
                                         <Card className={classes.card}>
                                             <CardHeader
-                                                title={`${reserva.diaString} 
-                                                ${moment(reserva.fechaInicio.toDate()).format("D MMMM YYYY")} 
+                                                title={` 
+                                                ${moment(reserva.fechaInicio.toDate()).format("DD/MM/YYYY")} 
                                                 ${moment(reserva.fechaInicio.toDate()).format("HH:mm")} - 
                                                 ${moment(reserva.fechaFin.toDate()).format("HH:mm")}`}
                                                 titleTypographyProps={{ align: 'center' }}
@@ -167,7 +190,7 @@ const ReservasList = () => {
                                             />
                                             <CardMedia
                                                 className={classes.cardMedia}
-                                                image={Image}
+                                                image={reserva.espacio.foto[0]}
                                                 title="Image title"
                                             />
                                             <CardContent className={classes.cardContent} >
@@ -178,10 +201,10 @@ const ReservasList = () => {
                                                     Tipo de Espacio: <b>{reserva.espacio.tipoEspacio}</b>
                                                 </Typography>
                                                 <Typography>
-                                                    Complejo: <b><LinkCustom to={`/complejos/${reserva.complejo.id}`}>Complejo Cerca de Mi Casa</LinkCustom></b>
+                                                    Complejo: <b><LinkCustom to={`/complejos/${reserva.complejo.id}`}>{reserva.nombre}</LinkCustom></b>
                                                 </Typography>
                                                 <Typography >
-                                                    Dirección: <b>Lagunilla, 2321 Cordoba, Cordoba</b>
+                                                    Dirección: <b>{reserva.complejo.ubicacion}</b>
                                                 </Typography>
                                                 <Typography>
                                                     Precio: <b>$ {reserva.monto}</b>
@@ -208,7 +231,7 @@ const ReservasList = () => {
                                     </Grid>
                                 ))
                             ) : (
-                                null
+                                <Alert severity="warning">¡No existen reservas realizadas por ti!</Alert>
                             )
                             }
                         </Grid>
