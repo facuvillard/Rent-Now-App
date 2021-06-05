@@ -100,3 +100,27 @@ export async function getComplejosById(id) {
       };
     }
   }
+
+  export async function getComplejoNameImagesAndUbicacion(id) {
+    try {
+      const result = await firebase
+        .firestore()
+        .collection("complejos")
+        .doc(id)
+        .get()
+
+      const complejo = result.data() ;
+      return {
+        status: "OK",
+        message: "Se consulto las imagenes del complejo con exito",
+        data: { fotos: complejo.fotos, nombre: complejo.nombre, ubicacion: complejo.ubicacion },
+      };
+    } catch (err) {
+      console.log(err);
+      return {
+        status: "ERROR",
+        message: "Se produjo un error al consultar las imagenes del complejo",
+        error: err,
+      };
+    }
+  }

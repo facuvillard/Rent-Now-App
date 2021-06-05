@@ -71,10 +71,13 @@ const ConfirmReserva = (props) => {
                 espacio: {
                     id: reserva.espacio.id,
                     descripcion: reserva.espacio.nombre,
-                    tipoEspacio: reserva.espacio.tipoEspacio
+                    tipoEspacio: reserva.espacio.tipoEspacio,
+                    foto: reserva.espacio.foto[0] ? reserva.espacio.foto[0] : ""
                 },
                 complejo: {
-                    id: reserva.idComplejo
+                    id: reserva.idComplejo,
+                    foto: reserva.complejo.fotos[0],
+                    ubicacion: `${reserva.complejo.ubicacion.calle} ${reserva.complejo.ubicacion.numero}, Barrio: ${reserva.complejo.ubicacion.barrio}, ${reserva.complejo.ubicacion.ciudad}`
                 },
                 estaPagado: false,
                 estados: [],
@@ -85,7 +88,7 @@ const ConfirmReserva = (props) => {
                 fechaFin: (moment(reserva.fecha, 'DD/MM/YYYY').set({ 'hours': horarioFin[0], 'minutes': horarioFin[1] })).toString(),
             }
         )
-    }, [])
+    }, [currentUser, reserva])
 
     const handleCreateReserva = () => {
         async function createReservaFunction(reserva) {
