@@ -105,13 +105,9 @@ const DetalleComplejo = () => {
     const [espacios, setEspacios] = useState({})
     const [value, setValue] = React.useState(0);
 
-    const [open, setOpen] = useState(false)
-
     const [isLoading, setIsLoading] = useState(true);
 
     const { idComplejo } = useParams();
-
-    const handleClick = () => { setOpen(true) }
 
     function a11yProps(index) {
         return {
@@ -176,7 +172,7 @@ const DetalleComplejo = () => {
                                         </Typography>
                                     }
                                     subtitle={
-                                        <Link href="#" onClick={handleClick} color="inherit">
+                                        <Link href={`https://maps.google.com/?ll=${complejo.ubicacion.latlng.latitude},${complejo.ubicacion.latlng.longitude}`} target='_blank' color="inherit">
                                             <Typography variant="subtitle1">
                                                 {complejo.ubicacion.calle}, {complejo.ubicacion.numero} {complejo.ubicacion.ciudad} {complejo.ubicacion.provincia}
                                             </Typography>
@@ -231,7 +227,7 @@ const DetalleComplejo = () => {
                                             Horarios
                                         </Typography>
                                         <Typography color="textSecondary" className={classes.tituloSeccion}>
-                                            Aquí encontraras todos los horarios de atención del complejo
+                                            Aquí encontrarás todos los horarios de atención del complejo
                                     </Typography>
                                         <Horarios horarios={complejo.horarios} />
                                     </Grid>
@@ -243,7 +239,7 @@ const DetalleComplejo = () => {
                                             Redes
                                 </Typography>
                                         <Typography color="textSecondary" className={classes.tituloSeccion}>
-                                            Aquí encontraras las redes sociales que tenga el complejo.
+                                            Aquí encontrarás las redes sociales que tenga el complejo.
                                     </Typography>
                                         <Redes redes={complejo.redes} />
                                     </Grid>
@@ -260,7 +256,7 @@ const DetalleComplejo = () => {
                                         Valoraciones
                         </Typography>
                                     <Typography color="textSecondary" className={classes.tituloSeccion}>
-                                        Aquí encontraras todas las valoraciones y opiniones realizadas por los usuarios sobre el complejo y sus espacios
+                                        Aquí encontrarás todas las valoraciones y opiniones realizadas por los usuarios sobre el complejo y sus espacios
                         </Typography>
                                     <Valoraciones />
                                 </Grid>

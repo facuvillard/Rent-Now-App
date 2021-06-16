@@ -26,10 +26,12 @@ const useStyles = makeStyles((theme) => ({
     },
     horariosMobile: {
         width: '80%',
+        marginTop: theme.spacing(2),
         marginBottom: theme.spacing(4),
     },
     horariosWeb: {
         width: '40%',
+        marginTop: theme.spacing(2),
         marginBottom: theme.spacing(4),
     },
 }));
@@ -92,7 +94,7 @@ const Horarios = (props) => {
                             alignItems="center"
                         >
                             <Typography color="textSecondary" className={classes.tituloSeccion}>
-                                Miercoles
+                                Miércoles
                         </Typography>
                             {props.horarios.Miercoles.abre ? (
                                 <Typography color="textSecondary" className={classes.tituloSeccion}>

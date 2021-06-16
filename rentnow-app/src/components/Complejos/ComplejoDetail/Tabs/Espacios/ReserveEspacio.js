@@ -88,6 +88,9 @@ const useStyles = makeStyles((theme) => ({
     tituloSeccion: {
         marginBottom: theme.spacing(2)
     },
+    loading:{
+        marginTop: theme.spacing(4)
+    }
 }))
 
 function EspacioCard({ espacio, idComplejo, fecha, horarioInicio, horarioFin, complejo, duracion }) {
@@ -275,13 +278,13 @@ const ReserveEspacio = (props) => {
             const result = await getHorariosAndEspacios(moment(fecha).format('DD/MM/YYYY'), tipoEspacio, idComplejo, duracion, complejo)
             if (result.status === "OK") {
                 setHorariosAndEspacios(result.data)
-                if(result.data.horarios.length === 0){
+                if (result.data.horarios.length === 0) {
                     Swal.fire({
                         title: '¡Error!',
                         text: 'No existen horarios disponibles para los filtros ingresados',
                         icon: 'error',
                         confirmButtonText: 'Aceptar'
-                      })
+                    })
                 }
                 setIsLoadingHorariosAndEspacios(false)
             } else {
@@ -355,12 +358,9 @@ const ReserveEspacio = (props) => {
                         direction="row"
                         justify="center"
                         alignItems="center"
-                        spacing={5}
-
+                        className={classes.loading}
                     >
-                        <Grid item xs={2}>
-                            <CircularProgress />
-                        </Grid>
+                        <CircularProgress />
                     </Grid>
                 ) : (
                     <>
@@ -385,11 +385,9 @@ const ReserveEspacio = (props) => {
                         direction="row"
                         justify="center"
                         alignItems="center"
-                        spacing={5}
+                        className={classes.loading}
                     >
-                        <Grid item xs={2}>
-                            <CircularProgress />
-                        </Grid>
+                        <CircularProgress />
                     </Grid>
                 ) : (
                     <>
