@@ -10,7 +10,7 @@ import {
     CardMedia, CardContent, Tooltip,
     Chip, Typography, CardActions,
     Button, useTheme, useMediaQuery, Divider,
-    CircularProgress
+    CircularProgress, IconButton
 } from "@material-ui/core";
 import { makeStyles } from '@material-ui/core/styles';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -25,6 +25,8 @@ import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
 import TodayOutlinedIcon from '@material-ui/icons/TodayOutlined';
 import QueryBuilderOutlinedIcon from '@material-ui/icons/QueryBuilderOutlined';
 import SportsFootballOutlinedIcon from '@material-ui/icons/SportsFootballOutlined';
+import ArrowBackIcon from "@material-ui/icons/ArrowBack";
+import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
 
 // Componentes Genericos
 import LinkCustom from "components/utils/LinkCustom/LinkCustom";
@@ -320,11 +322,37 @@ const ReserveEspacio = (props) => {
     const theme = useTheme();
     const matches = useMediaQuery(theme.breakpoints.up('sm'));
 
+    function SamplePrevArrow(props) {
+        const { className, style, onClick } = props;
+        return (
+            <div className={className} style={{ ...style, display: "flex", marginLeft: '10px' }}>
+                <IconButton size='small' style={{ backgroundColor: "gray" }}>
+                    <ArrowBackIcon style={{ color: "white" }} onClick={onClick} />
+                </IconButton>
+            </div>
+        );
+    }
+
+    function SampleNextArrow(props) {
+        const { className, style, onClick } = props;
+        return (
+            <div className={className} style={{ ...style, display: "flex", marginRight: '10px' }}>
+                <IconButton size='small' style={{ backgroundColor: "gray" }}>
+                    <ArrowForwardIcon style={{ color: "white" }} onClick={onClick} />
+                </IconButton>
+            </div>
+        );
+    }
+
     const settings = {
-        arrowsBlock: false,
+        centerMode: true,
+        centerPadding: 70,
+        arrowsBlock: true,
         arrows: true,
-        dots: false,
         slidesPerRow: matches ? 5 : 3,
+        dots: true,
+        nextArrow: <SampleNextArrow />,
+        prevArrow: <SamplePrevArrow />
     };
 
     const handleShowEspacios = (horario) => {

@@ -4,14 +4,13 @@ import SwipeableViews from 'react-swipeable-views';
 
 //Material UI
 import { makeStyles } from '@material-ui/core/styles';
-import Rating from '@material-ui/lab/Rating';
 import {
     Grid, CircularProgress, useTheme,
     useMediaQuery, Fab, Typography,
     Link, Button, Container,
     Divider, GridList, GridListTile,
     GridListTileBar, Box, Tab, Tabs,
-    AppBar
+    AppBar, Chip
 } from "@material-ui/core";
 
 // APIS
@@ -20,6 +19,7 @@ import { getEspaciosByIdComplejo } from "api/espacios"
 
 //Iconos
 import ArrowBackIosRoundedIcon from '@material-ui/icons/ArrowBackIosRounded';
+import StarBorderIcon from '@material-ui/icons/StarBorder';
 
 // Componentes Genericos
 import LinkCustom from "components/utils/LinkCustom/LinkCustom";
@@ -73,6 +73,10 @@ const useStyles = makeStyles((theme) => ({
         top: theme.spacing(2),
         left: theme.spacing(2),
     },
+    chip: {
+        marginTop: theme.spacing(1),
+        marginLeft: theme.spacing(2),
+    }
 }));
 
 
@@ -166,10 +170,24 @@ const DetalleComplejo = () => {
                                 </LinkCustom>
                                 <GridListTileBar
                                     title={
-                                        <Typography component="h5" variant="h5">
-                                            {complejo.nombre}
-                                            <Rating name="read-only" value={complejo.valoracionPromedio} readOnly precision={0.5} size="small" />
-                                        </Typography>
+                                        <Grid
+                                            container
+                                            direction="row"
+                                            justify="flex-start"
+                                            alignItems="flex-start"
+                                        >
+                                            <Typography component="h5" variant="h5">
+                                                {complejo.nombre}
+                                            </Typography>
+                                            <Chip
+                                                icon={<StarBorderIcon />}
+                                                label={complejo.valoracion}
+                                                color="primary"
+                                                size='small'
+                                                className={classes.chip}
+                                            />
+
+                                        </Grid>
                                     }
                                     subtitle={
                                         <Link href={`https://maps.google.com/?ll=${complejo.ubicacion.latlng.latitude},${complejo.ubicacion.latlng.longitude}`} target='_blank' color="inherit">
@@ -214,7 +232,7 @@ const DetalleComplejo = () => {
                             <TabPanel value={value} index={0} dir={theme.direction}>
                                 <Typography className={classes.tituloSeccion} variant="h4" gutterBottom>
                                     Ubicación
-                            </Typography>
+                                </Typography>
                                 <Ubicacion ubicacion={complejo.ubicacion} />
                                 <Divider className={classes.divider} />
                                 <Grid container
@@ -228,7 +246,7 @@ const DetalleComplejo = () => {
                                         </Typography>
                                         <Typography color="textSecondary" className={classes.tituloSeccion}>
                                             Aquí encontrarás todos los horarios de atención del complejo
-                                    </Typography>
+                                        </Typography>
                                         <Horarios horarios={complejo.horarios} />
                                     </Grid>
                                     <Grid item xs={12} md={1} className={matches ? classes.verticalDivider : classes.divider}>
@@ -237,27 +255,27 @@ const DetalleComplejo = () => {
                                     <Grid item xs={12} md={5} >
                                         <Typography className={classes.tituloSeccion} variant="h4" gutterBottom>
                                             Redes
-                                </Typography>
+                                        </Typography>
                                         <Typography color="textSecondary" className={classes.tituloSeccion}>
                                             Aquí encontrarás las redes sociales que tenga el complejo.
-                                    </Typography>
+                                        </Typography>
                                         <Redes redes={complejo.redes} />
                                     </Grid>
                                 </Grid>
                             </TabPanel>
                             <TabPanel value={value} index={1} dir={theme.direction}>
                                 <Container className={classes.cardGrid} maxWidth="md">
-                                    <ReserveEspacio espacios={espacios} idComplejo={idComplejo} complejo={complejo}/>
+                                    <ReserveEspacio espacios={espacios} idComplejo={idComplejo} complejo={complejo} />
                                 </Container>
                             </TabPanel>
                             <TabPanel value={value} index={2} dir={theme.direction}>
                                 <Grid item xs={12} md={12}>
                                     <Typography className={classes.tituloSeccion} variant="h4" gutterBottom>
                                         Valoraciones
-                        </Typography>
+                                    </Typography>
                                     <Typography color="textSecondary" className={classes.tituloSeccion}>
                                         Aquí encontrarás todas las valoraciones y opiniones realizadas por los usuarios sobre el complejo y sus espacios
-                        </Typography>
+                                    </Typography>
                                     <Valoraciones />
                                 </Grid>
                             </TabPanel>
