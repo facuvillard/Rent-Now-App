@@ -22,6 +22,9 @@ const useStyles = makeStyles((theme) => ({
     cardContent: {
         flexGrow: 1,
     },
+    alert: {
+        marginTop: theme.spacing(4)
+    }
 }))
 
 const Redes = (props) => {
@@ -72,7 +75,7 @@ const Redes = (props) => {
                         </Grid>
                     </>
                 ) : (
-                    <Grid container direction="column" alignItems="center">
+                    <Grid container direction="column" alignItems="center" className={classes.alert}>
                         <Alert severity="info">
                             <AlertTitle>INFO</AlertTitle>
                             ¡El complejo no tiene Redes Sociales cargadas!

@@ -1,12 +1,26 @@
 import React, { useState, useEffect } from 'react';
+
+// API
 import { getComplejosById } from "api/complejos";
-import { Grid, CircularProgress, Typography, Container} from "@material-ui/core";
-import Slider from 'infinite-react-carousel';
+
+// Material UI
+import { Grid, CircularProgress, Typography, Container, 
+    Divider, IconButton, Card, CardActionArea, CardMedia,
+    Fab
+ } from "@material-ui/core";
 import { makeStyles } from '@material-ui/core/styles';
-import Card from '@material-ui/core/Card';
-import CardActionArea from '@material-ui/core/CardActionArea';
-import CardMedia from '@material-ui/core/CardMedia';
+
+// Slider
+import Slider from 'infinite-react-carousel';
+
+// Router
 import { useParams } from 'react-router';
+import { useHistory } from "react-router-dom";
+
+// Iconos
+import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
+import ArrowBackIcon from "@material-ui/icons/ArrowBack";
+import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
 
 
 
@@ -15,20 +29,32 @@ const useStyles = makeStyles((theme) => ({
         height: 350,
     },
     section: {
-    top: '50%',
+        top: '50%',
     },
     tituloSeccion: {
         textAlign: 'center'
     },
+    returnButton: {
+        position: 'absolute',
+        top: theme.spacing(11),
+        left: theme.spacing(2),
+        zIndex: 2,
+        boxShadow: "5px 5px 5px 1px rgba(0, 0, 0, 0.2)"
+    },
+    divider: {
+        marginTop: theme.spacing(2),
+        marginBottom: theme.spacing(2),
+    },
 }))
 
 const VerFotos = () => {
+    const history = useHistory();
 
     const classes = useStyles();
     const [complejo, setComplejo] = useState({});
     const [isLoading, setIsLoading] = useState(true);
 
-    const {idComplejo} = useParams();
+    const { idComplejo } = useParams();
 
     useEffect(() => {
         getComplejosById(idComplejo).then((response) => {
@@ -42,12 +68,39 @@ const VerFotos = () => {
 
     }, [idComplejo]);
 
-    console.log(complejo)
+    const handleRouteComplejo = () => {
+        history.push(`/complejos/${idComplejo}`);
+    }
+
+    function SamplePrevArrow(props) {
+        const { className, style, onClick } = props;
+        return (
+            <div className={className} style={{ ...style, display: "flex", marginLeft: '10px' }}>
+                <IconButton style={{ backgroundColor: "gray" }}>
+                    <ArrowBackIcon style={{ color: "white" }} onClick={onClick} />
+                </IconButton>
+            </div>
+        );
+    }
+
+    function SampleNextArrow(props) {
+        const { className, style, onClick } = props;
+        return (
+            <div className={className} style={{ ...style, display: "flex", marginRight: '10px' }}>
+                <IconButton style={{ backgroundColor: "gray" }}>
+                    <ArrowForwardIcon style={{ color: "white" }} onClick={onClick} />
+                </IconButton>
+            </div>
+        );
+    }
 
     const settings = {
-        arrowsBlock: false,
-        arrows: false,
-        dots: true
+        arrowsBlock: true,
+        arrows: true,
+        dots: true,
+        autoplay: true,
+        nextArrow: <SampleNextArrow />,
+        prevArrow: <SamplePrevArrow />
     };
 
     return (
@@ -66,9 +119,10 @@ const VerFotos = () => {
             ) : (
                 <div className={classes.section}>
                     <Grid item xs={12} md={12}>
-                        <Typography className={classes.tituloSeccion} variant="h5" gutterBottom>
-                        Fotos del Complejo {complejo.nombre}
-                </Typography>
+                        <Typography className={classes.tituloSeccion} variant="h4" gutterBottom>
+                            Fotos del Complejo {complejo.nombre}
+                        </Typography>
+                        <Divider className={classes.divider} />
                     </Grid>
 
                     <Container maxWidth="xl">
@@ -76,7 +130,6 @@ const VerFotos = () => {
                         <Slider {...settings}>
                             {complejo.fotos.map((foto) => (
                                 <Grid item key={foto} xs={12}>
-                                    {/* <img src={foto} alt={foto} /> */}
                                     <Card >
                                         <CardActionArea>
                                             <CardMedia
@@ -94,6 +147,14 @@ const VerFotos = () => {
                     </Container>
                 </ div>
             )}
+            <Fab
+                aria-label='returnButton'
+                className={classes.returnButton}
+                color='secondary'
+                onClick={handleRouteComplejo}
+            >
+                <ChevronLeftIcon />
+            </Fab>
         </>
     )
 }
