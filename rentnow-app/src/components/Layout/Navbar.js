@@ -12,6 +12,8 @@ import {
 	ClickAwayListener,
 	Popper,
 	Typography,
+	Grid,
+	Divider
 } from '@material-ui/core';
 import useScrollTrigger from '@material-ui/core/useScrollTrigger';
 import rentnowLogo from 'assets/Landing/rentnow-logo-landing.png';
@@ -20,6 +22,9 @@ import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import { AuthContext } from '../../Auth/Auth';
 import { signOut } from 'api/auth';
 import { useHistory } from 'react-router-dom';
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import EventIcon from '@material-ui/icons/Event';
+import * as Routes from 'constants/routes'
 
 const useStyles = makeStyles((theme) => ({
 	title: {
@@ -61,10 +66,37 @@ const useStyles = makeStyles((theme) => ({
 		marginTop: '15px',
 		[theme.breakpoints.up('md')]: { display: 'none' },
 	},
-	logo: {
+	logoWeb: {
 		maxWidth: 250,
 		marginTop: 5,
+		[theme.breakpoints.down('sm')]: { display: 'none' },
+
 	},
+	logoMobile: {
+		maxWidth: 200,
+		marginTop: 5,
+		[theme.breakpoints.up('md')]: { display: 'none' },
+	},
+	avatar: {
+		color: '#FAFAFA'
+	},
+	container: {
+		paddingLeft: theme.spacing(2),
+		paddingRight: theme.spacing(2),
+		paddingTop: theme.spacing(2),
+		paddingBottom: theme.spacing(2),
+	},
+	divider: {
+		width: 'inherit',
+		backgroundColor: '#FEFEFE',
+	},
+	reservasButton: {
+		fontSize: 13,
+		color: '#FAFAFA',
+		marginLeft: theme.spacing(0.5),
+		marginRight: theme.spacing(0.5),
+		borderColor: '#FAFAFA'
+	}
 }));
 
 function ElevationScroll(props) {
@@ -81,35 +113,76 @@ function ElevationScroll(props) {
 
 const RightMenu = (props) => {
 	const classes = useStyles();
+
 	return (
 		<Popper anchorEl={props.referencia} open={props.open}>
 			<Paper className={classes.paper}>
-				<ClickAwayListener onClick={props.handleRightMenuOpen}>
-					<MenuList>
-						{props.currentUser === null ? (
-							<>
-								<MenuItem>
-									<LinkRouter to="/login" className={classes.link}>
-										<Button color="primary" className={classes.rightLink}>
-											<b>Iniciar Sesión</b>
-										</Button>
-									</LinkRouter>
-								</MenuItem>
-								<MenuItem>
-									<Button className={classes.rightLink} color="primary" href="#Contacto">
-										<b>Registrate</b>
-									</Button>
-								</MenuItem>
-							</>
-						) : (
+				<MenuList>
+					{props.currentUser === null ? (
+						<>
 							<MenuItem>
-								<Button onClick={props.handleLogOut} color="primary" className={classes.rightLink}>
-									<b>Cerrar Sesion</b>
+								<LinkRouter to="/login" className={classes.link}>
+									<Button color="primary" className={classes.rightLink}>
+										<b>Iniciar Sesión</b>
+									</Button>
+								</LinkRouter>
+							</MenuItem>
+							<MenuItem>
+								<Button className={classes.rightLink} color="primary" href="#Contacto">
+									<b>Registrate</b>
 								</Button>
 							</MenuItem>
-						)}
-					</MenuList>
-				</ClickAwayListener>
+						</>
+					) : (
+						<div>
+							<Grid
+								container
+								direction="column"
+								justify="center"
+								alignItems="center"
+								className={classes.container}
+							>
+								<AccountCircleIcon className={classes.avatar} fontSize="large" />
+								<Typography className={classes.avatar} align='center' variant='subtitle1'>
+									{props.currentUser.displayName ? props.currentUser.displayName : ""}
+								</Typography>
+								<Typography className={classes.avatar} variant='subtitle2' align='center'>
+									{props.currentUser.email ? props.currentUser.email : ""}
+								</Typography>
+							</Grid>
+							<Divider className={classes.divider} variant='fullWidth' />
+							<Grid
+								container
+								direction="column"
+								justify="center"
+								alignItems="center"
+								className={classes.container}
+							>
+								<Button
+									fullWidth
+									onClick={props.handleRouteMisReservas}
+									variant='outlined'
+									className={classes.reservasButton}
+									startIcon={<EventIcon />}
+								>
+									Mis Reservas
+								</Button>
+							</Grid>
+							<Divider className={classes.divider} variant='fullWidth' />
+							<Grid
+								container
+								direction="column"
+								justify="center"
+								alignItems="center"
+								className={classes.container}
+							>
+								<Button onClick={props.handleLogOut} color="primary" className={classes.rightLink} startIcon={<ExitToAppIcon />}>
+									<b>Cerrar Sesión</b>
+								</Button>
+							</Grid>
+						</div>
+					)}
+				</MenuList>
 			</Paper>
 		</Popper>
 	);
@@ -120,18 +193,29 @@ const Navbar = (props) => {
 	const [rightMenuOpen, setRightMenuOpen] = useState(false);
 	const anchorRef = React.useRef(null);
 	const { currentUser } = useContext(AuthContext);
+	console.log(currentUser)
 
 	const history = useHistory();
+
+	const handleRouteMisReservas = () => {
+		history.push(Routes.CONSULTAR_RESERVAS);
+		setRightMenuOpen(false)
+	}
 
 	const handleRightMenuOpen = () => {
 		setRightMenuOpen(!rightMenuOpen);
 	};
 
+	const handleRightMenuClose = () => {
+		setRightMenuOpen(false);
+		console.log('hola')
+	}
+
 	const handleLogOut = () => {
 		signOut()
 			.then((resp) => {
 				if (resp.status === 'OK') {
-					history.push('/login');
+					history.push(Routes.LOGIN);
 				}
 			})
 			.catch(() => {
@@ -146,8 +230,10 @@ const Navbar = (props) => {
 					<div />
 					<Link variant="h5" underline="none" className={classes.title} href="">
 						<Typography align="center" className={classes.title}>
-							<img src={rentnowLogo} alt="logo" className={classes.logo} />
+							<img src={rentnowLogo} alt="logo" className={classes.logoWeb} />
+							<img src={rentnowLogo} alt="logo" className={classes.logoMobile} />
 						</Typography>
+
 					</Link>
 					{currentUser === null ? (
 						<div className={classes.rightLinks}>
@@ -167,16 +253,23 @@ const Navbar = (props) => {
 							</Button>
 						</div>
 					)}
-					<div className={classes.rightMenu}>
-						<IconButton ref={anchorRef} color="primary" onClick={handleRightMenuOpen}>
-							<AccountCircleIcon />
-						</IconButton>
-						<RightMenu
-							referencia={anchorRef.current}
-							open={rightMenuOpen}
-							handleRightMenuOpen={handleRightMenuOpen}
-						/>
-					</div>
+					<ClickAwayListener onClickAway={handleRightMenuClose}>
+						<div className={classes.rightMenu}>
+							<IconButton ref={anchorRef} className={classes.avatar} onClick={handleRightMenuOpen}>
+								<AccountCircleIcon />
+							</IconButton>
+							<RightMenu
+								referencia={anchorRef.current}
+								open={rightMenuOpen}
+								handleRightMenuOpen={handleRightMenuOpen}
+								handleLogOut={handleLogOut}
+								currentUser={currentUser}
+								handleRouteMisReservas={handleRouteMisReservas}
+								setRightMenuOpen={setRightMenuOpen}
+								handleRightMenuClose={handleRightMenuClose}
+							/>
+						</div>
+					</ClickAwayListener>
 				</Toolbar>
 			</AppBar>
 		</ElevationScroll>
