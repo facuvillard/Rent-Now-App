@@ -59,12 +59,12 @@ const useStyles = makeStyles((theme) => ({
 		flex: 1,
 		display: 'flex',
 		justifyContent: 'flex-end',
-		[theme.breakpoints.up('md')]: { display: 'none' },
+		// [theme.breakpoints.up('md')]: { display: 'none' },
 	},
 	paper: {
 		backgroundColor: theme.palette.secondary.dark,
 		marginTop: '15px',
-		[theme.breakpoints.up('md')]: { display: 'none' },
+		// [theme.breakpoints.up('md')]: { display: 'none' },
 	},
 	logoWeb: {
 		maxWidth: 250,
@@ -247,12 +247,11 @@ const Navbar = (props) => {
 							</Button>
 						</div>
 					) : (
-						<div className={classes.rightLinks}>
-							<Button color="primary" className={classes.rightLink} onClick={handleLogOut}>
-								<b>Cerrar Sesión</b>
-							</Button>
-						</div>
-					)}
+						// <div className={classes.rightLinks}>
+						// 	<Button color="primary" className={classes.rightLink} onClick={handleLogOut}>
+						// 		<b>Cerrar Sesión</b>
+						// 	</Button>
+						// </div>
 					<ClickAwayListener onClickAway={handleRightMenuClose}>
 						<div className={classes.rightMenu}>
 							<IconButton ref={anchorRef} className={classes.avatar} onClick={handleRightMenuOpen}>
@@ -270,6 +269,7 @@ const Navbar = (props) => {
 							/>
 						</div>
 					</ClickAwayListener>
+					)}
 				</Toolbar>
 			</AppBar>
 		</ElevationScroll>
