@@ -125,16 +125,19 @@ const ReservasList = () => {
     useEffect(() => {
         if (reservas.length === 0) {
             async function obtenerReservas(id) {
-                const result = await getReservas(id)
-                if (result.status === "OK") {
-                    setReservas(result.data)
-                    setIsLoading(false)
-                } else {
-                    console.log(result.message)
-                    setIsLoading(false)
-                    alert(result.message)
-                    return;
-                }
+                await getReservas(id).then(
+                    (result) => {
+                        if (result.status === "OK") {
+                            setReservas(result.data)
+                            setIsLoading(false)
+                        } else {
+                            console.log(result.message)
+                            setIsLoading(false)
+                            alert(result.message)
+                            return;
+                        }
+                    }
+                )
             }
             obtenerReservas(currentUser.uid)
         }
@@ -153,7 +156,7 @@ const ReservasList = () => {
                 <Grid item xs={12}>
                     <Typography className={classes.titulo} variant="h5" gutterBottom>
                         Tus Reservas
-                </Typography>
+                    </Typography>
                     <Divider variant="middle" className={classes.divider} />
                 </Grid>
                 {isLoading ? (
