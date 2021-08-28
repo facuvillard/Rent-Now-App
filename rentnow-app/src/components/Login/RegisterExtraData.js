@@ -106,9 +106,9 @@ const RegisterExtraData = (props) => {
 					initialValues={{
 						nombre: '',
 						apellido: '',
-						telefono: '',
 						ciudad: '',
 						provincia: '',
+						celular: '',
 					}}
 					onSubmit={(values) => {
 						console.log('Extra data submitted: ', values, props.userData);
@@ -146,13 +146,14 @@ const RegisterExtraData = (props) => {
 								onChange={handleChange}
 							/>
 							<TextField
+								type="number"
 								variant="outlined"
 								margin="normal"
 								required
 								fullWidth
-								name="telefono"
-								label="Telefono"
-								id="telefono"
+								name="celular"
+								label="Celular"
+								id="celular"
 								autoComplete="phone"
 								onChange={handleChange}
 							/>
