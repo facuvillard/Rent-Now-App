@@ -60,7 +60,7 @@ export async function getEspaciosByIdComplejo(idComplejo) {
 
       return result.data;
     } catch (err){
-      console.log(err);
+      console.log("Error getTiposEspacioByIdComplejo", err);
       return {
         status: "ERROR",
         message: "Se produjo un error al consultar los tipos de espacios",

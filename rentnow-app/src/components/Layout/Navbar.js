@@ -20,6 +20,7 @@ import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import { AuthContext } from '../../Auth/Auth';
 import { signOut } from 'api/auth';
 import { useHistory } from 'react-router-dom';
+import Notifications from 'components/Layout/Notifications'
 
 const useStyles = makeStyles((theme) => ({
 	title: {
@@ -102,11 +103,14 @@ const RightMenu = (props) => {
 								</MenuItem>
 							</>
 						) : (
+							<>
+							
 							<MenuItem>
 								<Button onClick={props.handleLogOut} color="primary" className={classes.rightLink}>
-									<b>Cerrar Sesion</b>
+									<b>Cerrar Seeesion</b>
 								</Button>
 							</MenuItem>
+							</>
 						)}
 					</MenuList>
 				</ClickAwayListener>
@@ -162,12 +166,14 @@ const Navbar = (props) => {
 						</div>
 					) : (
 						<div className={classes.rightLinks}>
+							<Notifications />
 							<Button color="primary" className={classes.rightLink} onClick={handleLogOut}>
 								<b>Cerrar Sesión</b>
 							</Button>
 						</div>
 					)}
 					<div className={classes.rightMenu}>
+					<Notifications />
 						<IconButton ref={anchorRef} color="primary" onClick={handleRightMenuOpen}>
 							<AccountCircleIcon />
 						</IconButton>
