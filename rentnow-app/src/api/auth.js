@@ -55,3 +55,25 @@ export async function signOut() {
 	}
 }
 
+export async function getUserData(userId) {
+	try {
+		const result = await firebase
+        .firestore()
+        .collection("usuariosApp")
+        .doc(userId)
+        .get();
+
+		return {
+			status: "OK",
+			message: "Usuario consultado correctamente",
+			data: result.data()
+		}
+	} catch(error) {
+		return {
+			status: "ERROR",
+			message: "Usuario consultado ERROR",
+			data: ""
+		}
+	} 
+}
+
