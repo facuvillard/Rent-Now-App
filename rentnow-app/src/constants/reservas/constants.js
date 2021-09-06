@@ -1,4 +1,5 @@
 export const colorsByEstado = {
+    "CREADA": "#9500ae",
     "EN CURSO": "#5F8A2D",
     "CONFIRMADA": "#0197CA",
     "FINALIZADA": "#757575",

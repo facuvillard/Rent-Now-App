@@ -17,6 +17,7 @@ import { getComplejoNameImagesAndUbicacion } from 'api/complejos';
 
 // Constantes
 import { colorsByEstado } from 'constants/reservas/constants'
+import { tipoEspacio } from "constants/espacios/constants"
 
 // Componentes Genericos
 import DialogCustom from "components/utils/DialogCustom/DialogCustom"
@@ -193,7 +194,7 @@ const ReservasList = () => {
                                             />
                                             <CardMedia
                                                 className={classes.cardMedia}
-                                                image={reserva.espacio.foto[0]}
+                                                image={reserva.espacio.foto[0] ? reserva.espacio.foto[0] : tipoEspacio[reserva.espacio.tipoEspacio].urlImagen}
                                                 title="Image title"
                                             />
                                             <CardContent className={classes.cardContent} >
