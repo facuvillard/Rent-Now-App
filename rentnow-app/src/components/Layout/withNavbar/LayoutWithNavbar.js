@@ -24,11 +24,11 @@ const useStyles = makeStyles((theme) => ({
     color: "#fff",
   },
   returnButton: {
-    position: 'absolute',
+    position: 'fixed',
     top: theme.spacing(11),
     left: theme.spacing(2),
-    zIndex: 2,
-    boxShadow: "5px 5px 5px 1px rgba(0, 0, 0, 0.2)"
+    zIndex: 5,
+    boxShadow: "5px 5px 5px 1px rgba(0, 0, 0, 0.3)"
   },
 }));
 
