@@ -228,13 +228,12 @@ const Navbar = (props) => {
 			<AppBar position="fixed" className={classes.appbar}>
 				<Toolbar className={classes.toolbar}>
 					<div />
-					<Link variant="h5" underline="none" className={classes.title} href="">
+					<LinkRouter variant="h5" underline="none" className={classes.title} to={currentUser === null ? Routes.LANDING : Routes.COMPLEJOS}>
 						<Typography align="center" className={classes.title}>
 							<img src={rentnowLogo} alt="logo" className={classes.logoWeb} />
 							<img src={rentnowLogo} alt="logo" className={classes.logoMobile} />
 						</Typography>
-
-					</Link>
+					</LinkRouter>
 					{currentUser === null ? (
 						<div className={classes.rightLinks}>
 							<LinkRouter to="/login" className={classes.link}>
