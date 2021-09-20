@@ -207,7 +207,6 @@ const Navbar = (props) => {
 
 	const handleRightMenuClose = () => {
 		setRightMenuOpen(false);
-		console.log('hola')
 	}
 
 	const handleLogOut = () => {
