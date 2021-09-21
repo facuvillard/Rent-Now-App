@@ -90,7 +90,7 @@ const useStyles = makeStyles((theme) => ({
     tituloSeccion: {
         marginBottom: theme.spacing(2)
     },
-    loading:{
+    loading: {
         marginTop: theme.spacing(4)
     }
 }))
@@ -166,7 +166,7 @@ function EspacioCard({ espacio, idComplejo, fecha, horarioInicio, horarioFin, co
                             color="primary"
                         >
                             Reservar
-                                        </Button>
+                        </Button>
                     </LinkCustom>
                 </Grid>
             </CardActions>
@@ -349,7 +349,7 @@ const ReserveEspacio = (props) => {
         centerPadding: 70,
         arrowsBlock: true,
         arrows: true,
-        slidesPerRow: matches ? 5 : 3,
+        slidesPerRow: matches ? 5 : 2,
         dots: true,
         nextArrow: <SampleNextArrow />,
         prevArrow: <SamplePrevArrow />
@@ -424,7 +424,7 @@ const ReserveEspacio = (props) => {
                                 <Divider className={classes.divider} />
                                 <Typography variant='subtitle2' className={classes.tituloSeccion} gutterBottom>
                                     Seleccione un Horario:
-                            </Typography>
+                                </Typography>
                                 {horariosAndEspacios.horarios.length !== 0 ? (
                                     <Slider {...settings}>
                                         {horariosAndEspacios.horarios.map((horario, index) => (
@@ -470,7 +470,7 @@ const ReserveEspacio = (props) => {
                                 <Divider className={classes.divider} />
                                 <Typography variant='subtitle2' className={classes.tituloSeccion} gutterBottom>
                                     Seleccione un Espacio:
-                            </Typography>
+                                </Typography>
                             </Grid>
                             {espaciosToShow.map((espacio) => (
                                 <Grid item key={espacio.id} xs={12} sm={6} md={4}>

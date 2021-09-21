@@ -76,6 +76,9 @@ const useStyles = makeStyles((theme) => ({
     chip: {
         marginTop: theme.spacing(1),
         marginLeft: theme.spacing(2),
+    },
+    loading: {
+        marginTop: theme.spacing(4)
     }
 }));
 
@@ -155,7 +158,7 @@ const DetalleComplejo = () => {
                     direction="row"
                     justify="center"
                     alignItems="center"
-                    className={classes.circularProgress}>
+                    className={classes.loading}>
                     <Grid item>
                         <CircularProgress />
                     </Grid>
@@ -163,12 +166,13 @@ const DetalleComplejo = () => {
             ) : (
                 <>
                     <div className={classes.root}>
-                        <GridList cols={1} rows={1} cellHeight={300} className={classes.gridList}>
+                        <GridList cols={1} rows={1} cellHeight={400} className={classes.gridList}>
                             <GridListTile>
                                 <LinkCustom to={`/complejos/${idComplejo}/ver-fotos`}>
-                                    <img src={complejo.fotos[0]} alt={complejo.nombre} />
+                                    <img src={complejo.fotos[0]} alt={complejo.nombre} width='100%' height='100%' />
                                 </LinkCustom>
                                 <GridListTileBar
+                                    style={!matches ? { display: 'flex', height: '30%' } : { display: 'flex', height: '20%' }}
                                     title={
                                         <Grid
                                             container

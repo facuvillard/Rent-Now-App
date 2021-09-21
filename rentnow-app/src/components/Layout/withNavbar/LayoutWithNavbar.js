@@ -1,14 +1,17 @@
 import React from "react";
 import Navbar from "components/Layout/Navbar";
 import { makeStyles } from "@material-ui/core/styles";
-import { Container } from "@material-ui/core";
+import { useHistory } from "react-router-dom";
+import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
+import { Fab } from "@material-ui/core";
+import * as Routes from "constants/routes"
 
 const useStyles = makeStyles((theme) => ({
   toolbar: {
     display: "flex",
     alignItems: "center",
     justifyContent: "flex-end",
-    padding: theme.spacing(1, 1),
+    padding: theme.spacing(0),
     // necessary for content to be below app bar
     ...theme.mixins.toolbar,
   },
@@ -20,18 +23,43 @@ const useStyles = makeStyles((theme) => ({
     zIndex: theme.zIndex.drawer - 1,
     color: "#fff",
   },
+  returnButton: {
+    position: 'fixed',
+    top: theme.spacing(11),
+    left: theme.spacing(2),
+    zIndex: 5,
+    boxShadow: "5px 5px 5px 1px rgba(0, 0, 0, 0.3)"
+  },
 }));
 
 const LayoutWithNavbar = (props) => {
   const classes = useStyles();
+  const history = useHistory();
+
+  const handleRouteComplejo = () => {
+    history.goBack();
+  }
+
+  console.log(history.location.pathname)
+
   return (
     <div>
       <Navbar />
       <main className={classes.content}>
         <div className={classes.toolbar} />
-        {/* <Container maxWidth="xxl"> */}
-          {props.children}
-        {/* </Container> */}
+        {props.children}
+        {history.location.pathname !== Routes.COMPLEJOS ? (
+          <Fab
+            aria-label='returnButton'
+            className={classes.returnButton}
+            color='secondary'
+            onClick={handleRouteComplejo}
+          >
+            <ChevronLeftIcon />
+          </Fab>
+        ) : (
+          null
+        )}
       </main>
     </div>
   );

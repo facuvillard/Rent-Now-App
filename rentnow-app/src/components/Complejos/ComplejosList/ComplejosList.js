@@ -107,7 +107,7 @@ export const ComplejosList = ({ complejos }) => {
 									<Typography gutterBottom variant="h5" component="h2">
 										{complejo.nombre}
 									</Typography>
-									<Rating defaultValue={3} size="large" precision={1} readOnly />
+									<Rating defaultValue={complejo.valoracion} size="large" precision={0.5} readOnly />
 								</CardContent>
 							</CardActionArea>
 						</Card>
