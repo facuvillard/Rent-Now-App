@@ -76,6 +76,9 @@ const useStyles = makeStyles((theme) => ({
     chip: {
         marginTop: theme.spacing(1),
         marginLeft: theme.spacing(2),
+    },
+    loading: {
+        marginTop: theme.spacing(4)
     }
 }));
 
@@ -155,7 +158,7 @@ const DetalleComplejo = () => {
                     direction="row"
                     justify="center"
                     alignItems="center"
-                    className={classes.circularProgress}>
+                    className={classes.loading}>
                     <Grid item>
                         <CircularProgress />
                     </Grid>
