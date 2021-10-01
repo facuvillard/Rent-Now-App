@@ -1,13 +1,14 @@
-import ComplejoInfoWindow from '../ComplejoInfoWindow/ComplejoInfoWindow';
+import ComplejoInfoWindow from './ComplejoInfoWindow/ComplejoInfoWindow';
 import React, { useState, useEffect } from 'react'
 import { GoogleMap, LoadScript } from "@react-google-maps/api";
 import { GOOGLE_MAP_KEY } from "constants/apiKeys";
 import { Marker } from "@react-google-maps/api";
+import Image from 'assets/Landing/marker.png'
 
 
 const containerStyle = {
-	width: '100%',
-	height: '100vh',
+    width: '100%',
+    height: '100vh',
 };
 
 const ComplejosMap = ({ complejos, center, fetchComplejos }) => {
@@ -27,7 +28,7 @@ const ComplejosMap = ({ complejos, center, fetchComplejos }) => {
     useEffect(() => {
         fetchComplejos(mapCenter)
     }, [mapCenter])
-    
+
     const handleCenterChange = () => {
         if (!mapRef) {
             return
@@ -47,31 +48,32 @@ const ComplejosMap = ({ complejos, center, fetchComplejos }) => {
         }, 3000);
     }
 
-    return (
-        <LoadScript
-            googleMapsApiKey={GOOGLE_MAP_KEY}
+return (
+    <LoadScript
+        googleMapsApiKey={GOOGLE_MAP_KEY}
+    >
+        <GoogleMap
+            mapContainerStyle={containerStyle}
+            center={center}
+            zoom={15}
+            onCenterChanged={handleCenterChange}
+            onLoad={map => setMapRef(map)}
+
         >
-            <GoogleMap
-                mapContainerStyle={containerStyle}
-                center={center}
-                zoom={15}
-                onCenterChanged={handleCenterChange}
-                onLoad={map => setMapRef(map)}
-
-            >
-                {complejos ? complejos.map((complejo) => 
-                <Marker 
-                    key={complejo.ubicacion.latlng.latitude + complejo.ubicacion.latlng.long} 
-                    position={{ lat: complejo.ubicacion.latlng.latitude, lng: complejo.ubicacion.latlng.longitude }} 
-                    onClick={()=>{setSelectedComplejo(complejo)}}
-                    />) 
+            {complejos ? complejos.map((complejo) =>
+                <Marker
+                    key={complejo.ubicacion.latlng.latitude + complejo.ubicacion.latlng.long}
+                    position={{ lat: complejo.ubicacion.latlng.latitude, lng: complejo.ubicacion.latlng.longitude }}
+                    onClick={() => { setSelectedComplejo(complejo) }}
+                    icon={Image}
+                />)
                 : null}
-	              {selectedComplejo && (
-                    <ComplejoInfoWindow complejo={selectedComplejo} setComplejo={setSelectedComplejo} />
-				)}
+            {selectedComplejo && (
+                <ComplejoInfoWindow complejo={selectedComplejo} setComplejo={setSelectedComplejo} />
+            )}
 
-            </GoogleMap>
-        </LoadScript>
-    )
+        </GoogleMap>
+    </LoadScript>
+)
 }
 export default ComplejosMap;

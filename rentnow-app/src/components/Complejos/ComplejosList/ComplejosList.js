@@ -12,14 +12,17 @@ import {
 	MenuItem,
 	FormControl,
 	Grid,
+	Chip
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { useHistory } from 'react-router-dom';
-import { Rating, Alert, AlertTitle } from '@material-ui/lab';
+import { Alert, AlertTitle } from '@material-ui/lab';
 
 import { tipoEspacio } from 'constants/espacios/tipoEspacio';
+import StarBorderIcon from '@material-ui/icons/StarBorder';
+import NewReleasesIcon from '@material-ui/icons/NewReleases';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
 	root: {
 		width: '100%',
 		height: '100%',
@@ -43,7 +46,28 @@ const useStyles = makeStyles({
 		marginLeft: '5%',
 		marginRight: '5%',
 	},
-});
+	fab: {
+		position: 'fixed',
+		top: theme.spacing(2),
+		left: theme.spacing(2),
+	},
+	chipSuccess: {
+		backgroundColor: '#66bb6a',
+		color: '#FAFAFA',
+		margin: 'auto',
+		marginLeft: theme.spacing(2),
+	},
+	container:{
+		display: 'inline-flex'
+	},
+	chipValoracion: {
+        margin: 'auto',
+		marginLeft: theme.spacing(2),
+    },
+	chipCancha: {
+		marginRight: theme.spacing(0.5),
+	},
+}));
 
 export const ComplejosList = ({ complejos }) => {
 	const classes = useStyles();
@@ -104,10 +128,35 @@ export const ComplejosList = ({ complejos }) => {
 							<CardActionArea style={{ height: '100%' }} onClick={() => goToComplejoDetail(complejo.id)}>
 								<CardMedia className={classes.media} image={complejo.fotos[0]} title={complejo.nombre} />
 								<CardContent>
-									<Typography gutterBottom variant="h5" component="h2">
-										{complejo.nombre}
-									</Typography>
-									<Rating defaultValue={complejo.valoracion} size="large" precision={0.5} readOnly />
+									<Grid className={classes.container}>
+										<Typography gutterBottom variant="h6" component="h2">
+											{complejo.nombre}
+										</Typography>
+										{complejo.valoracion ? (
+											<Chip
+												icon={<StarBorderIcon />}
+												label={complejo.valoracion}
+												color="primary"
+												size='small'
+												className={classes.chipValoracion}
+											/>
+										) : (
+											<Chip
+												icon={<NewReleasesIcon style={{ color: '#FAFAFA' }} />}
+												label={'Nuevo'}
+												size='small'
+												className={classes.chipSuccess}
+											/>
+										)}
+									</Grid>
+									{complejo.espaciosMetaData.map((espacio) => (
+										<Chip
+											label={espacio.tipoEspacio}
+											color="secondary"
+											size='small'
+											className={classes.chipCancha}
+										/>
+									))}
 								</CardContent>
 							</CardActionArea>
 						</Card>
