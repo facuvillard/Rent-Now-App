@@ -65,7 +65,7 @@ export default function ComplejoInfoWindow(props) {
 				<CardMedia className={classes.media} image={complejo.fotos[0]} title="Imagen complejo" />
 				<CardContent>
 					<Typography component="legend">Valoración:</Typography>
-					<Rating defaultValue={3} size="large" precision={1} readOnly />
+					<Rating defaultValue={complejo.valoracion} size="large" precision={0.5} readOnly />
 				</CardContent>
 				<CardActions className={classes.cardActions}>
 					<Link fullWidth to={`/complejos/${complejo.id}`}>

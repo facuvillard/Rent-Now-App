@@ -10,7 +10,7 @@ import {
     CardMedia, CardContent, Tooltip,
     Chip, Typography, CardActions,
     Button, useTheme, useMediaQuery, Divider,
-    CircularProgress
+    CircularProgress, IconButton
 } from "@material-ui/core";
 import { makeStyles } from '@material-ui/core/styles';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -25,6 +25,8 @@ import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
 import TodayOutlinedIcon from '@material-ui/icons/TodayOutlined';
 import QueryBuilderOutlinedIcon from '@material-ui/icons/QueryBuilderOutlined';
 import SportsFootballOutlinedIcon from '@material-ui/icons/SportsFootballOutlined';
+import ArrowBackIcon from "@material-ui/icons/ArrowBack";
+import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
 
 // Componentes Genericos
 import LinkCustom from "components/utils/LinkCustom/LinkCustom";
@@ -88,6 +90,9 @@ const useStyles = makeStyles((theme) => ({
     tituloSeccion: {
         marginBottom: theme.spacing(2)
     },
+    loading: {
+        marginTop: theme.spacing(4)
+    }
 }))
 
 function EspacioCard({ espacio, idComplejo, fecha, horarioInicio, horarioFin, complejo, duracion }) {
@@ -161,7 +166,7 @@ function EspacioCard({ espacio, idComplejo, fecha, horarioInicio, horarioFin, co
                             color="primary"
                         >
                             Reservar
-                                        </Button>
+                        </Button>
                     </LinkCustom>
                 </Grid>
             </CardActions>
@@ -280,13 +285,13 @@ const ReserveEspacio = (props) => {
             const result = await getHorariosAndEspacios(moment(fecha).format('DD/MM/YYYY'), tipoEspacio, idComplejo, duracion, complejo)
             if (result.status === "OK") {
                 setHorariosAndEspacios(result.data)
-                if(result.data.horarios.length === 0){
+                if (result.data.horarios.length === 0) {
                     Swal.fire({
                         title: '¡Error!',
                         text: 'No existen horarios disponibles para los filtros ingresados',
                         icon: 'error',
                         confirmButtonText: 'Aceptar'
-                      })
+                    })
                 }
                 setIsLoadingHorariosAndEspacios(false)
             } else {
@@ -322,11 +327,37 @@ const ReserveEspacio = (props) => {
     const theme = useTheme();
     const matches = useMediaQuery(theme.breakpoints.up('sm'));
 
+    function SamplePrevArrow(props) {
+        const { className, style, onClick } = props;
+        return (
+            <div className={className} style={{ ...style, display: "flex", marginLeft: '10px' }}>
+                <IconButton size='small' style={{ backgroundColor: "gray" }}>
+                    <ArrowBackIcon style={{ color: "white" }} onClick={onClick} />
+                </IconButton>
+            </div>
+        );
+    }
+
+    function SampleNextArrow(props) {
+        const { className, style, onClick } = props;
+        return (
+            <div className={className} style={{ ...style, display: "flex", marginRight: '10px' }}>
+                <IconButton size='small' style={{ backgroundColor: "gray" }}>
+                    <ArrowForwardIcon style={{ color: "white" }} onClick={onClick} />
+                </IconButton>
+            </div>
+        );
+    }
+
     const settings = {
-        arrowsBlock: false,
+        centerMode: true,
+        centerPadding: 70,
+        arrowsBlock: true,
         arrows: true,
-        dots: false,
-        slidesPerRow: matches ? 5 : 3,
+        slidesPerRow: matches ? 5 : 2,
+        dots: true,
+        nextArrow: <SampleNextArrow />,
+        prevArrow: <SamplePrevArrow />
     };
 
     const handleShowEspacios = (horario) => {
@@ -360,12 +391,9 @@ const ReserveEspacio = (props) => {
                         direction="row"
                         justify="center"
                         alignItems="center"
-                        spacing={5}
-
+                        className={classes.loading}
                     >
-                        <Grid item xs={2}>
-                            <CircularProgress />
-                        </Grid>
+                        <CircularProgress />
                     </Grid>
                 ) : (
                     <>
@@ -390,11 +418,9 @@ const ReserveEspacio = (props) => {
                         direction="row"
                         justify="center"
                         alignItems="center"
-                        spacing={5}
+                        className={classes.loading}
                     >
-                        <Grid item xs={2}>
-                            <CircularProgress />
-                        </Grid>
+                        <CircularProgress />
                     </Grid>
                 ) : (
                     <>
@@ -403,7 +429,7 @@ const ReserveEspacio = (props) => {
                                 <Divider className={classes.divider} />
                                 <Typography variant='subtitle2' className={classes.tituloSeccion} gutterBottom>
                                     Seleccione un Horario:
-                            </Typography>
+                                </Typography>
                                 {horariosAndEspacios.horarios.length !== 0 ? (
                                     <Slider {...settings}>
                                         {horariosAndEspacios.horarios.map((horario, index) => (
@@ -449,7 +475,7 @@ const ReserveEspacio = (props) => {
                                 <Divider className={classes.divider} />
                                 <Typography variant='subtitle2' className={classes.tituloSeccion} gutterBottom>
                                     Seleccione un Espacio:
-                            </Typography>
+                                </Typography>
                             </Grid>
                             {espaciosToShow.map((espacio) => (
                                 <Grid item key={espacio.id} xs={12} sm={6} md={4}>

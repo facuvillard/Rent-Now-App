@@ -51,9 +51,10 @@ const ConfirmReserva = (props) => {
 
     const classes = useStyles();
 
-    const { currentUser } = useContext(AuthContext);
+    const { currentUser, currentUserData } = useContext(AuthContext);
 
     useEffect(() => {
+        console.log(currentUser)
         const horarioInicio = reserva.horarioInicio.split(':')
         const horarioFin = reserva.horarioFin.split(':')
         const duracion = reserva.duracion.replace(':', ".")
@@ -63,10 +64,10 @@ const ConfirmReserva = (props) => {
             {
                 cliente: {
                     id: currentUser.uid,
-                    apellido: '',
-                    nombre: '',
-                    email: currentUser.email,
-                    numTelefono: ''
+                    apellido: currentUserData.apellido,
+                    nombre: currentUserData.nombre,
+                    email: currentUserData.email,
+                    celular: currentUserData.celular
                 },
                 espacio: {
                     id: reserva.espacio.id,
