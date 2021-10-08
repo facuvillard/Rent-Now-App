@@ -13,6 +13,8 @@ import { AuthContext } from "Auth/Auth";
 import { setNotificationAsReaded } from "api/usuarios";
 import { useHistory } from "react-router-dom";
 import { makeStyles } from "@material-ui/core";
+import { getReservaById } from "api/reservas";
+import Swal from "sweetalert2";
 
 const useStyles = makeStyles((theme) => ({
   icon: {
@@ -35,10 +37,21 @@ const Notifications = () => {
     setNotificationsAnchorEl(null);
   };
 
-  const handleNotClick = (not) => {
+  const handleNotClick = async (not) => {
     setNotificationAsReaded(currentUser.uid, not.id);
-    if (not.tipo === "RESERVA_TERMINADA") {
-      history.push("/reservas/opinion");
+    if (not.tipo === "RESERVA_FINALIZADA") {
+      const result = await getReservaById(not.idReserva);
+      if (result.data.estaValorada) {
+        Swal.fire({
+          title: "Esta reserva ya fue valorada",
+          text: "Encontramos una valoracion para esta reserva, las reservas solo se pueden valorar una vez",
+          icon: "info",
+          confirmButtonText: "Aceptar",
+          allowOutsideClick: true,
+        });
+        return;
+      }
+      history.push("/reservas/opinion", { idReserva: not.idReserva });
     }
   };
 
