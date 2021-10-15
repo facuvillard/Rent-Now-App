@@ -15,7 +15,7 @@ const ValoracionListItem = ({ valoracion }) => {
   return (
     <ListItem alignItems="flex-start" divider>
       <ListItemAvatar>
-        <Avatar alt="Juan P. Bergues" src="/static/images/avatar/1.jpg" />
+        <Avatar alt={cliente.nombre || ""} src="/static/images/avatar/1.jpg" />
       </ListItemAvatar>
       <ListItemText
         primary={
