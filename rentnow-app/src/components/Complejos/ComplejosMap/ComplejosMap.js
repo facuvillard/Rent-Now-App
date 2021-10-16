@@ -1,4 +1,4 @@
-import ComplejoInfoWindow from "../ComplejoInfoWindow/ComplejoInfoWindow";
+import ComplejoInfoWindow from "components/Complejos/ComplejosMap/ComplejoInfoWindow/ComplejoInfoWindow";
 import React, { useState, useEffect } from "react";
 import { GoogleMap, LoadScript } from "@react-google-maps/api";
 import { GOOGLE_MAP_KEY } from "constants/apiKeys";
@@ -8,7 +8,6 @@ import Image from 'assets/Landing/marker.png'
 const containerStyle = {
   width: "100%",
   height: "100vh",
-
 };
 
 const ComplejosMap = ({ complejos, center, fetchComplejos }) => {
@@ -86,4 +85,5 @@ const ComplejosMap = ({ complejos, center, fetchComplejos }) => {
     </LoadScript>
   );
 };
+
 export default ComplejosMap;
