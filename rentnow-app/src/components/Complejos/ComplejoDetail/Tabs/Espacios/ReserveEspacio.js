@@ -189,7 +189,7 @@ function SelectTipoEspacio({ open, tiposEspacio, onClose, selectedTipo }) {
             <List>
                 {
 
-                    tiposEspacio.map((tipo, index) => {
+                    tiposEspacio?.map((tipo, index) => {
                         return (
                             <ListItem autoFocus onClick={() => { handleListItemClick(tipo) }} button key={tipo + index}>
                                 <ListItemAvatar>
@@ -267,9 +267,14 @@ const ReserveEspacio = (props) => {
 
     useEffect(() => {
         async function getTiposEspacios() {
-            const result = await getTiposEspacioByIdComplejo(idComplejo);
-            setTiposEspacioComplejo(result.data)
-            setIsLoadingTipoEspacio(false)
+            try{
+                const result = await getTiposEspacioByIdComplejo(idComplejo);
+                console.log('tipos', result)
+                setTiposEspacioComplejo(result.data)
+                setIsLoadingTipoEspacio(false)
+            } catch (err){
+                console.log('Error en tipos de espacio',err)
+            }
         }
         getTiposEspacios();
 

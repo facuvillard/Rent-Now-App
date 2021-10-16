@@ -15,3 +15,4 @@ export const DETALLE_ESPACIO = `${DETALLE_COMPLEJO}/espacios/:idEspacio`
 export const CONFIRMACION_RESERVA = `${DETALLE_COMPLEJO}/reservas/confirmar`
 export const CONSULTAR_RESERVAS = `/reservas/consultar`
 export const CREATE_OPINION = `/reservas/opinion`
+export const REGISTER_VALORACION = `/reservas/:idReserva/valorar`

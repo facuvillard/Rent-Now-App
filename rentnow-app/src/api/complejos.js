@@ -60,32 +60,35 @@ export async function getNearbyComplejos(center, radius) {
     const bounds = geofire.geohashQueryBounds(center, radius);
     const promises = [];
 
-    bounds.forEach(b => {
-      const q = firebase.firestore()
+    bounds.forEach((b) => {
+      const q = firebase
+        .firestore()
         .collection("complejos")
         .orderBy("ubicacion.geohash")
         .startAt(b[0])
         .endAt(b[1]);
 
       promises.push(q.get());
-    })
+    });
 
     let snapshots = await Promise.all(promises);
-    const matchingDocs = []
-    snapshots.forEach(snap =>
-      snap.forEach(doc => {
-        const lat = doc.get('ubicacion').latlng.latitude;
-        const lng = doc.get('ubicacion').latlng.longitude;
+    const matchingDocs = [];
+    snapshots.forEach((snap) =>
+      snap.forEach((doc) => {
+        const lat = doc.get("ubicacion").latlng.latitude;
+        const lng = doc.get("ubicacion").latlng.longitude;
         const distanceInKm = geofire.distanceBetween([lat, lng], center);
         const distanceInM = distanceInKm * 1000;
 
         if (distanceInM <= radius) {
           matchingDocs.push(doc);
         }
+      })
+    );
 
-      }))
-
-    let complejos = await matchingDocs.map(doc => { return { id: doc.id, ...doc.data() } })
+    let complejos = await matchingDocs.map((doc) => {
+      return { id: doc.id, ...doc.data() };
+    });
 
     return {
       status: "OK",
@@ -93,7 +96,7 @@ export async function getNearbyComplejos(center, radius) {
       data: complejos,
     };
   } catch (err) {
-    console.log(err)
+    console.log(err);
     return {
       status: "ERROR",
       message: "Se produjo un error al consultar los complejos",
@@ -102,19 +105,57 @@ export async function getNearbyComplejos(center, radius) {
   }
 }
 
+
 export async function getComplejoNameImagesAndUbicacion(id) {
   try {
     const result = await firebase
       .firestore()
       .collection("complejos")
       .doc(id)
-      .get()
+      .get();
 
     const complejo = result.data();
     return {
       status: "OK",
       message: "Se consulto las imagenes del complejo con exito",
-      data: { fotos: complejo.fotos, nombre: complejo.nombre, ubicacion: complejo.ubicacion },
+      data: {
+        fotos: complejo.fotos,
+        nombre: complejo.nombre,
+        ubicacion: complejo.ubicacion,
+      },
+    };
+  } catch (err) {
+    console.log(err);
+    return {
+      status: "ERROR",
+      message: "Se produjo un error al consultar las imagenes del complejo",
+      error: err,
+    };
+  }
+}
+
+export async function getValoracionesByComplejoId(complejoId) {
+  try {
+    const result = await firebase
+      .firestore()
+      .collection("complejos")
+      .doc(complejoId)
+      .collection("valoraciones")
+      .get();
+
+    const valoraciones = result.docs.map((valoracionRef) => {
+      const valoracionData = valoracionRef.data();
+      return {
+        id: valoracionRef.id,
+        ...valoracionData,
+        fecha: valoracionData.fecha.toDate(),
+      };
+    });
+
+    return {
+      status: "OK",
+      message: "Se consultaron las valoraciones del complejo con exito",
+      data: valoraciones || [],
     };
   } catch (err) {
     console.log(err);
