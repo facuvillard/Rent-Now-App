@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { InfoWindow } from '@react-google-maps/api';
 import {
 	Card,
@@ -9,12 +9,14 @@ import {
 	CardActions,
 	Button,
 	Typography,
+	Chip
 } from '@material-ui/core';
-import { Rating } from '@material-ui/lab';
 import Link from 'utils/LinkCustom/Link';
 
 import logo from 'assets/Landing/logo-amarillo-simple.png';
 import { makeStyles } from '@material-ui/core/styles';
+import StarBorderIcon from '@material-ui/icons/StarBorder';
+import NewReleasesIcon from '@material-ui/icons/NewReleases';
 
 const useStyles = makeStyles((theme) => ({
 	root: {
@@ -33,18 +35,46 @@ const useStyles = makeStyles((theme) => ({
 		display: "flex",
 		justifyContent: 'center',
 	},
+	chipCancha: {
+		marginRight: theme.spacing(0.5),
+		marginTop: theme.spacing(1),
+	},
+	chipValoracion: {
+		margin: 'auto',
+		marginTop: theme.spacing(1),
+	},
+	chipSuccess: {
+		backgroundColor: '#66bb6a',
+		color: '#FAFAFA',
+		margin: 'auto',
+		marginLeft: theme.spacing(2),
+	},
 }));
 
 export default function ComplejoInfoWindow(props) {
 	const { complejo } = props;
+	const [tiposEspacios] = useState([])
 	const classes = useStyles();
 	const position = {
 		lat: complejo.ubicacion.latlng.latitude,
 		lng: complejo.ubicacion.latlng.longitude,
 	};
+
 	const onCloseClickHandler = () => {
 		props.setComplejo(null);
 	};
+
+	useEffect(() => {
+		complejo.espaciosMetaData.forEach((espacio) => {
+			if (tiposEspacios.includes(espacio.tipoEspacio)) {
+				return
+			}
+			else {
+				tiposEspacios.push(espacio.tipoEspacio)
+			}
+		})
+	}, [complejo])
+
 	return (
 		<InfoWindow onCloseClick={onCloseClickHandler} position={position}>
 			<Card elevation={4}>
@@ -54,18 +84,38 @@ export default function ComplejoInfoWindow(props) {
 					subheaderTypographyProps="h3"
 					title={complejo.nombre}
 					subheader={
-						complejo.ubicacion.calle +
-						' ' +
-						complejo.ubicacion.numero +
-						', ' +
-						complejo.ubicacion.ciudad +
-						'.'
+						complejo.valoracion ? (
+							<Chip
+								icon={<StarBorderIcon />}
+								label={complejo.valoracion}
+								color="primary"
+								size='small'
+								className={classes.chipValoracion}
+							/>
+						) : (
+							<Chip
+								icon={<NewReleasesIcon style={{ color: '#FAFAFA' }} />}
+								label={'Nuevo'}
+								size='small'
+								className={classes.chipSuccess}
+							/>
+						)
 					}
 				/>
 				<CardMedia className={classes.media} image={complejo.fotos[0]} title="Imagen complejo" />
 				<CardContent>
-					<Typography component="legend">Valoración:</Typography>
-					<Rating defaultValue={complejo.valoracion} size="large" precision={0.5} readOnly />
+					<div>
+						<Typography component="legend"><strong>Dirección:</strong> {complejo.ubicacion.calle} {complejo.ubicacion.numero}, {complejo.ubicacion.barrio}, {complejo.ubicacion.ciudad.charAt(0) + (complejo.ubicacion.ciudad.slice(1)).toLowerCase()}  </Typography>
+						{tiposEspacios.length !== 0 && tiposEspacios.map((tipoEspacio) => (
+							<Chip
+								key={tipoEspacio}
+								label={tipoEspacio}
+								color="secondary"
+								size='small'
+								className={classes.chipCancha}
+							/>
+						))}
+					</div>
 				</CardContent>
 				<CardActions className={classes.cardActions}>
 					<Link fullWidth to={`/complejos/${complejo.id}`}>

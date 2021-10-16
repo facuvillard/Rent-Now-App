@@ -3,10 +3,12 @@ import React, { useState, useEffect } from "react";
 import { GoogleMap, LoadScript } from "@react-google-maps/api";
 import { GOOGLE_MAP_KEY } from "constants/apiKeys";
 import { Marker } from "@react-google-maps/api";
+import Image from 'assets/Landing/marker.png'
 
 const containerStyle = {
   width: "100%",
   height: "100vh",
+
 };
 
 const ComplejosMap = ({ complejos, center, fetchComplejos }) => {
@@ -23,6 +25,7 @@ const ComplejosMap = ({ complejos, center, fetchComplejos }) => {
     setMapCenter(center);
   }, [center]);
 
+
   useEffect(() => {
     fetchComplejos(mapCenter);
   }, [mapCenter]);
@@ -31,7 +34,6 @@ const ComplejosMap = ({ complejos, center, fetchComplejos }) => {
     if (!mapRef) {
       return;
     }
-
     clearTimeout(timer);
     timer = setTimeout(function () {
       setMapCenter((oldMapCenter) => {
@@ -69,9 +71,8 @@ const ComplejosMap = ({ complejos, center, fetchComplejos }) => {
                   lat: complejo.ubicacion.latlng.latitude,
                   lng: complejo.ubicacion.latlng.longitude,
                 }}
-                onClick={() => {
-                  setSelectedComplejo(complejo);
-                }}
+                onClick={() => { setSelectedComplejo(complejo) }}
+                icon={Image}
               />
             ))
           : null}

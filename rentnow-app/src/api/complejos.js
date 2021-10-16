@@ -1,3 +1,4 @@
+import { Complejos } from "components/Complejos/Complejos";
 import firebase from "firebase";
 import * as geofire from "geofire-common";
 
@@ -104,6 +105,7 @@ export async function getNearbyComplejos(center, radius) {
   }
 }
 
+
 export async function getComplejoNameImagesAndUbicacion(id) {
   try {
     const result = await firebase
@@ -160,6 +162,49 @@ export async function getValoracionesByComplejoId(complejoId) {
     return {
       status: "ERROR",
       message: "Se produjo un error al consultar las imagenes del complejo",
+      error: err,
+    };
+  }
+}
+
+export async function getComplejosByFilters(filtros) {
+  try {
+    const { ciudad, tipoEspacio, provincia } = filtros;
+    const hasFilters = tipoEspacio !== "Todos";
+
+    const result = await firebase
+      .firestore()
+      .collection("complejos")
+      .where("habilitado", "==", true)
+      .where("ubicacion.provincia", "==", provincia)
+      .where("ubicacion.ciudad", "==", ciudad)
+      .get();
+
+    const complejos = result.docs.map((complejoRef) => ({
+      id: complejoRef.id,
+      ...complejoRef.data(),
+    }));
+
+    const checkFilters = (complejo) => {
+      const { espaciosMetaData: espacios } = complejo;
+
+      return espacios.some((espacio) => espacio.tipoEspacio === tipoEspacio);
+    };
+
+    const filteredComplejos = hasFilters
+      ? complejos.filter(checkFilters)
+      : complejos;
+
+    return {
+      status: "OK",
+      message: "Se consultaron los complejos con exito",
+      data: filteredComplejos,
+    };
+  } catch (err) {
+    console.log(err);
+    return {
+      status: "ERROR",
+      message: "Se produjo un error al consultar los complejos",
       error: err,
     };
   }
