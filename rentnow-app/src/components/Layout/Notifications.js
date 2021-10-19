@@ -1,13 +1,7 @@
-import React, { useContext, useEffect, useState } from "react";
-import Typography from "@material-ui/core/Typography";
-import IconButton from "@material-ui/core/IconButton";
+import React, { useContext, useState, useEffect } from "react";
+import { Typography, IconButton, Badge, Popover, List, ListItemText, ListItem, Grid, Divider } from "@material-ui/core";
 import NotificationsIcon from "@material-ui/icons/Notifications";
-import Badge from "@material-ui/core/Badge";
-import Popover from "@material-ui/core/Popover";
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemText from "@material-ui/core/ListItemText";
-import PriorityHighIcon from "@material-ui/icons/PriorityHigh";
+import FiberNew from "@material-ui/icons/FiberNew";
 import moment from "moment";
 import { AuthContext } from "Auth/Auth";
 import { setNotificationAsReaded } from "api/usuarios";
@@ -20,6 +14,10 @@ const useStyles = makeStyles((theme) => ({
   icon: {
     color: "#FAFAFA",
   },
+  container: {
+    marginTop: theme.spacing(2),
+    marginBottom: theme.spacing(2),
+  }
 }));
 
 const Notifications = () => {
@@ -29,11 +27,15 @@ const Notifications = () => {
   const classes = useStyles();
   let { currentUser, notificaciones } = useContext(AuthContext);
 
+  useEffect(() => {
+    console.log(notificaciones)
+  }, [notificaciones])
+
   const handleOpenNots = (event) => {
     setNotificationsAnchorEl(event.currentTarget);
   };
 
-  const handleCloseNots = (event) => {
+  const handleCloseNots = () => {
     setNotificationsAnchorEl(null);
   };
 
@@ -83,8 +85,18 @@ const Notifications = () => {
         onClose={handleCloseNots}
         anchorEl={notificationsAnchorEl}
       >
+        <Grid
+          container
+          direction="column"
+          justify="center"
+          alignItems="center"
+          className={classes.container}
+        >
+          <Typography variant='h6'>NOTIFICACIONES</Typography>
+        </Grid>
+        <Divider className={classes.divider} variant="fullWidth" />
         <List dense={true}>
-          {notificaciones.map((not, i) => (
+          {notificaciones && notificaciones.length !== 0 ? (notificaciones.map((not, i) => (
             <ListItem
               button
               onClick={() => {
@@ -99,10 +111,16 @@ const Notifications = () => {
                 )} - ${moment().format("h:mm")}`}
               />
               {not.leida === false ? (
-                <PriorityHighIcon color="primary" />
+                <FiberNew color="secondary" />
               ) : null}
             </ListItem>
-          ))}
+          ))) : (
+            <ListItem>
+              <ListItemText
+                primary={<Typography>¡No tienes notificaciones aún!</Typography>}
+              />
+            </ListItem>
+          )}
         </List>
       </Popover>
     </>
