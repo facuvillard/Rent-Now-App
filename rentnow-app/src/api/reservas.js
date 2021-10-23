@@ -5,16 +5,23 @@ export async function getReservas(idCliente) {
     const result = await firebase
       .firestore()
       .collection("reservas")
-      .where("cliente.id", "==", idCliente) // Falta agregar que verifique tambien el paramentro de si es hecha por la app
+      .where("cliente.id", "==", idCliente)
+      .where('reservaApp', '==', true)
       .orderBy("fechaInicio", "desc")
       .get()
-      .then((snap) => snap.docs.map((reservas) => reservas.data()));
 
-    // const reservas = getDatosComplejo(result)
+    const reservas = result.docs.map((reserva) => {
+      const reservaData = reserva.data();
+      return {
+        id: reserva.id,
+        ...reservaData,
+      };
+    });
+
     return {
       status: "OK",
       message: "Se consultaron correctamente las reservas",
-      data: result,
+      data: reservas,
     };
   } catch (err) {
     return {
@@ -79,4 +86,19 @@ export async function registerValoracion(valoracion) {
       error: err,
     };
   }
+}
+
+export async function updateReservaState(reserva) {
+	try {
+		await firebase.firestore().collection("reservas").doc(reserva.id).update(reserva);
+		return {
+			status: "OK",
+			message: "Los datos de la reserva han sido actualizados con exito",
+		};
+	} catch (err) {
+		return {
+			status: "ERROR",
+			message: "Error al actualizar los datos de la reserva",
+		};
+	}
 }

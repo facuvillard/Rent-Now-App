@@ -3,8 +3,10 @@ import React, { useState, useEffect, useContext } from 'react'
 // Material UI
 import {
     Grid, Typography, Divider,
-    makeStyles, Card, CardContent, CardMedia, Tooltip,
-    Chip, Stepper, Step, StepLabel, CircularProgress, CardHeader
+    makeStyles, Card, CardContent, 
+    CardMedia, Tooltip, Chip, 
+    Stepper, Step, StepLabel, 
+    CircularProgress, CardHeader, Button
 } from "@material-ui/core";
 import Alert from '@material-ui/lab/Alert';
 
@@ -12,8 +14,7 @@ import Alert from '@material-ui/lab/Alert';
 import moment from "moment"
 
 // APIS
-import { getReservas } from 'api/reservas';
-import { getComplejoNameImagesAndUbicacion } from 'api/complejos';
+import { getReservas, updateReservaState } from 'api/reservas';
 
 // Constantes
 import { colorsByEstado } from 'constants/reservas/constants'
@@ -25,6 +26,12 @@ import LinkCustom from 'utils/LinkCustom/Link'
 
 // Auth
 import { AuthContext } from 'Auth/Auth'
+
+import { useHistory } from "react-router-dom";
+
+import Swal from 'sweetalert2'
+
+import firebase from "firebase";
 
 const useStyles = makeStyles((theme) => ({
     titulo: {
@@ -104,14 +111,22 @@ function ReservaDetail({ open, reserva, onClose }) {
     )
 }
 
+function isCancelable(fechaInicio, estadoActual) {
+    const fechaActual = moment()
+    if (fechaInicio.add(-2, 'hours').isSameOrAfter(fechaActual) && estadoActual !== 'CANCELADA') {
+        return true
+    }
+    return false
+}
+
 const ReservasList = () => {
+    const history = useHistory();
     const classes = useStyles();
 
     const { currentUser } = useContext(AuthContext);
 
     const [reservas, setReservas] = useState([])
     const [isLoading, setIsLoading] = useState(true)
-    const [reservasShow, setReservasShow] = useState(false)
     const [open, setOpen] = useState(false)
     const [reservaDetail, setReservaDetail] = useState(null)
 
@@ -121,6 +136,64 @@ const ReservasList = () => {
 
     const handleClose = () => {
         setOpen(false)
+    }
+
+    const cancelReserva = (reserva) => {
+        Swal.fire({
+            title: '¿Está seguro que desea cancelar esta reserva?',
+            text: `Reserva del complejo: 
+                ${reserva.complejo.nombre}, del dia 
+                ${moment(reserva.fechaInicio.toDate()).format("DD/MM/YYYY")} a las 
+                ${moment(reserva.fechaInicio.toDate()).format("HH:mm")}`,
+            icon: 'warning',
+            confirmButtonText: 'Aceptar',
+            cancelButtonText: 'Volver',
+            showCloseButton: true,
+            showCancelButton: true,
+            allowOutsideClick: false
+        }).then((result) => {
+            if (result.isConfirmed) {
+                setIsLoading(true)
+                const fechaActualizacion = new firebase.firestore.Timestamp.fromDate(
+                    moment().toDate()
+                );
+                reserva.estados.push({
+                    estado: "CANCELADA",
+                    fecha: fechaActualizacion,
+                    motivo: "La reserva ha sido cancelada por el cliente.",
+                });
+                reserva.estadoActual = "CANCELADA";
+                updateReservaState(reserva).then((result) => {
+                    if (result.status === 'OK') {
+                        Swal.fire({
+                            title: '¡Reserva Cancelada!',
+                            text: `La reserva en el complejo: ${reserva.complejo.nombre} ha sido cancelada con éxito`,
+                            icon: 'success',
+                            confirmButtonText: 'Aceptar',
+                            allowOutsideClick: false
+                        }).then((result) => {
+                            /* Read more about isConfirmed, isDenied below */
+                            if (result.isConfirmed) {
+                                setReservas([])
+                            }
+                        })
+                    } else {
+                        Swal.fire({
+                            title: '¡Error al cancelar la Reserva!',
+                            text: 'Prueba de nuevo mas tarde',
+                            icon: 'error',
+                            confirmButtonText: 'Aceptar',
+                            allowOutsideClick: false
+                        }).then((result) => {
+                            /* Read more about isConfirmed, isDenied below */
+                            if (result.isConfirmed) {
+                                history.push(`/complejos`);
+                            }
+                        })
+                    }
+                })
+            }
+        })
     }
 
     useEffect(() => {
@@ -205,7 +278,7 @@ const ReservasList = () => {
                                                     Tipo de Espacio: <b>{reserva.espacio.tipoEspacio}</b>
                                                 </Typography>
                                                 <Typography>
-                                                    Complejo: <b><LinkCustom to={`/complejos/${reserva.complejo.id}`}>{reserva.nombre}</LinkCustom></b>
+                                                    Complejo: <b><LinkCustom to={`/complejos/${reserva.complejo.id}`}>{reserva.complejo.nombre}</LinkCustom></b>
                                                 </Typography>
                                                 <Typography >
                                                     Dirección: <b>{reserva.complejo.ubicacion}</b>
@@ -213,7 +286,8 @@ const ReservasList = () => {
                                                 <Typography>
                                                     Precio: <b>$ {reserva.monto}</b>
                                                 </Typography>
-                                                <Grid container
+                                                <Grid
+                                                    container
                                                     direction="row"
                                                     justify="space-around"
                                                     alignItems="center">
@@ -228,6 +302,17 @@ const ReservasList = () => {
                                                             }}
                                                         />
                                                     </Tooltip>
+                                                    {
+                                                        isCancelable(moment(reserva.fechaInicio.toDate()), reserva.estadoActual) &&
+                                                        <Button
+                                                            variant="contained"
+                                                            size="small"
+                                                            color='secondary'
+                                                            onClick={() => cancelReserva(reserva)}
+                                                        >
+                                                            Cancelar Reserva
+                                                        </Button>
+                                                    }
                                                 </Grid>
                                             </CardContent>
                                         </Card>
