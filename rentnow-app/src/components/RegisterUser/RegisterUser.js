@@ -92,7 +92,12 @@ export default function RegisterUser(props) {
 						});
 						setAlertShow(true);
 					} else {
-						window.location.replace('/complejos');
+						setAlertProps({
+							text: "Usuario creado correctamente! Ahora podras usar tu cuenta",
+							type: 'success',
+						});
+						setAlertShow(true);
+						window.location.replace('/login');
 					}
 				})
 				.catch(() => {

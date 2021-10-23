@@ -1,3 +1,4 @@
+import moment from "moment";
 import React, { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import {
@@ -109,13 +110,13 @@ const RegisterExtraData = (props) => {
 						ciudad: '',
 						provincia: '',
 						celular: '',
+						fechaNacimiento: moment(new Date()).format('yyyy-MM-DD')
 					}}
 					onSubmit={(values) => {
 						console.log('Extra data submitted: ', values, props.userData);
 						submitExtraDataOnRegister({ ...values, ...props.userData }).then((result) => {
 							if (result.status === 'OK') {
 								history.push('/complejos');
-							} else {
 							}
 						});
 					}}
@@ -155,6 +156,20 @@ const RegisterExtraData = (props) => {
 								label="Celular"
 								id="celular"
 								autoComplete="phone"
+								onChange={handleChange}
+							/>
+							<TextField
+								type="date"
+								inputProps={{ max: moment(new Date()).format('yyyy-MM-DD') }}
+								variant="outlined"
+								margin="normal"
+								required
+								fullWidth
+								id="fechaNacimiento"
+								label="Fecha de Nacimiento"
+								name="fechaNacimiento"
+								autoComplete="birth"
+								autoFocus
 								onChange={handleChange}
 							/>
 							<FormControl fullWidth margin="normal">

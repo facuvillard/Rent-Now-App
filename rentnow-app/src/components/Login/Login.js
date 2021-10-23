@@ -1,24 +1,23 @@
-import React, { useState } from 'react';
-import { Container, Avatar, Button, CircularProgress, Paper } from '@material-ui/core';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import TextField from '@material-ui/core/TextField';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
-import Grid from '@material-ui/core/Grid';
+import { Avatar, Button, CircularProgress, Container, IconButton, Paper, Tooltip } from '@material-ui/core';
 import Box from '@material-ui/core/Box';
-import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
-import Typography from '@material-ui/core/Typography';
+import Checkbox from '@material-ui/core/Checkbox';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/core/styles';
-import { useFormik } from 'formik';
-import AlertCustom from './../../utils/AlertCustom/AlertCustom';
-import { signIn } from './../../api/auth';
-import * as Routes from '../../constants/routes';
-import Link from 'utils/LinkCustom/Link';
-import ButtonGroup from '@material-ui/core/ButtonGroup';
+import TextField from '@material-ui/core/TextField';
+import Typography from '@material-ui/core/Typography';
 import EmailIcon from '@material-ui/icons/Email';
-import { loginWithGmail } from 'firebase.js';
-import { useHistory } from 'react-router-dom';
+import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import RegisterExtraData from 'components/Login/RegisterExtraData';
+import { loginWithGmail } from 'firebase.js';
+import { useFormik } from 'formik';
+import React, { useState } from 'react';
+import { useHistory } from 'react-router-dom';
+import Link from 'utils/LinkCustom/Link';
+import * as Routes from '../../constants/routes';
+import { signIn } from './../../api/auth';
+import AlertCustom from './../../utils/AlertCustom/AlertCustom';
 
 const useStyles = makeStyles((theme) => ({
 	main: {
@@ -129,7 +128,7 @@ const Login = () => {
 	if (showNewUserForm) {
 		return (
 			<Container component="main" maxWidth="xs">
-				<RegisterExtraData userData={userData} />
+				<RegisterExtraData userData={userData}/>
 			</Container>
 		);
 	}
@@ -137,10 +136,10 @@ const Login = () => {
 	return (
 		<Container component="main" maxWidth="xs">
 			<Paper variant="outlined" className={classes.paper}>
-				<CssBaseline />
+				<CssBaseline/>
 				<div className={classes.main}>
 					<Avatar className={classes.avatar}>
-						<LockOutlinedIcon />
+						<LockOutlinedIcon/>
 					</Avatar>
 					<Typography component="h1" variant="h5">
 						Iniciar Sesión
@@ -173,7 +172,7 @@ const Login = () => {
 							onChange={formik.handleChange}
 						/>
 						<FormControlLabel
-							control={<Checkbox value="remember" color="primary" />}
+							control={<Checkbox value="remember" color="primary"/>}
 							label="Recordarme"
 						/>
 						<Button
@@ -184,7 +183,7 @@ const Login = () => {
 							className={classes.submit}
 							disabled={isLoading}
 						>
-							{!isLoading ? 'Ingresar' : <CircularProgress />}
+							{!isLoading ? 'Ingresar' : <CircularProgress/>}
 						</Button>
 						<AlertCustom
 							type={alertProps.type}
@@ -199,12 +198,12 @@ const Login = () => {
 							<Grid item xs={6}>
 								<Typography align="right"> Ingresá con </Typography>
 							</Grid>
-							<Grid item xs={4} style={{ marginBottom: '2rem' }}>
-								<ButtonGroup variant="text">
-									<Button onClick={handleLoginWithGmail}>
-										<EmailIcon />
-									</Button>
-								</ButtonGroup>
+							<Grid item xs={4} style={{marginBottom: '2rem'}}>
+								<Tooltip title="Google">
+									<IconButton size="small" color="secondary" onClick={handleLoginWithGmail}>
+										<EmailIcon/>
+									</IconButton>
+								</Tooltip>
 							</Grid>
 							<Grid item xs={6}>
 								<Link href="#" variant="body2" color="secondary">
@@ -222,7 +221,7 @@ const Login = () => {
 					</form>
 				</div>
 				<Box mt={8}>
-					<Copyright />
+					<Copyright/>
 				</Box>
 			</Paper>
 		</Container>
