@@ -15,9 +15,8 @@ import { signIn } from './../../api/auth';
 import * as Routes from '../../constants/routes';
 import Link from 'utils/LinkCustom/Link';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
-import FacebookIcon from '@material-ui/icons/Facebook';
 import EmailIcon from '@material-ui/icons/Email';
-import { loginWithFacebook, loginWithGmail } from 'firebase.js';
+import { loginWithGmail } from 'firebase.js';
 import { useHistory } from 'react-router-dom';
 import RegisterExtraData from 'components/Login/RegisterExtraData';
 
@@ -108,34 +107,11 @@ const Login = () => {
 		loginWithGmail()
 			.then((user) => {
 				if (user.additionalUserInfo.isNewUser) {
-					setShowNewUserForm(true);
 					setUserData({
 						uid: user.user.uid,
 						email: user.additionalUserInfo.profile.email,
 					});
-				} else {
-					history.push('/complejos');
-				}
-			})
-			.catch(() => {
-				setIsLoading(false);
-				setAlertProps({
-					type: 'error',
-					text: 'Error de logueo!',
-				});
-				setShowAlert(true);
-			});
-	};
-
-	const handleLoginWithFacebook = () => {
-		loginWithFacebook()
-			.then((user) => {
-				if (user.additionalUserInfo.isNewUser) {
 					setShowNewUserForm(true);
-					setUserData({
-						uid: user.user.uid,
-						email: user.additionalUserInfo.profile.email,
-					});
 				} else {
 					history.push('/complejos');
 				}
@@ -225,9 +201,6 @@ const Login = () => {
 							</Grid>
 							<Grid item xs={4} style={{ marginBottom: '2rem' }}>
 								<ButtonGroup variant="text">
-									<Button onClick={handleLoginWithFacebook}>
-										<FacebookIcon />
-									</Button>
 									<Button onClick={handleLoginWithGmail}>
 										<EmailIcon />
 									</Button>

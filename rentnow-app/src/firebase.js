@@ -17,11 +17,6 @@ if (firebase.apps.length === 0) {
 	firebaseApp = firebase.apps[0];
 }
 
-export const loginWithFacebook = () => {
-	const facebookProvider = new firebase.auth.FacebookAuthProvider();
-	return firebase.auth().signInWithPopup(facebookProvider);
-};
-
 export const loginWithGmail = () => {
 	const gmailProvider = new firebase.auth.GoogleAuthProvider();
 	return firebase.auth().signInWithPopup(gmailProvider);
