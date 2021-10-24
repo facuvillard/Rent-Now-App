@@ -77,7 +77,8 @@ const useStyles = makeStyles((theme) => ({
 		margin: theme.spacing(2)
 	},
 	filterChip: {
-		margin: theme.spacing(0.25)
+		margin: theme.spacing(0.25),
+		backgroundColor: '#f6f7f9'
 	}
 }));
 
@@ -275,13 +276,13 @@ export const ComplejosList = () => {
 			>
 				<div style={{ display: 'inline-grid', marginRight: '10px' }}>
 					<IconButton><img src={EspacioImage} alt="espacio" onClick={handleSelectTipoEspacioOpen} /></IconButton>
-					<Typography variant="subtitle2" gutterBottom>
+					<Typography variant="subtitle2" gutterBottom align='center'>
 						Espacio
 					</Typography>
 				</div>
 				<div style={{ display: 'inline-grid', marginRight: '10px' }}>
 					<IconButton><img src={LocationImage} alt="ciudad" onClick={handleSelectCiudadOpen} /></IconButton>
-					<Typography variant="subtitle2" gutterBottom>
+					<Typography variant="subtitle2" gutterBottom align='center'>
 						Ciudad
 					</Typography>
 				</div>

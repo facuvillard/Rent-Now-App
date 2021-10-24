@@ -354,7 +354,7 @@ const ReserveEspacio = (props) => {
         centerPadding: 70,
         arrowsBlock: true,
         arrows: true,
-        slidesPerRow: matches ? 5 : 2,
+        slidesPerRow: matches ? 5 : 1,
         dots: true,
         nextArrow: <SampleNextArrow />,
         prevArrow: <SamplePrevArrow />

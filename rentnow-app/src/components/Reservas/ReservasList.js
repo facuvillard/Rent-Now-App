@@ -3,9 +3,9 @@ import React, { useState, useEffect, useContext } from 'react'
 // Material UI
 import {
     Grid, Typography, Divider,
-    makeStyles, Card, CardContent, 
-    CardMedia, Tooltip, Chip, 
-    Stepper, Step, StepLabel, 
+    makeStyles, Card, CardContent,
+    CardMedia, Tooltip, Chip,
+    Stepper, Step, StepLabel,
     CircularProgress, CardHeader, Button
 } from "@material-ui/core";
 import Alert from '@material-ui/lab/Alert';
@@ -93,12 +93,19 @@ const useStyles = makeStyles((theme) => ({
     cardContent: {
         flexGrow: 1,
     },
+    motivo: {
+        marginBottom: theme.spacing(1),
+        marginLeft: theme.spacing(1),
+        marginRight: theme.spacing(1),
+    },
 }));
 
 function ReservaDetail({ open, reserva, onClose }) {
+    const classes = useStyles();
     return (
         <DialogCustom title="Detalle de Reserva" open={open} onClose={onClose}>
             <Grid>
+                <Divider variant="middle" />
                 <Stepper activeStep={reserva.estados.length - 1} orientation="vertical">
                     {reserva.estados.map((estado, index) => (
                         <Step key={index}>
@@ -107,6 +114,11 @@ function ReservaDetail({ open, reserva, onClose }) {
                     ))}
                 </Stepper>
             </Grid>
+            {reserva.estados[reserva.estados.length - 1].estado === 'CANCELADA' &&
+                <Grid className={classes.motivo}>
+                    <Alert severity="error"><strong>Motivo:</strong> {reserva.estados[reserva.estados.length - 1].motivo}</Alert>
+                </Grid>
+            }
         </DialogCustom>
     )
 }
