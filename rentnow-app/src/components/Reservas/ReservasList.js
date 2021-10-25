@@ -279,7 +279,7 @@ const ReservasList = () => {
                                             />
                                             <CardMedia
                                                 className={classes.cardMedia}
-                                                image={reserva.espacio.foto[0] ? reserva.espacio.foto[0] : tipoEspacio[reserva.espacio.tipoEspacio].urlImagen}
+                                                image={reserva.espacio.foto ? reserva.espacio.foto : tipoEspacio[reserva.espacio.tipoEspacio].urlImagen}
                                                 title="Image title"
                                             />
                                             <CardContent className={classes.cardContent} >
