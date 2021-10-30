@@ -55,24 +55,24 @@ export async function signOut() {
 	}
 }
 
-export async function getUserData(userId) {
+export async function getUserData(userId, runWhenChange) {
 	try {
 		const result = await firebase
         .firestore()
         .collection("usuariosApp")
         .doc(userId)
-        .get();
+        .onSnapshot((userSnapshot)=>{
+			runWhenChange(userSnapshot.data())
+		})
 
 		return {
 			status: "OK",
 			message: "Usuario consultado correctamente",
-			data: result.data()
 		}
 	} catch(error) {
 		return {
 			status: "ERROR",
 			message: "Usuario consultado ERROR",
-			data: ""
 		}
 	} 
 }

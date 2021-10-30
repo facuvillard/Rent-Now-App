@@ -16,13 +16,6 @@ const AuthProvider = (props) => {
 		firebaseApp.auth().onAuthStateChanged((user) => {
 			if (user) {
 				setCurrentUser(user);
-				getUserData(user.uid).then((res) => {
-					if (res.status === "OK") {
-						setCurrentUserData(res.data);
-						setPending(false);
-						return;
-					}
-				});
 			}
 			setUserRoles(["default"]);
 			setPending(false);
@@ -35,7 +28,12 @@ const AuthProvider = (props) => {
 			return;
 		}
 		getNotificacionesByUsuarioRealTime(currentUser.uid, setNotificaciones);
-	}, [currentUser]);
+		getUserData(currentUser.uid, setCurrentUserData).then((res) => {
+				setPending(false);
+				return;
+			}
+		);
+	}, [currentUser, getUserData]);
 
 	if (pending) {
 		return <>Cargando...</>;
