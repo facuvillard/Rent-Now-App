@@ -195,10 +195,10 @@ const Login = () => {
 							<Grid alignItems="center" item xs={12}>
 								<Typography align="center"> ó </Typography>
 							</Grid>
-							<Grid item xs={6}>
-								<Typography align="right"> Ingresá con </Typography>
+							<Grid item xs={10}>
+								<Typography align="right"> Ingresá con tu cuenta de Gmail</Typography>
 							</Grid>
-							<Grid item xs={4} style={{marginBottom: '2rem'}}>
+							<Grid item xs={2} style={{marginBottom: '2rem'}}>
 								<Tooltip title="Google">
 									<IconButton size="small" color="secondary" onClick={handleLoginWithGmail}>
 										<EmailIcon/>
