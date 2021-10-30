@@ -67,7 +67,9 @@ const ConfirmReserva = (props) => {
                     apellido: currentUserData.apellido,
                     nombre: currentUserData.nombre,
                     email: currentUserData.email,
-                    celular: currentUserData.celular
+                    celular: currentUserData.celular,
+                    cantidadCreada: currentUserData.cantidadCreada,
+                    cantidadSinConcurrencia: currentUserData.cantidadSinConcurrencia 
                 },
                 espacio: {
                     id: reserva.espacio.id,
