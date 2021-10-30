@@ -125,7 +125,7 @@ function ReservaDetail({ open, reserva, onClose }) {
 
 function isCancelable(fechaInicio, estadoActual) {
     const fechaActual = moment()
-    if (fechaInicio.add(-2, 'hours').isSameOrAfter(fechaActual) && estadoActual !== 'CANCELADA') {
+    if (fechaInicio.add(-2, 'hours').isSameOrAfter(fechaActual) && estadoActual !== 'CANCELADA' && estadoActual !== 'SIN CONCURRENCIA' && estadoActual !== 'FINALIZADA') {
         return true
     }
     return false
