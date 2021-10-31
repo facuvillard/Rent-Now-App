@@ -1,5 +1,15 @@
 import React, { useContext, useState, useEffect } from "react";
-import { Typography, IconButton, Badge, Popover, List, ListItemText, ListItem, Grid, Divider } from "@material-ui/core";
+import {
+  Typography,
+  IconButton,
+  Badge,
+  Popover,
+  List,
+  ListItemText,
+  ListItem,
+  Grid,
+  Divider,
+} from "@material-ui/core";
 import NotificationsIcon from "@material-ui/icons/Notifications";
 import FiberNew from "@material-ui/icons/FiberNew";
 import moment from "moment";
@@ -9,6 +19,7 @@ import { useHistory } from "react-router-dom";
 import { makeStyles } from "@material-ui/core";
 import { getReservaById } from "api/reservas";
 import Swal from "sweetalert2";
+import * as Routes from "constants/routes";
 
 const useStyles = makeStyles((theme) => ({
   icon: {
@@ -17,7 +28,7 @@ const useStyles = makeStyles((theme) => ({
   container: {
     marginTop: theme.spacing(2),
     marginBottom: theme.spacing(2),
-  }
+  },
 }));
 
 const Notifications = () => {
@@ -26,10 +37,6 @@ const Notifications = () => {
   const history = useHistory();
   const classes = useStyles();
   let { currentUser, notificaciones } = useContext(AuthContext);
-
-  useEffect(() => {
-    console.log(notificaciones)
-  }, [notificaciones])
 
   const handleOpenNots = (event) => {
     setNotificationsAnchorEl(event.currentTarget);
@@ -41,19 +48,30 @@ const Notifications = () => {
 
   const handleNotClick = async (not) => {
     setNotificationAsReaded(currentUser.uid, not.id);
-    if (not.tipo === "RESERVA_FINALIZADA") {
-      const result = await getReservaById(not.idReserva);
-      if (result.data.estaValorada) {
-        Swal.fire({
-          title: "Esta reserva ya fue valorada",
-          text: "Encontramos una valoracion para esta reserva, las reservas solo se pueden valorar una vez",
-          icon: "info",
-          confirmButtonText: "Aceptar",
-          allowOutsideClick: true,
-        });
+    switch (not.tipo) {
+      case "RESERVA_FINALIZADA": {
+        const result = await getReservaById(not.idReserva);
+        if (result.data.estaValorada) {
+          Swal.fire({
+            title: "Esta reserva ya fue valorada",
+            text: "Encontramos una valoracion para esta reserva, las reservas solo se pueden valorar una vez",
+            icon: "info",
+            confirmButtonText: "Aceptar",
+            allowOutsideClick: true,
+          });
+          break;
+        }
+        history.push("/reservas/opinion", { idReserva: not.idReserva });
+        break;
+      }
+      case "RESERVA_CANCELADA":
+      case "RESERVA_CONFIRMADA": {
+        history.push(Routes.CONSULTAR_RESERVAS);
+        break;
+      }
+      default: {
         return;
       }
-      history.push("/reservas/opinion", { idReserva: not.idReserva });
     }
   };
 
@@ -92,32 +110,37 @@ const Notifications = () => {
           alignItems="center"
           className={classes.container}
         >
-          <Typography variant='h6'>NOTIFICACIONES</Typography>
+          <Typography variant="h6">NOTIFICACIONES</Typography>
         </Grid>
         <Divider className={classes.divider} variant="fullWidth" />
         <List dense={true}>
-          {notificaciones && notificaciones.length !== 0 ? (notificaciones.map((not, i) => (
-            <ListItem
-              button
-              onClick={() => {
-                handleNotClick(not);
-              }}
-              selected={not.leida === false ? false : true}
-            >
-              <ListItemText
-                primary={<Typography>{not.mensaje}</Typography>}
-                secondary={`${not.espacio} → ${moment().format(
-                  "DD/MM h:mm"
-                )} - ${moment().format("h:mm")}`}
-              />
-              {not.leida === false ? (
-                <FiberNew color="secondary" />
-              ) : null}
-            </ListItem>
-          ))) : (
+          {notificaciones && notificaciones.length !== 0 ? (
+            notificaciones.map((not, i) => (
+              <ListItem
+                button
+                onClick={() => {
+                  handleNotClick(not);
+                }}
+                selected={not.leida}
+                key={not.id}
+              >
+                <ListItemText
+                  primary={<Typography>{not.mensaje}</Typography>}
+                  secondary={`${not.espacio} → ${moment(
+                    not.fechaInicio?.toDate()
+                  ).format("DD/MM h:mm")} - ${moment(
+                    not.fechaFin?.toDate()
+                  ).format("h:mm")}`}
+                />
+                {not.leida === false ? <FiberNew color="secondary" /> : null}
+              </ListItem>
+            ))
+          ) : (
             <ListItem>
               <ListItemText
-                primary={<Typography>¡No tienes notificaciones aún!</Typography>}
+                primary={
+                  <Typography>¡No tienes notificaciones aún!</Typography>
+                }
               />
             </ListItem>
           )}

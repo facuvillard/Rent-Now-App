@@ -1,52 +1,57 @@
 import firebase from "firebase";
 
 export async function getNotificacionesByUsuarioRealTime(
-    idUsuario, runWhenChange
+  idUsuario,
+  runWhenChange
 ) {
-    try {
+  try {
+    const result = await firebase
+      .firestore()
+      .collection("usuariosApp")
+      .doc(idUsuario)
+      .collection("notificaciones")
+      .orderBy("fechaRegistro", "desc")
+      .limit(5)
+      .onSnapshot((querySnapshot) => {
+        let notificaciones = [];
 
-        const result = await firebase
-            .firestore()
-            .collection("usuariosApp")
-            .doc(idUsuario)
-            .collection("notificaciones")
-            .onSnapshot((querySnapshot) => {
-                let notificaciones = [];
+        querySnapshot.forEach((notificacionDoc) => {
+          notificaciones.push({
+            ...notificacionDoc.data(),
+            id: notificacionDoc.id,
+          });
+        });
+        runWhenChange(notificaciones);
+      });
 
-                querySnapshot.forEach((notificacionDoc) => {
-                    notificaciones.push({ ...notificacionDoc.data(), id: notificacionDoc.id });
-                });
-                runWhenChange(notificaciones);
-            });
-
-        return result;
-    } catch (err) {
-        console.log(err);
-        return {
-            status: "ERROR",
-            message: "Se produjo un error al consultar las notificaciones",
-            error: err,
-        };
-    }
+    return result;
+  } catch (err) {
+    console.log(err);
+    return {
+      status: "ERROR",
+      message: "Se produjo un error al consultar las notificaciones",
+      error: err,
+    };
+  }
 }
 
 export async function setNotificationAsReaded(idUsuario, notId) {
-    try {
-        const result = await firebase
-            .firestore()
-            .collection("usuariosApp")
-            .doc(idUsuario)
-            .collection("notificaciones")
-            .doc(notId)
-            .update({ leida: true })
+  try {
+    const result = await firebase
+      .firestore()
+      .collection("usuariosApp")
+      .doc(idUsuario)
+      .collection("notificaciones")
+      .doc(notId)
+      .update({ leida: true });
 
-        return { status: "OK", message: "Notificacion marcada como leida" };
-    } catch (err) {
-        console.log(err);
-        return {
-            status: "ERROR",
-            message: "Se produjo un error al registrar la reserva",
-            error: err,
-        };
-    }
+    return { status: "OK", message: "Notificacion marcada como leida" };
+  } catch (err) {
+    console.log(err);
+    return {
+      status: "ERROR",
+      message: "Se produjo un error al registrar la reserva",
+      error: err,
+    };
+  }
 }
