@@ -242,10 +242,21 @@ function ButtonForDatepicker(props) {
 
 function DatepickerReserva({ selectedFecha, handleDateChange }) {
     moment.locale("es");
-
+    const maxDate = moment().add(3, 'months');
     return (
         <MuiPickersUtilsProvider libInstance={moment} utils={MomentUtils} locale='es'>
-            <DatePicker value={selectedFecha} disablePast cancelLabel="" TextFieldComponent={(props) => <ButtonForDatepicker {...props} />} okLabel="" autoOk onChange={handleDateChange} format="DD/MM/yyyy" inputVariant="outlined" emptyLabel="Fecha" />
+            <DatePicker
+                maxDate={maxDate}
+                value={selectedFecha}
+                disablePast
+                cancelLabel=""
+                TextFieldComponent={(props) => <ButtonForDatepicker {...props} />}
+                okLabel="" autoOk
+                onChange={handleDateChange}
+                format="DD/MM/yyyy"
+                inputVariant="outlined"
+                emptyLabel="Fecha"
+            />
         </MuiPickersUtilsProvider>
     )
 }
@@ -267,13 +278,13 @@ const ReserveEspacio = (props) => {
 
     useEffect(() => {
         async function getTiposEspacios() {
-            try{
+            try {
                 const result = await getTiposEspacioByIdComplejo(idComplejo);
                 console.log('tipos', result)
                 setTiposEspacioComplejo(result.data)
                 setIsLoadingTipoEspacio(false)
-            } catch (err){
-                console.log('Error en tipos de espacio',err)
+            } catch (err) {
+                console.log('Error en tipos de espacio', err)
             }
         }
         getTiposEspacios();
