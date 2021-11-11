@@ -121,18 +121,14 @@ const Notifications = () => {
                 onClick={() => {
                   handleNotClick(not);
                 }}
-                selected={not.leida}
+                selected={not.leida === false ? true : false}
                 key={not.id}
               >
+                {not.leida === false ? <FiberNew style={{marginRight:'5px'}} color="secondary" /> : null}
                 <ListItemText
                   primary={<Typography>{not.mensaje}</Typography>}
-                  secondary={`${not.espacio} → ${moment(
-                    not.fechaInicio?.toDate()
-                  ).format("DD/MM h:mm")} - ${moment(
-                    not.fechaFin?.toDate()
-                  ).format("h:mm")}`}
+                  secondary={`${not.espacio} → ${moment(not.fechaInicio.toDate()).format("DD/MM h:mm")} - ${moment(not.fechaFin.toDate()).format("h:mm")}`}
                 />
-                {not.leida === false ? <FiberNew color="secondary" /> : null}
               </ListItem>
             ))
           ) : (
