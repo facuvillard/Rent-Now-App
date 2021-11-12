@@ -64,6 +64,7 @@ export async function getNearbyComplejos(center, radius) {
       const q = firebase
         .firestore()
         .collection("complejos")
+        .where("habilitado", "==", true)
         .orderBy("ubicacion.geohash")
         .startAt(b[0])
         .endAt(b[1]);
