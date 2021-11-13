@@ -53,7 +53,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function ComplejoInfoWindow(props) {
 	const { complejo } = props;
-	const [tiposEspacios] = useState([])
+	const [tiposEspacios, setTiposEspacios] = useState(null)
 	const classes = useStyles();
 	const position = {
 		lat: complejo.ubicacion.latlng.latitude,
@@ -65,14 +65,16 @@ export default function ComplejoInfoWindow(props) {
 	};
 
 	useEffect(() => {
+		let aux = []
 		complejo.espaciosMetaData.forEach((espacio) => {
-			if (tiposEspacios.includes(espacio.tipoEspacio)) {
+			if (aux.includes(espacio.tipoEspacio)) {
 				return
 			}
 			else {
-				tiposEspacios.push(espacio.tipoEspacio)
+				aux.push(espacio.tipoEspacio)
 			}
 		})
+		setTiposEspacios(aux)
 	}, [complejo])
 
 	return (
@@ -106,7 +108,7 @@ export default function ComplejoInfoWindow(props) {
 				<CardContent>
 					<div>
 						<Typography component="legend"><strong>Dirección:</strong> {complejo.ubicacion.calle} {complejo.ubicacion.numero}, {complejo.ubicacion.barrio}, {complejo.ubicacion.ciudad.charAt(0) + (complejo.ubicacion.ciudad.slice(1)).toLowerCase()}  </Typography>
-						{tiposEspacios.length !== 0 && tiposEspacios.map((tipoEspacio) => (
+						{tiposEspacios && tiposEspacios.map((tipoEspacio) => (
 							<Chip
 								key={tipoEspacio}
 								label={tipoEspacio}

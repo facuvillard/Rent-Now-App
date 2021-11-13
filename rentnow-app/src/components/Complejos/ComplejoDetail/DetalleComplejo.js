@@ -45,6 +45,7 @@ import Redes from "components/Complejos/ComplejoDetail/Tabs/Info/Redes";
 import ReserveEspacio from "components/Complejos/ComplejoDetail/Tabs/Espacios/ReserveEspacio";
 // Valoraciones
 import Valoraciones from "components/Complejos/ComplejoDetail/Tabs/Valoraciones/Valoraciones";
+import NewReleasesIcon from '@material-ui/icons/NewReleases';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -91,6 +92,16 @@ const useStyles = makeStyles((theme) => ({
   loading: {
     marginTop: theme.spacing(4),
   },
+  chipValoracion: {
+		margin: 'auto',
+		marginLeft: theme.spacing(2),
+	},
+  chipSuccess: {
+		backgroundColor: '#66bb6a',
+		color: '#FAFAFA',
+		margin: 'auto',
+		marginLeft: theme.spacing(2),
+	},
 }));
 
 function TabPanel(props) {
@@ -206,13 +217,22 @@ const DetalleComplejo = () => {
                       <Typography component="h5" variant="h5">
                         {complejo.nombre}
                       </Typography>
-                      <Chip
-                        icon={<StarBorderIcon />}
-                        label={complejo.valoracion}
-                        color="primary"
-                        size="small"
-                        className={classes.chip}
-                      />
+                      {complejo.valoracion ? (
+													<Chip
+														icon={<StarBorderIcon />}
+														label={complejo.valoracion}
+														color="primary"
+														size='small'
+														className={classes.chipValoracion}
+													/>
+												) : (
+													<Chip
+														icon={<NewReleasesIcon style={{ color: '#FAFAFA' }} />}
+														label={'Nuevo'}
+														size='small'
+														className={classes.chipSuccess}
+													/>
+												)}
                     </Grid>
                   }
                   subtitle={
