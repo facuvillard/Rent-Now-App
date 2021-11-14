@@ -48,6 +48,7 @@ const Horarios = (props) => {
   const classes = useStyles();
   const theme = useTheme();
   const matches = useMediaQuery(theme.breakpoints.up("sm"));
+  
   return (
     <Grid container direction="row" justify="center" alignItems="center">
       <div className={matches ? classes.horariosWeb : classes.horariosMobile}>
@@ -121,13 +122,13 @@ const Horarios = (props) => {
               >
                 Miércoles
               </Typography>
-              {props.horarios?.Miercoles?.abre ? (
+              {props.horarios?.Miércoles?.abre ? (
                 <Typography
                   color="textSecondary"
                   className={classes.tituloSeccion}
                 >
-                  {props.horarios.Miercoles.desde} -{" "}
-                  {props.horarios.Miercoles.hasta}
+                  {props.horarios.Miércoles.desde} -{" "}
+                  {props.horarios.Miércoles.hasta}
                 </Typography>
               ) : (
                 <Typography
@@ -205,14 +206,14 @@ const Horarios = (props) => {
                 color="textSecondary"
                 className={classes.tituloSeccion}
               >
-                Sabado
+                Sábado
               </Typography>
-              {props.horarios?.Sabado?.abre ? (
+              {props.horarios?.Sábado?.abre ? (
                 <Typography
                   color="textSecondary"
                   className={classes.tituloSeccion}
                 >
-                  {props.horarios.Sabado.desde} - {props.horarios.Sabado.hasta}
+                  {props.horarios.Sábado.desde} - {props.horarios.Sábado.hasta}
                 </Typography>
               ) : (
                 <Typography
