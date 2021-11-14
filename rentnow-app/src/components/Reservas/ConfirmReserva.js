@@ -108,7 +108,7 @@ const ConfirmReserva = (props) => {
                     }).then((result) => {
                         /* Read more about isConfirmed, isDenied below */
                         if (result.isConfirmed) {
-                            history.push(Routes.CONSULTAR_RESERVAS);
+                            history.push(Routes.CONSULTAR_RESERVAS, history.location.pathname);
                         }
                     })
                 }
@@ -122,7 +122,7 @@ const ConfirmReserva = (props) => {
                     }).then((result) => {
                         /* Read more about isConfirmed, isDenied below */
                         if (result.isConfirmed) {
-                            history.push(`/complejos/${reserva.idComplejo}`);
+                            history.push(`/complejos/${reserva.idComplejo}`, history.location.pathname);
                         }
                     })
                 }

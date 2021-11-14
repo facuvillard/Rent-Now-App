@@ -5,6 +5,7 @@ import { useHistory } from "react-router-dom";
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import { Fab } from "@material-ui/core";
 import * as Routes from "constants/routes"
+import { withRouter } from 'react-router-dom'
 
 const useStyles = makeStyles((theme) => ({
   toolbar: {
@@ -33,14 +34,18 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const LayoutWithNavbar = (props) => {
+  console.log(props)
   const classes = useStyles();
   const history = useHistory();
 
   const handleRouteComplejo = () => {
-    history.goBack();
+    if (props.location.state && props.location.state.includes('confirmar')) {
+      history.push(Routes.COMPLEJOS)
+    }
+    else {
+      history.goBack();
+    }
   }
-
-  console.log(history.location.pathname)
 
   return (
     <div>
@@ -65,4 +70,4 @@ const LayoutWithNavbar = (props) => {
   );
 };
 
-export default LayoutWithNavbar;
+export default withRouter(LayoutWithNavbar);
