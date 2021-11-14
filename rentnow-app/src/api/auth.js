@@ -1,5 +1,16 @@
 import firebase from 'firebase';
 
+export async function recoverAndResetPassword(email) {
+	var auth = firebase.auth();
+	try {
+		await auth.sendPasswordResetEmail(email)
+		return {status: "OK", message:"Email de reseteo de contraseña enviado"}
+
+	} catch (err) {
+		return {status: "ERROR", message: "Error al recuperar contraseña"}
+	}
+}
+
 export async function signIn(email, password) {
 	var auth = firebase.auth();
 	try {
@@ -74,6 +85,6 @@ export async function getUserData(userId, runWhenChange) {
 			status: "ERROR",
 			message: "Usuario consultado ERROR",
 		}
-	} 
+	}
 }
 

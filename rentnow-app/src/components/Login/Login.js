@@ -16,8 +16,9 @@ import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import Link from 'utils/LinkCustom/Link';
 import * as Routes from '../../constants/routes';
-import { signIn } from './../../api/auth';
+import { recoverAndResetPassword, signIn } from '../../api/auth';
 import AlertCustom from './../../utils/AlertCustom/AlertCustom';
+
 
 const useStyles = makeStyles((theme) => ({
 	main: {
@@ -69,7 +70,6 @@ const Login = () => {
 	const [isLoading, setIsLoading] = useState(false);
 	const [showNewUserForm, setShowNewUserForm] = useState(false);
 	const [userData, setUserData] = useState({});
-
 	const history = useHistory();
 
 	const formik = useFormik({
@@ -132,6 +132,25 @@ const Login = () => {
 			</Container>
 		);
 	}
+
+	const handleClickRecoverAndResetPassword = async (email) => {
+		const result = await recoverAndResetPassword(email);
+
+		if (result.status === "OK") {
+			setAlertProps({
+				type: "success",
+				text: "Se ha enviado un mail para recuperar contraseña, por favor revise su correo electronico.",
+			});
+			setShowAlert(true);
+		} else {
+			setAlertProps({
+				type: 'error',
+				text: 'No se puede recuperar contraseña, por favor ingrese un email válido.',
+			});
+			setShowAlert(true);
+			console.log(result.message);
+		}
+	};
 
 	return (
 		<Container component="main" maxWidth="xs">
@@ -206,7 +225,7 @@ const Login = () => {
 								</Tooltip>
 							</Grid>
 							<Grid item xs={6}>
-								<Link href="#" variant="body2" color="secondary">
+								<Link onClick={() => handleClickRecoverAndResetPassword(formik.values.email)} variant="body2" color="secondary">
 									¿Olvidaste tu contraseña?
 								</Link>
 							</Grid>
@@ -224,6 +243,12 @@ const Login = () => {
 					<Copyright/>
 				</Box>
 			</Paper>
+			<AlertCustom
+				type={alertProps.type}
+				text={alertProps.text}
+				open={showAlert}
+				setOpen={setShowAlert}
+			/>
 		</Container>
 	);
 };
