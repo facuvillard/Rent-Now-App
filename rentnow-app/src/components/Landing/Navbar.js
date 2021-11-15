@@ -3,7 +3,6 @@ import {
   AppBar,
   Toolbar,
   makeStyles,
-  Link,
   Button,
   IconButton,
   Paper,
@@ -17,6 +16,7 @@ import useScrollTrigger from "@material-ui/core/useScrollTrigger";
 import rentnowLogo from "assets/Landing/rentnow-logo-landing.png";
 import { Link as LinkRouter } from "react-router-dom";
 import MenuIcon from "@material-ui/icons/Menu";
+import * as Routes from "constants/routes";
 
 const useStyles = makeStyles((theme) => ({
   title: {
@@ -58,9 +58,15 @@ const useStyles = makeStyles((theme) => ({
     marginTop: "15px",
     [theme.breakpoints.up("md")]: { display: "none" },
   },
-  logo: {
+  logoWeb: {
     maxWidth: 250,
     marginTop: 5,
+    [theme.breakpoints.down("sm")]: { display: "none" },
+  },
+  logoMobile: {
+    maxWidth: 200,
+    marginTop: 5,
+    [theme.breakpoints.up("md")]: { display: "none" },
   },
 }));
 
@@ -127,11 +133,21 @@ const Navbar = (props) => {
       <AppBar position="fixed" className={classes.appbar}>
         <Toolbar className={classes.toolbar}>
           <div />
-          <Link variant="h5" underline="none" className={classes.title} href="">
+          <LinkRouter
+            variant="h5"
+            underline="none"
+            className={classes.title}
+            to={Routes.LANDING}
+          >
             <Typography align="center" className={classes.title}>
-              <img src={rentnowLogo} alt="logo" className={classes.logo} />
+              <img src={rentnowLogo} alt="logo" className={classes.logoWeb} />
+              <img
+                src={rentnowLogo}
+                alt="logo"
+                className={classes.logoMobile}
+              />
             </Typography>
-          </Link>
+          </LinkRouter>
           <div className={classes.rightLinks}>
             <LinkRouter to="/login" className={classes.link}>
               <Button color="primary" className={classes.rightLink}>

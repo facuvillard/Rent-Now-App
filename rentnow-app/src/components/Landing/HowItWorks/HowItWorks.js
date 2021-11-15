@@ -5,6 +5,8 @@ import calendarImage from 'assets/Landing/calendarImage.png'
 import checkImage from 'assets/Landing/checkImage.png'
 import filterImage from 'assets/Landing/filtrarImage.png'
 import fondoImage from 'assets/Landing/fondoImage.png'
+import LinkCustom from 'utils/LinkCustom/Link'
+import * as Routes from "constants/routes";
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -87,7 +89,11 @@ const HowItWorks = () => {
                                     <b>1. REGISTRATE</b>
                                 </Typography>
                                 <Typography variant="h6" align="center">
-                                    {'¡Entra a www. y registrate para poder usar nuestro sitio!'}
+                                    ¡Entra {' '}
+                                    <LinkCustom to={Routes.LOGIN}>
+                                        <strong>aquí</strong>
+                                    </LinkCustom>
+                                    {' '}y registrate para poder usar nuestro sitio!
                                 </Typography>
                                 <Button color="primary" size="large" variant="contained" className={classes.button} href="/login"><b>Registrarme</b></Button>
                             </div>
