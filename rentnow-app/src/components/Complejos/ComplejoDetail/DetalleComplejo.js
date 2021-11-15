@@ -217,10 +217,10 @@ const DetalleComplejo = () => {
                       <Typography component="h5" variant="h5">
                         {complejo.nombre}
                       </Typography>
-                      {complejo.valoracion ? (
+                      {complejo.valoracionPromedio ? (
 													<Chip
 														icon={<StarBorderIcon />}
-														label={complejo.valoracion}
+														label={complejo.valoracionPromedio.toFixed(2)}
 														color="primary"
 														size='small'
 														className={classes.chipValoracion}
