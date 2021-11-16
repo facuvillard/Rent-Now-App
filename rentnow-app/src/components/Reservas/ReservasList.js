@@ -135,6 +135,10 @@ function isCancelable(fechaInicio, estadoActual, lastEstado) {
     return false
 }
 
+function isValorable(reserva){
+    return !reserva.estaValorada && reserva.estadoActual === 'FINALIZADA'
+}
+
 const ReservasList = () => {
     const history = useHistory();
     const classes = useStyles();
@@ -212,6 +216,10 @@ const ReservasList = () => {
         })
     }
 
+    function goToValorar(idReserva){
+        history.push("/reservas/opinion", { idReserva })
+    }
+
     useEffect(() => {
         if (reservas.length === 0) {
             async function obtenerReservas(id) {
@@ -270,8 +278,8 @@ const ReservasList = () => {
                             className={classes.container}
                         >
                             {reservas.length > 0 ? (
-                                reservas.map((reserva, index) => (
-                                    <Grid key={index} item xs={12} md={3}>
+                                reservas.map((reserva, index) => {
+                                    return <Grid key={index} item xs={12} md={3}>
                                         <Card className={classes.card}>
                                             <CardHeader
                                                 title={` 
@@ -327,14 +335,22 @@ const ReservasList = () => {
                                                             onClick={() => cancelReserva(reserva)}
                                                         >
                                                             Cancelar Reserva
-                                                        </Button>
-                                                    }
+                                                        </Button>}
+                                                        {isValorable(reserva) &&                                                        
+                                                        <Button
+                                                            variant="contained"
+                                                            size="small"
+                                                            color='primary'
+                                                            onClick={() => goToValorar(reserva.id)}
+                                                        >
+                                                            Valorar
+                                                        </Button> }
                                                 </Grid>
                                             </CardContent>
                                         </Card>
 
                                     </Grid>
-                                ))
+                                })
                             ) : (
                                 <Alert severity="warning">¡No existen reservas realizadas por ti!</Alert>
                             )
