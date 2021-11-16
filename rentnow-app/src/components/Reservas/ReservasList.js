@@ -123,9 +123,13 @@ function ReservaDetail({ open, reserva, onClose }) {
     )
 }
 
-function isCancelable(fechaInicio, estadoActual) {
+function isCancelable(fechaInicio, estadoActual, lastEstado) {
     const fechaActual = moment()
-    if (fechaInicio.add(-2, 'hours').isSameOrAfter(fechaActual) && estadoActual !== 'CANCELADA' && estadoActual !== 'SIN CONCURRENCIA' && estadoActual !== 'FINALIZADA') {
+    if (fechaInicio.add(-2, 'hours').isSameOrAfter(fechaActual) 
+        && estadoActual !== 'CANCELADA' 
+        && estadoActual !== 'SIN CONCURRENCIA' 
+        && estadoActual !== 'FINALIZADA' 
+        && lastEstado !== 'CANCELADA') {
         return true
     }
     return false
@@ -315,7 +319,7 @@ const ReservasList = () => {
                                                         />
                                                     </Tooltip>
                                                     {
-                                                        isCancelable(moment(reserva.fechaInicio.toDate()), reserva.estadoActual) &&
+                                                        isCancelable(moment(reserva.fechaInicio.toDate()), reserva.estadoActual, reserva.estados[reserva.estados.length - 1].estado) &&
                                                         <Button
                                                             variant="contained"
                                                             size="small"
