@@ -54,9 +54,12 @@ const useStyles = makeStyles((theme) => ({
 		color: '#FAFAFA',
 		margin: 'auto',
 		marginLeft: theme.spacing(2),
+		paddingBottom: '3px'
+
 	},
 	container: {
-		display: 'inline-flex'
+		display: 'inline-flex',
+		width: '100%'
 	},
 	chipValoracion: {
 		margin: 'auto',
@@ -329,7 +332,7 @@ export const ComplejosList = () => {
 													/>
 												) : (
 													<Chip
-														icon={<NewReleasesIcon style={{ color: '#FAFAFA', marginRight: 5 }} />}
+														icon={<NewReleasesIcon style={{ color: '#FAFAFA', marginRight: 3 }} />}
 														label={'Nuevo'}
 														size='small'
 														className={classes.chipSuccess}

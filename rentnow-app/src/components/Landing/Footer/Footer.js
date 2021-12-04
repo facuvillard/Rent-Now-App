@@ -10,11 +10,11 @@ import Instagram from '@material-ui/icons/Instagram';
 const useStyles = makeStyles((theme) => ({
     root: {
         display: 'flex',
-        backgroundColor: theme.palette.secondary.main,
+        backgroundColor: '#1C1C1C',
     },
     container: {
-        marginTop: theme.spacing(8),
-        marginBottom: theme.spacing(8),
+        marginTop: theme.spacing(2),
+        marginBottom: theme.spacing(2),
         display: 'flex',
     },
     iconsWrapper: {
@@ -22,6 +22,7 @@ const useStyles = makeStyles((theme) => ({
     },
     icons: {
         display: 'flex',
+        marginLeft: theme.spacing(2)
     },
     icon: {
         width: 45,
@@ -30,7 +31,6 @@ const useStyles = makeStyles((theme) => ({
         justifyContent: 'center',
         alignItems: 'center',
         marginRight: theme.spacing(1),
-
     },
     list: {
         margin: 0,
@@ -49,61 +49,44 @@ const useStyles = makeStyles((theme) => ({
         height: 2,
         width: 20,
         display: 'block',
-        background: "rgb(0,0,0) linear-gradient(90deg, rgba(0,0,0,0.7517401392111369) 0%, rgba(0,0,0,1) 0%)",
+        background: "rgb(255,255,255) linear-gradient(90deg, rgba(0,0,0,0.7517401392111369) 0%, rgba(255,255,255) 0%)",
     },
 }));
-
-function Copyright() {
-    return (
-        <>
-            {'© '}
-            <Link color="inherit" href="https://material-ui.com/">
-                RentNow
-        </Link>{' '}
-            {new Date().getFullYear()}
-        </>
-    );
-}
 
 const Footer = () => {
     const classes = useStyles();
     return (
         <Typography component="footer" className={classes.root}>
-            <Container className={classes.container}>
-                <Grid container spacing={5}>
-                    <Grid item xs={6} sm={4} md={3}>
-                        <Grid
-                            container
-                            direction="column"
-                            justify="flex-end"
-                            className={classes.iconsWrapper}
-                            spacing={2}
-                        >
-                            <Grid item className={classes.icons}>
-                                <IconButton color="inherit" href="https://www.facebook.com/juan.bergues" aria-label="Facebook">
-                                    <Facebook />
-                                </IconButton>
-                                <IconButton color="inherit" href="https://twitter.com/JuanBergues" aria-label="Twitter">
-                                    <Twitter />
-                                </IconButton>
-                                <IconButton color="inherit" href="https://www.instagram.com/juanpablobergues" aria-label="Instagram">
-                                    <Instagram />
-                                </IconButton>
-                            </Grid>
-                            <Grid item>
-                                <Copyright />
-                            </Grid>
-                        </Grid>
-                    </Grid>
-                    <Grid item xs={6} sm={8} md={4}>
-                        <Typography variant="h6" marked="left" gutterBottom>
-                            <b>PAISES</b>
-                            <span className={classes.subrayado} />
-                        </Typography>
-                        <img className={classes.icon} src={argentinaImage} alt="Argentina" />
-                    </Grid>
+            <Grid
+                container
+                direction="column"
+                justify="center"
+                alignItems="center"
+                className={classes.container}
+            >
+                <Grid item xs={6} sm={8} md={4} className={classes.icons}>
+                    <Typography style={{ color: '#FAFAFA'}} variant="h6" marked="left" gutterBottom>
+                        <b>REDES</b>
+                        <span className={classes.subrayado} />
+                    </Typography>
+                    <IconButton style={{ color: '#FAFAFA'}} href="https://www.facebook.com" aria-label="Facebook">
+                        <Facebook />
+                    </IconButton>
+                    <IconButton style={{ color: '#FAFAFA'}} href="https://twitter.com" aria-label="Twitter">
+                        <Twitter />
+                    </IconButton>
+                    <IconButton style={{ color: '#FAFAFA'}} href="https://www.instagram.com" aria-label="Instagram">
+                        <Instagram />
+                    </IconButton>
                 </Grid>
-            </Container>
+                <Grid item xs={6} sm={8} md={4} style={{ display: 'flow-root'}}>
+                    <Typography style={{ color: '#FAFAFA'}} variant="h6" marked="left" gutterBottom>
+                        <b>PAISES</b>
+                        <span className={classes.subrayado} />
+                    </Typography>
+                    <img className={classes.icon} src={argentinaImage} alt="Argentina" />
+                </Grid>
+            </Grid>
         </Typography>
     )
 }
