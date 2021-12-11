@@ -15,7 +15,7 @@ const ValoracionListItem = ({ valoracion }) => {
   return (
     <ListItem alignItems="flex-start" divider>
       <ListItemAvatar>
-        <Avatar alt={cliente.nombre || ""} src="/static/images/avatar/1.jpg" />
+        <Avatar alt={cliente.nombre || ""} src="/static/images/avatar/1.jpg"/>
       </ListItemAvatar>
       <ListItemText
         primary={
@@ -34,6 +34,7 @@ const ValoracionListItem = ({ valoracion }) => {
         secondary={comentario || ""}
       />
       <ListItemText
+        style={{ textAlign: 'right' }}
         secondary={fecha ? moment(fecha).format("DD/MM/YY") : "-"}
       />
     </ListItem>
