@@ -6,7 +6,7 @@ export const tipoEspacio = {
         urlImagen: 'https://firebasestorage.googleapis.com/v0/b/rent-now-13046.appspot.com/o/fotos-genericas-espacios%2Fbasket%2Fbasket-ball.png?alt=media&token=7937ff30-0fae-4218-bcb0-918f1a6cdf12'
     },
     "Cancha Handball": {
-        urlImagen: ''
+        urlImagen: 'https://firebasestorage.googleapis.com/v0/b/rent-now-13046.appspot.com/o/fotos-genericas-espacios%2Fhandball%2Fhandball.png?alt=media&token=d28a8ab6-ce09-4616-81e0-660f8a1b9c5e'
     },
     "Cancha Tenis": {
         urlImagen: 'https://firebasestorage.googleapis.com/v0/b/rent-now-13046.appspot.com/o/fotos-genericas-espacios%2Ftenis%2Ftenis.png?alt=media&token=660dbbd0-3e8a-4659-9b27-beba615b8a20'
