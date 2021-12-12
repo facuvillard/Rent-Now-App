@@ -82,10 +82,16 @@ const useStyles = makeStyles((theme) => ({
         "&:hover, &:focus": {
             backgroundColor: "#ABEBC6",
             cursor: "pointer",
-        }
+        },
+        display: 'inline-flex !important',
+        //fontWeight: 'bold',
+        fontSize: 'medium',
     },
     chipNoDisponible: {
         backgroundColor: '#c2c2c2',
+        display: 'inline-flex !important',
+        // fontWeight: 'bold',
+        fontSize: 'medium',
     },
     tituloSeccion: {
         marginBottom: theme.spacing(2)
@@ -276,6 +282,8 @@ const ReserveEspacio = (props) => {
     const { idComplejo, complejo } = props
     const classes = useStyles();
 
+    console.log('estos son los datos del complejo: ', complejo)
+
     useEffect(() => {
         async function getTiposEspacios() {
             try {
@@ -365,8 +373,7 @@ const ReserveEspacio = (props) => {
         centerPadding: 70,
         arrowsBlock: true,
         arrows: true,
-        slidesPerRow: matches ? 5 : 1,
-        dots: true,
+        slidesPerRow: matches ? 5 : 2,
         nextArrow: <SampleNextArrow />,
         prevArrow: <SamplePrevArrow />
     };
@@ -510,7 +517,7 @@ const ReserveEspacio = (props) => {
             </Grid>
 
             <SelectTipoEspacio open={openSelectTipoEspacio} tiposEspacio={tiposEspacioComplejo} onClose={handleCloseSelectTipoEspacio} selectedTipo={selectedTipoEspacio} />
-            <SelectDuracion open={openSelectDuracion} duraciones={["1", "1:30", "2", "2:30", "3", "3:30"]} onClose={handleCloseSelectDuracion} selectedDuracion={selectedDuracion} />
+            <SelectDuracion open={openSelectDuracion} duraciones={complejo.parametrosReserva.duracionTurno || ["1", "1:30", "2", "2:30", "3", "3:30"]} onClose={handleCloseSelectDuracion} selectedDuracion={selectedDuracion} />
 
         </>
     )
