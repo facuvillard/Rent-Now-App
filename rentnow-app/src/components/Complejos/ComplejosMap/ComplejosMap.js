@@ -1,10 +1,11 @@
-import ComplejoInfoWindow from "components/Complejos/ComplejosMap/ComplejoInfoWindow/ComplejoInfoWindow";
 import React, { useState, useEffect } from "react";
+import ComplejoInfoWindow from "components/Complejos/ComplejosMap/ComplejoInfoWindow/ComplejoInfoWindow";
 import { GoogleMap, LoadScript } from "@react-google-maps/api";
 import { GOOGLE_MAP_KEY } from "constants/apiKeys";
 import { Marker } from "@react-google-maps/api";
 import Image from "assets/Landing/marker.png";
-import { Backdrop, CircularProgress } from "@material-ui/core";
+import User from "assets/Landing/placeholder.png";
+import { Backdrop, CircularProgress, Tooltip } from "@material-ui/core";
 
 const containerStyle = {
   width: "100%",
@@ -64,26 +65,29 @@ const ComplejosMap = ({ complejos, center, fetchComplejos }) => {
           onDragEnd={handleCenterChange}
           onDragStart={() => clearTimeout(timer)}
         >
+          <Tooltip title="Tú estás aquí" arrow>
+            <Marker position={{ lat: center.lat, lng: center.lng }} icon={User} />
+          </Tooltip>
           <Backdrop open={isLoading} style={{ zIndex: 100 }}>
             <CircularProgress />
           </Backdrop>
           {complejos
             ? complejos.map((complejo) => (
-                <Marker
-                  key={
-                    complejo.ubicacion.latlng.latitude +
-                    complejo.ubicacion.latlng.long
-                  }
-                  position={{
-                    lat: complejo.ubicacion.latlng.latitude,
-                    lng: complejo.ubicacion.latlng.longitude,
-                  }}
-                  onClick={() => {
-                    setSelectedComplejo(complejo);
-                  }}
-                  icon={Image}
-                />
-              ))
+              <Marker
+                key={
+                  complejo.ubicacion.latlng.latitude +
+                  complejo.ubicacion.latlng.long
+                }
+                position={{
+                  lat: complejo.ubicacion.latlng.latitude,
+                  lng: complejo.ubicacion.latlng.longitude,
+                }}
+                onClick={() => {
+                  setSelectedComplejo(complejo);
+                }}
+                icon={Image}
+              />
+            ))
             : null}
           {selectedComplejo && (
             <ComplejoInfoWindow
