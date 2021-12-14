@@ -125,17 +125,17 @@ function ReservaDetail({ open, reserva, onClose }) {
 
 function isCancelable(fechaInicio, estadoActual, lastEstado) {
     const fechaActual = moment()
-    if (fechaInicio.add(-2, 'hours').isSameOrAfter(fechaActual) 
-        && estadoActual !== 'CANCELADA' 
-        && estadoActual !== 'SIN CONCURRENCIA' 
-        && estadoActual !== 'FINALIZADA' 
+    if (fechaInicio.add(-2, 'hours').isSameOrAfter(fechaActual)
+        && estadoActual !== 'CANCELADA'
+        && estadoActual !== 'SIN CONCURRENCIA'
+        && estadoActual !== 'FINALIZADA'
         && lastEstado !== 'CANCELADA') {
         return true
     }
     return false
 }
 
-function isValorable(reserva){
+function isValorable(reserva) {
     return !reserva.estaValorada && reserva.estadoActual === 'FINALIZADA'
 }
 
@@ -216,7 +216,7 @@ const ReservasList = () => {
         })
     }
 
-    function goToValorar(idReserva){
+    function goToValorar(idReserva) {
         history.push("/reservas/opinion", { idReserva })
     }
 
@@ -279,7 +279,7 @@ const ReservasList = () => {
                         >
                             {reservas.length > 0 ? (
                                 reservas.map((reserva, index) => {
-                                    return <Grid key={index} item xs={12} md={3}>
+                                    return <Grid style={{ paddingLeft: '10%', paddingRight: '10%' }} key={index} item xs={12} md={3}>
                                         <Card className={classes.card}>
                                             <CardHeader
                                                 title={` 
@@ -336,7 +336,7 @@ const ReservasList = () => {
                                                         >
                                                             Cancelar Reserva
                                                         </Button>}
-                                                        {isValorable(reserva) &&                                                        
+                                                    {isValorable(reserva) &&
                                                         <Button
                                                             variant="contained"
                                                             size="small"
@@ -344,7 +344,7 @@ const ReservasList = () => {
                                                             onClick={() => goToValorar(reserva.id)}
                                                         >
                                                             Valorar
-                                                        </Button> }
+                                                        </Button>}
                                                 </Grid>
                                             </CardContent>
                                         </Card>

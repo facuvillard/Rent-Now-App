@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext, useState } from "react";
 import {
   Typography,
   IconButton,
@@ -115,22 +115,24 @@ const Notifications = () => {
         <Divider className={classes.divider} variant="fullWidth" />
         <List dense={true}>
           {notificaciones && notificaciones.length !== 0 ? (
-            notificaciones.map((not, i) => (
-              <ListItem
-                button
-                onClick={() => {
-                  handleNotClick(not);
-                }}
-                selected={not.leida === false ? true : false}
-                key={not.id}
-              >
-                {not.leida === false ? <FiberNew style={{marginRight:'5px'}} color="secondary" /> : null}
-                <ListItemText
-                  primary={<Typography>{not.mensaje}</Typography>}
-                  secondary={`${not.espacio} → ${moment(not.fechaInicio.toDate()).format("DD/MM h:mm")} - ${moment(not.fechaFin.toDate()).format("h:mm")}`}
-                />
-              </ListItem>
-            ))
+            <>
+              {notificaciones.map((not, i) => (
+                <ListItem
+                  button
+                  onClick={() => {
+                    handleNotClick(not);
+                  }}
+                  selected={not.leida === false ? true : false}
+                  key={not.id}
+                >
+                  {not.leida === false ? <FiberNew style={{ marginRight: '5px' }} color="secondary" /> : null}
+                  <ListItemText
+                    primary={<Typography>{not.mensaje}</Typography>}
+                    secondary={`${not.espacio} → ${moment(not.fechaInicio.toDate()).format("DD/MM H:mm")} - ${moment(not.fechaFin.toDate()).format("H:mm")}`}
+                  />
+                </ListItem>
+              ))}
+            </>
           ) : (
             <ListItem>
               <ListItemText
