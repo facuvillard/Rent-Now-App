@@ -82,7 +82,7 @@ const ConfirmReserva = (props) => {
                     foto: reserva.complejo.fotos[0],
                     ubicacion: `${reserva.complejo.ubicacion.calle} ${reserva.complejo.ubicacion.numero}, Barrio: ${reserva.complejo.ubicacion.barrio}, ${reserva.complejo.ubicacion.ciudad}`,
                     nombre: reserva.complejo.nombre,
-                    tiempoVencimiento: reserva.complejo.parametrosReserva.tiempoVencimiento || 12
+                    tiempoVencimiento: reserva.complejo?.parametrosReserva?.tiempoVencimiento || 12
                 },
                 estaPagado: false,
                 estados: [],

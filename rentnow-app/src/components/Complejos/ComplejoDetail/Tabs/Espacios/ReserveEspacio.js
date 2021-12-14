@@ -517,7 +517,7 @@ const ReserveEspacio = (props) => {
             </Grid>
 
             <SelectTipoEspacio open={openSelectTipoEspacio} tiposEspacio={tiposEspacioComplejo} onClose={handleCloseSelectTipoEspacio} selectedTipo={selectedTipoEspacio} />
-            <SelectDuracion open={openSelectDuracion} duraciones={complejo.parametrosReserva.duracionTurno || ["1", "1:30", "2", "2:30", "3", "3:30"]} onClose={handleCloseSelectDuracion} selectedDuracion={selectedDuracion} />
+            <SelectDuracion open={openSelectDuracion} duraciones={complejo?.parametrosReserva?.duracionTurno || ["1", "1:30", "2", "2:30", "3", "3:30"]} onClose={handleCloseSelectDuracion} selectedDuracion={selectedDuracion} />
 
         </>
     )
