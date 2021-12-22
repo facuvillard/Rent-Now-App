@@ -142,6 +142,7 @@ export async function getValoracionesByComplejoId(complejoId) {
       .collection("complejos")
       .doc(complejoId)
       .collection("valoraciones")
+      .orderBy("fecha", "desc")
       .get();
 
     const valoraciones = result.docs.map((valoracionRef) => {

@@ -33,13 +33,14 @@ const Redes = (props) => {
         <>
             {
                 props.redes.facebook !== ''
-                    && props.redes.twitter !== ''
-                    && props.redes.instagram !== '' ? (
+                    || props.redes.twitter !== ''
+                    || props.redes.instagram !== '' ? (
                     <>
                         <Grid container
                             direction="row"
                             justify="center"
                             alignItems="center"
+                            style={{ marginTop: '10px'}}
                         >
                             <Card className={classes.card}>
                                 <CardContent className={classes.cardContent}>

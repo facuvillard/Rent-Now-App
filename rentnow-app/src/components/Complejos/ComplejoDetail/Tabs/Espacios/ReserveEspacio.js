@@ -120,7 +120,7 @@ function EspacioCard({ espacio, idComplejo, fecha, horarioInicio, horarioFin, co
                     direction="row"
                     justify="space-around"
                     alignItems="center">
-                    <Tooltip title="Precio de Turno">
+                    <Tooltip title="Precio por Hora">
                         <Chip
                             className={classes.chip}
                             icon={<AttachMoneyIcon />}
