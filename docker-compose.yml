@@ -1,0 +1,32 @@
+services:
+  # Production container (Nginx serving static build)
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: runner
+    container_name: rentnow-app-prod
+    restart: unless-stopped
+    ports:
+      - "${PORT:-3001}:80"
+    environment:
+      - NODE_ENV=production
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O - http://localhost/health || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  # Development container with hot-reload (optional: run with docker compose up app-dev)
+  app-dev:
+    image: node:20-alpine
+    container_name: rentnow-app-dev
+    working_dir: /app
+    volumes:
+      - .:/app
+      - /app/node_modules
+    ports:
+      - "5174:5173"
+    command: sh -c "npm install && npm run dev -- --host"
+    environment:
+      - NODE_ENV=development
