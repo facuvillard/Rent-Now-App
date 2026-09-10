@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import ComplejoInfoWindow from "./ComplejoInfoWindow/ComplejoInfoWindow";
-import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
+import { GoogleMap, useJsApiLoader, Marker } from "@react-google-maps/api";
 import { GOOGLE_MAP_KEY } from "constants/apiKeys";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
-import Tooltip from "@mui/material/Tooltip";
 import Box from "@mui/material/Box";
+import Alert from "@mui/material/Alert";
 import Image from "assets/Landing/marker.png";
 import User from "assets/Landing/placeholder.png";
 
@@ -22,6 +22,11 @@ const ComplejosMap = ({ complejos, center, fetchComplejos }) => {
   const [selectedComplejo, setSelectedComplejo] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
+  const { isLoaded, loadError } = useJsApiLoader({
+    id: "google-map-script",
+    googleMapsApiKey: GOOGLE_MAP_KEY,
+  });
+
   useEffect(() => {
     if (center?.lat && center?.lng) {
       setMapCenter(center);
@@ -30,6 +35,7 @@ const ComplejosMap = ({ complejos, center, fetchComplejos }) => {
 
   useEffect(() => {
     if (mapCenter?.lat && mapCenter?.lng && typeof fetchComplejos === "function") {
+      setIsLoading(true);
       fetchComplejos(mapCenter).finally(() => {
         setIsLoading(false);
       });
@@ -40,7 +46,6 @@ const ComplejosMap = ({ complejos, center, fetchComplejos }) => {
     if (!mapRef) return;
     const newCenter = mapRef.getCenter();
     if (newCenter) {
-      setIsLoading(true);
       setMapCenter({
         lat: newCenter.lat(),
         lng: newCenter.lng(),
@@ -48,56 +53,84 @@ const ComplejosMap = ({ complejos, center, fetchComplejos }) => {
     }
   };
 
+  if (loadError) {
+    return (
+      <Alert severity="warning" sx={{ borderRadius: 3, my: 2 }}>
+        No se pudo cargar Google Maps. Podés utilizar la pestaña "Vista Listado" para ver todos los complejos.
+      </Alert>
+    );
+  }
+
+  if (!isLoaded) {
+    return (
+      <Box
+        sx={{
+          ...containerStyle,
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          bgcolor: "#F1F5F9",
+          gap: 2,
+        }}
+      >
+        <CircularProgress sx={{ color: "#FCC931" }} />
+        <Box sx={{ color: "#64748B", fontWeight: 600 }}>Cargando mapa interactivo...</Box>
+      </Box>
+    );
+  }
+
   return (
     <Box sx={{ position: "relative", width: "100%", overflow: "hidden", borderRadius: 4 }}>
-      <LoadScript googleMapsApiKey={GOOGLE_MAP_KEY}>
-        <GoogleMap
-          mapContainerStyle={containerStyle}
-          center={mapCenter}
-          zoom={14}
-          onLoad={(map) => setMapRef(map)}
-          onDragEnd={handleDragEnd}
-          options={{
-            fullscreenControl: false,
-            streetViewControl: false,
-            mapTypeControl: false,
-          }}
-        >
-          {/* User Location Marker */}
-          {center?.lat && center?.lng && (
-            <Tooltip title="Tu ubicación actual" arrow>
-              <Marker position={{ lat: center.lat, lng: center.lng }} icon={User} />
-            </Tooltip>
-          )}
+      <GoogleMap
+        mapContainerStyle={containerStyle}
+        center={mapCenter}
+        zoom={14}
+        onLoad={(map) => setMapRef(map)}
+        onDragEnd={handleDragEnd}
+        options={{
+          fullscreenControl: false,
+          streetViewControl: false,
+          mapTypeControl: false,
+        }}
+      >
+        {/* User Location Marker */}
+        {center?.lat && center?.lng && (
+          <Marker
+            position={{ lat: center.lat, lng: center.lng }}
+            icon={User}
+            title="Tu ubicación actual"
+          />
+        )}
 
-          {/* Complejos Markers */}
-          {complejos &&
-            complejos.map((complejo) => {
-              const lat = complejo.ubicacion?.latlng?.latitude;
-              const lng =
-                complejo.ubicacion?.latlng?.longitude ||
-                complejo.ubicacion?.latlng?.long;
+        {/* Complejos Markers */}
+        {complejos &&
+          complejos.map((complejo) => {
+            const lat = complejo.ubicacion?.latlng?.latitude;
+            const lng =
+              complejo.ubicacion?.latlng?.longitude ||
+              complejo.ubicacion?.latlng?.long;
 
-              if (!lat || !lng) return null;
+            if (!lat || !lng) return null;
 
-              return (
-                <Marker
-                  key={complejo.id || `${lat}-${lng}`}
-                  position={{ lat, lng }}
-                  onClick={() => setSelectedComplejo(complejo)}
-                  icon={Image}
-                />
-              );
-            })}
+            return (
+              <Marker
+                key={complejo.id || `${lat}-${lng}`}
+                position={{ lat, lng }}
+                onClick={() => setSelectedComplejo(complejo)}
+                icon={Image}
+                title={complejo.nombre}
+              />
+            );
+          })}
 
-          {selectedComplejo && (
-            <ComplejoInfoWindow
-              complejo={selectedComplejo}
-              setComplejo={setSelectedComplejo}
-            />
-          )}
-        </GoogleMap>
-      </LoadScript>
+        {selectedComplejo && (
+          <ComplejoInfoWindow
+            complejo={selectedComplejo}
+            setComplejo={setSelectedComplejo}
+          />
+        )}
+      </GoogleMap>
 
       <Backdrop
         open={isLoading}

@@ -17,11 +17,15 @@ import logo from 'assets/Landing/logo-amarillo-simple.png';
 
 export default function ComplejoInfoWindow({ complejo, setComplejo }) {
   const position = useMemo(() => {
-    return {
-      lat: complejo.ubicacion?.latlng?.latitude,
-      lng: complejo.ubicacion?.latlng?.longitude || complejo.ubicacion?.latlng?.long,
-    };
+    const lat = complejo?.ubicacion?.latlng?.latitude;
+    const lng = complejo?.ubicacion?.latlng?.longitude || complejo?.ubicacion?.latlng?.long;
+    if (lat && lng) {
+      return { lat, lng };
+    }
+    return null;
   }, [complejo]);
+
+  if (!position) return null;
 
   const tiposEspacios = useMemo(() => {
     if (!complejo.espaciosMetaData) return [];

@@ -9,7 +9,7 @@ import MapIcon from '@mui/icons-material/Map';
 import ViewListIcon from '@mui/icons-material/ViewList';
 import ComplejosMap from './ComplejosMap/ComplejosMap';
 import { ComplejosList } from './ComplejosList/ComplejosList';
-import { getNearbyComplejos } from 'api/complejos';
+import { getNearbyComplejos, getComplejosEnabledApi } from 'api/complejos';
 
 export const Complejos = () => {
   const [complejos, setComplejos] = useState([]);
@@ -41,12 +41,21 @@ export const Complejos = () => {
 
   async function fetchComplejos(searchCenter) {
     try {
-      const result = await getNearbyComplejos([searchCenter.lat, searchCenter.lng], 15000); // 15km radius
-      if (result.status === 'OK') {
-        setComplejos(result.data || []);
+      const result = await getNearbyComplejos([searchCenter.lat, searchCenter.lng], 25000);
+      if (result.status === 'OK' && result.data && result.data.length > 0) {
+        setComplejos(result.data);
+      } else {
+        const fallback = await getComplejosEnabledApi();
+        if (fallback.status === 'OK') {
+          setComplejos(fallback.data || []);
+        }
       }
     } catch (err) {
       console.error('Error fetching nearby complejos', err);
+      const fallback = await getComplejosEnabledApi();
+      if (fallback.status === 'OK') {
+        setComplejos(fallback.data || []);
+      }
     }
   }
 

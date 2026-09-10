@@ -75,8 +75,10 @@ export async function getNearbyComplejos(center, radius) {
     const matchingDocs = [];
     snapshots.forEach((snap) =>
       snap.forEach((doc) => {
-        const lat = doc.get("ubicacion").latlng.latitude;
-        const lng = doc.get("ubicacion").latlng.longitude;
+        const ubicacion = doc.get("ubicacion");
+        const lat = ubicacion?.latlng?.latitude;
+        const lng = ubicacion?.latlng?.longitude || ubicacion?.latlng?.long;
+        if (!lat || !lng) return;
         const distanceInKm = geofire.distanceBetween([lat, lng], center);
         const distanceInM = distanceInKm * 1000;
 
