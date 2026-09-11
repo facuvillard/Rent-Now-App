@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from "react";
-import { getUserData } from "api/auth";
+import React, { useEffect, useState, useCallback } from "react";
+import { getCurrentUser } from "api/auth";
 import { getNotificacionesByUsuarioRealTime } from "api/usuarios";
-import firebaseApp from "../firebase";
 import Box from "@mui/material/Box";
 import CircularProgress from "@mui/material/CircularProgress";
 import Typography from "@mui/material/Typography";
@@ -15,49 +14,49 @@ const AuthProvider = ({ children }) => {
   const [pending, setPending] = useState(true);
   const [notificaciones, setNotificaciones] = useState([]);
 
-  useEffect(() => {
-    const unsubscribeAuth = firebaseApp.auth().onAuthStateChanged((user) => {
-      if (user) {
-        setCurrentUser(user);
-      } else {
-        setCurrentUser(null);
-        setCurrentUserData(null);
-        setNotificaciones([]);
-      }
-      setUserRoles(["default"]);
-      setPending(false);
-    });
+  const syncUser = useCallback(() => {
+    const user = getCurrentUser();
+    const token = localStorage.getItem('token');
+    if (user && token) {
+      const normalizedUser = {
+        ...user,
+        uid: user.id || user.uid,
+        email: user.email,
+        displayName: user.displayName || `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.email,
+        nombre: user.firstName || user.nombre || user.displayName || 'Usuario',
+        apellido: user.lastName || user.apellido || '',
+        celular: user.phoneNumber || user.celular || '',
+        provincia: user.provincia || 'Córdoba',
+        ciudad: user.ciudad || 'Córdoba',
+      };
+      setCurrentUser(normalizedUser);
+      setCurrentUserData(normalizedUser);
+      setUserRoles([user.role ? user.role.toLowerCase() : "client"]);
 
-    return () => unsubscribeAuth();
+      getNotificacionesByUsuarioRealTime(normalizedUser.uid, (data) => {
+        setNotificaciones(data || []);
+      });
+    } else {
+      setCurrentUser(null);
+      setCurrentUserData(null);
+      setUserRoles(["default"]);
+      setNotificaciones([]);
+    }
+    setPending(false);
   }, []);
 
   useEffect(() => {
-    if (!currentUser) {
-      return;
-    }
+    syncUser();
 
-    let unsubscribeNots;
-    getNotificacionesByUsuarioRealTime(currentUser.uid, (data) => {
-      setNotificaciones(data || []);
-    }).then((unsub) => {
-      if (typeof unsub === "function") {
-        unsubscribeNots = unsub;
-      }
-    });
-
-    getUserData(currentUser.uid, (userData) => {
-      setCurrentUserData(userData);
-      setPending(false);
-    }).then(() => {
-      setPending(false);
-    });
+    const handleAuthChange = () => syncUser();
+    window.addEventListener('auth-changed', handleAuthChange);
+    window.addEventListener('storage', handleAuthChange);
 
     return () => {
-      if (unsubscribeNots) {
-        unsubscribeNots();
-      }
+      window.removeEventListener('auth-changed', handleAuthChange);
+      window.removeEventListener('storage', handleAuthChange);
     };
-  }, [currentUser]);
+  }, [syncUser]);
 
   if (pending) {
     return (
@@ -82,7 +81,7 @@ const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{ currentUser, userRoles, currentUserData, notificaciones }}
+      value={{ currentUser, userRoles, currentUserData, notificaciones, syncUser }}
     >
       {children}
     </AuthContext.Provider>
@@ -90,3 +89,4 @@ const AuthProvider = ({ children }) => {
 };
 
 export default AuthProvider;
+

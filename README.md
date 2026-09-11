@@ -48,12 +48,15 @@
 | **Biblioteca de Componentes** | Material UI (MUI) | `^5.16.7` |
 | **Motor de Estilos** | Emotion | `^11.13.3` |
 | **Ruteo SPA** | React Router DOM | `^6.26.2` |
-| **Backend / BaaS** | Firebase (Auth, Firestore, Functions) | `^10.13.1` (compat) |
-| **Mapas & Geocodificación** | `@react-google-maps/api` + `geofire-common` | `^2.19.3` / `^6.0.0` |
+| **Backend REST API** | Java 21 + Spring Boot 3.3 | `3.3.3` |
+| **Base de Datos** | PostgreSQL (Docker) | `16-alpine` |
+| **Autenticación** | Spring Security + JWT Stateless | `0.12.6` |
+| **Mapas & Geocodificación** | `@react-google-maps/api` | `^2.19.3` |
 | **Formularios** | Formik | `^2.4.6` |
 | **Manejo de Fechas** | Moment.js | `^2.30.1` |
 | **Alertas & Modales** | SweetAlert2 | `^11.14.0` |
 | **Contenedorización** | Docker (Multi-stage) + Nginx Alpine | `Node 20` / `Nginx Alpine` |
+
 
 ---
 

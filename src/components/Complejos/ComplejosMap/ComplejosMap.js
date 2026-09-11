@@ -106,12 +106,15 @@ const ComplejosMap = ({ complejos, center, fetchComplejos }) => {
         {/* Complejos Markers */}
         {complejos &&
           complejos.map((complejo) => {
-            const lat = complejo.ubicacion?.latlng?.latitude;
-            const lng =
+            const lat = Number(complejo.latitude || complejo.ubicacion?.latlng?.latitude || complejo.ubicacion?.lat);
+            const lng = Number(
+              complejo.longitude ||
               complejo.ubicacion?.latlng?.longitude ||
-              complejo.ubicacion?.latlng?.long;
+              complejo.ubicacion?.latlng?.long ||
+              complejo.ubicacion?.lng
+            );
 
-            if (!lat || !lng) return null;
+            if (!lat || !lng || isNaN(lat) || isNaN(lng)) return null;
 
             return (
               <Marker

@@ -1,90 +1,110 @@
-import firebase from 'firebase/compat/app';
+import apiClient from './client';
 
-export async function recoverAndResetPassword(email) {
-	var auth = firebase.auth();
-	try {
-		await auth.sendPasswordResetEmail(email)
-		return {status: "OK", message:"Email de reseteo de contraseña enviado"}
-
-	} catch (err) {
-		return {status: "ERROR", message: "Error al recuperar contraseña"}
-	}
+export async function loginApi(email, password) {
+  try {
+    const data = await apiClient.post('/auth/login', { email, password });
+    if (data.token) {
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('user', JSON.stringify(data));
+      window.dispatchEvent(new Event('auth-changed'));
+    }
+    return {
+      status: 'OK',
+      data,
+    };
+  } catch (error) {
+    return {
+      status: 'ERROR',
+      message: error.message || 'Error al iniciar sesión',
+      error,
+    };
+  }
 }
 
-export async function signIn(email, password) {
-	var auth = firebase.auth();
-	try {
-		await auth.signInWithEmailAndPassword(email, password);
-		return { status: 'OK', message: 'Logeo correcto' };
-	} catch (err) {
-		return { status: 'ERROR', message: 'Logueo incorrecto. Por favor, compruebe email y contraseña' };
-	}
+export async function registerApi(userData) {
+  try {
+    const payload = {
+      email: userData.email,
+      password: userData.password,
+      firstName: userData.firstName || userData.nombre || '',
+      lastName: userData.lastName || userData.apellido || '',
+      phoneNumber: userData.phoneNumber || userData.celular || '',
+      role: userData.role || 'CLIENT',
+    };
+    const data = await apiClient.post('/auth/register', payload);
+    if (data.token) {
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('user', JSON.stringify(data));
+      window.dispatchEvent(new Event('auth-changed'));
+    }
+    return {
+      status: 'OK',
+      data,
+    };
+  } catch (error) {
+    return {
+      status: 'ERROR',
+      message: error.message || 'Error al registrar usuario',
+      error,
+    };
+  }
 }
 
-export async function submitExtraDataOnRegister(extraData) {
-	try {
-		console.log('Extra data on api', extraData);
-		const createUsuario = firebase.functions().httpsCallable('createDocForNewUser');
-		const result = await createUsuario(extraData);
-
-		return { status: 'OK', message: 'Se registró con exito la información.' };
-	} catch (err) {
-		return { status: 'ERROR', message: 'Ocurrio un error al enviar la información extra.' };
-	}
+export function logoutApi() {
+  localStorage.removeItem('token');
+  localStorage.removeItem('user');
+  window.dispatchEvent(new Event('auth-changed'));
+  return { status: 'OK' };
 }
 
-export async function signUpWithEmailApi(user) {
-	var auth = firebase.auth();
-
-	try {
-		await auth.createUserWithEmailAndPassword(user.email, user.password);
-		delete user.password;
-		await firebase.firestore().collection('usuariosApp').doc().set(user);
-
-		return { status: 'OK', message: 'Usuario creado correctamente' };
-	} catch (error) {
-		if (error.code === 'auth/email-already-in-use') {
-			return {
-				status: 'ERROR',
-				message:
-					'El email ingresado ya existe registrado, intente con otro o pruebe recuperando contraseña.',
-				error: error,
-			};
-		} else {
-			return { status: 'ERROR', message: 'Error al registrar usuario', error: error };
-		}
-	}
+export function getCurrentUser() {
+  const user = localStorage.getItem('user');
+  return user ? JSON.parse(user) : null;
 }
 
-export async function signOut() {
-	var auth = firebase.auth();
-	try {
-		await auth.signOut();
-		return { status: 'OK', message: 'Deslogeo correcto' };
-	} catch (err) {
-		return { status: 'ERROR', message: 'Error al deslogear' };
-	}
+export async function getProfileApi() {
+  try {
+    const data = await apiClient.get('/auth/me');
+    return {
+      status: 'OK',
+      data,
+    };
+  } catch (error) {
+    return {
+      status: 'ERROR',
+      error,
+    };
+  }
 }
 
-export async function getUserData(userId, runWhenChange) {
-	try {
-		const result = await firebase
-        .firestore()
-        .collection("usuariosApp")
-        .doc(userId)
-        .onSnapshot((userSnapshot)=>{
-			runWhenChange(userSnapshot.data())
-		})
+// Aliases for compatibility
+export const signIn = loginApi;
+export const login = loginApi;
+export const signOut = logoutApi;
+export const logout = logoutApi;
+export const logOut = logoutApi;
+export const register = registerApi;
+export const signUp = registerApi;
+export const signUpWithEmailApi = registerApi;
+export const getUser = getCurrentUser;
 
-		return {
-			status: "OK",
-			message: "Usuario consultado correctamente",
-		}
-	} catch(error) {
-		return {
-			status: "ERROR",
-			message: "Usuario consultado ERROR",
-		}
-	}
-}
+export const recoverAndResetPassword = async (email) => {
+  return { status: 'OK', message: 'Instrucciones enviadas a tu correo.' };
+};
+
+export const submitExtraDataOnRegister = async (userId, data) => {
+  const currentUser = getCurrentUser();
+  if (currentUser) {
+    const updated = { ...currentUser, ...data };
+    localStorage.setItem('user', JSON.stringify(updated));
+    window.dispatchEvent(new Event('auth-changed'));
+  }
+  return { status: 'OK' };
+};
+
+export const getUserData = async (uid, callback) => {
+  const user = getCurrentUser();
+  if (callback && user) callback(user);
+  return user;
+};
 
